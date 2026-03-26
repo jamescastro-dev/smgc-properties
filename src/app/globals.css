@@ -1,26 +1,83 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+html {
+  scrollbar-gutter: stable;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@theme {
+  --color-luxury-50: #f9f9f9;
+  --color-luxury-100: #f0f0f0;
+  --color-luxury-200: #e4e4e4;
+  --color-luxury-300: #d1d1d1;
+  --color-luxury-400: #a8a8a8;
+  --color-luxury-500: #737373;
+  --color-luxury-600: #404040;
+  --color-luxury-700: #262626;
+  --color-luxury-800: #171717;
+  --color-luxury-900: #0a0a0a;
+
+  --color-gold-300: #ffd54f;
+  --color-gold-400: #ffca28;
+  --color-gold-500: #c9a84c;
+  --color-gold-600: #b8973e;
+  --color-gold-700: #a07830;
+
+  --font-sans: "Inter", sans-serif;
+  --font-serif: "Georgia", serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Force dark theme for admin (ignores client light/dark toggle) */
+[data-theme="admin"] {
+  --color-luxury-50: #f9f9f9;
+  --color-luxury-100: #f0f0f0;
+  --color-luxury-200: #e4e4e4;
+  --color-luxury-300: #d1d1d1;
+  --color-luxury-400: #a8a8a8;
+  --color-luxury-500: #737373;
+  --color-luxury-600: #404040;
+  --color-luxury-700: #262626;
+  --color-luxury-800: #171717;
+  --color-luxury-900: #0a0a0a;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Light mode */
+.light {
+  --color-luxury-900: #ffffff;
+  --color-luxury-800: #f4f4f5;
+  --color-luxury-700: #e4e4e7;
+  --color-luxury-600: #d4d4d8;
+  --color-luxury-500: #71717a;
+  --color-luxury-400: #3f3f46;
+  --color-luxury-300: #27272a;
+  --color-luxury-200: #18181b;
+  --color-luxury-100: #09090b;
+  --color-luxury-50: #000000;
+}
+
+/* Marquee animation */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+/* Awards carousel fade-in */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(1.015); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.45s ease-out forwards;
+}
+
+/* Hide scrollbar but keep scroll */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
