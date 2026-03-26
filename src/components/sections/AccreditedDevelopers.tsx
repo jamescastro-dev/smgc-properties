@@ -35,12 +35,24 @@ export default function AccreditedDevelopers() {
         </div>
       </div>
 
-      {/* Scrolling marquee */}
-      <div className="relative overflow-hidden">
-        {/* Fade edges */}
+      {/* Mobile: swipeable scroll */}
+      <div className="sm:hidden overflow-x-auto scrollbar-hide px-4">
+        <div className="flex gap-3 w-max">
+          {DEVELOPERS.map((name, i) => (
+            <span
+              key={i}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-luxury-700 bg-luxury-900 text-luxury-300 text-sm font-medium tracking-wide shrink-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-gold-500 shrink-0" />
+              {name}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop: auto-scrolling marquee */}
+      <div className="hidden sm:block relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-24 z-10 bg-linear-to-r from-luxury-800 to-transparent pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-24 z-10 bg-linear-to-l from-luxury-800 to-transparent pointer-events-none" />
-
         <div className="flex gap-6 animate-marquee whitespace-nowrap">
           {[...DEVELOPERS, ...DEVELOPERS].map((name, i) => (
             <span
