@@ -1,8 +1,67 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
-import { Users, Phone, Mail, Search, X } from "lucide-react";
+
+function TooltipCell({
+  id,
+  text,
+  href,
+  textClassName = "",
+  activeId,
+  setActiveId,
+}: {
+  id: string;
+  text: string;
+  href?: string;
+  textClassName?: string;
+  activeId: string | null;
+  setActiveId: (id: string | null) => void;
+}) {
+  const open = activeId === id;
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: MouseEvent | TouchEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setActiveId(null);
+    };
+    document.addEventListener("mousedown", close);
+    document.addEventListener("touchstart", close);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("touchstart", close);
+    };
+  }, [open, setActiveId]);
+
+  return (
+    <div
+      ref={ref}
+      className="relative group"
+      onMouseEnter={() => setActiveId(id)}
+      onMouseLeave={() => setActiveId(null)}>
+      <p
+        onClick={() => setActiveId(open ? null : id)}
+        className={`truncate cursor-pointer select-none ${textClassName}`}>
+        {text}
+      </p>
+      {open && (
+        <div className="absolute left-0 top-full mt-1.5 z-50 w-72 bg-luxury-900 border border-luxury-600 rounded-xl p-3 text-xs text-luxury-50 shadow-2xl break-words whitespace-normal">
+          <p className="leading-relaxed">{text}</p>
+          {href && (
+            <Link
+              href={href}
+              onClick={() => setActiveId(null)}
+              className="flex items-center gap-1 mt-2 pt-2 border-t border-luxury-700 text-gold-500 hover:text-gold-400 text-[10px] font-semibold uppercase tracking-widest">
+              View Property →
+            </Link>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+import { Users, Phone, Search, X } from "lucide-react";
 import UpdateLeadStatus from "./UpdateLeadStatus";
 import Pagination from "@/components/ui/Pagination";
 
@@ -15,7 +74,6 @@ interface Lead {
   id: string;
   name: string;
   phone: string;
-  email?: string | null;
   location?: string | null;
   budget?: string | null;
   message?: string | null;
@@ -30,6 +88,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
   const [filter, setFilter] = useState<StatusFilter>("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
   const counts = useMemo(
     () => ({
@@ -50,7 +109,6 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
         (l) =>
           l.name.toLowerCase().includes(q) ||
           l.phone.includes(q) ||
-          (l.email?.toLowerCase().includes(q) ?? false) ||
           (l.location?.toLowerCase().includes(q) ?? false),
       );
     }
@@ -138,6 +196,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                   {[
                     "Client",
                     "Contact",
+                    "Location",
                     "Inquiry",
                     "Budget",
                     "Property",
@@ -163,31 +222,23 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                       <p className="text-luxury-50 text-sm font-semibold whitespace-nowrap">
                         {lead.name}
                       </p>
-                      {lead.location && (
-                        <p className="text-luxury-500 text-xs mt-0.5">
-                          {lead.location}
-                        </p>
-                      )}
                     </td>
 
                     {/* Contact */}
                     <td className="px-6 py-4">
-                      <div className="flex flex-col gap-1.5">
-                        <a
-                          href={`tel:${lead.phone}`}
-                          className="flex items-center gap-1.5 text-luxury-300 text-xs hover:text-gold-500 transition-colors whitespace-nowrap">
-                          <Phone className="w-3 h-3 text-gold-500" />
-                          {lead.phone}
-                        </a>
-                        {lead.email && (
-                          <a
-                            href={`mailto:${lead.email}`}
-                            className="flex items-center gap-1.5 text-luxury-300 text-xs hover:text-gold-500 transition-colors whitespace-nowrap">
-                            <Mail className="w-3 h-3 text-gold-500" />
-                            {lead.email}
-                          </a>
-                        )}
-                      </div>
+                      <a
+                        href={`tel:${lead.phone}`}
+                        className="flex items-center gap-1.5 text-luxury-300 text-xs hover:text-gold-500 transition-colors whitespace-nowrap">
+                        <Phone className="w-3 h-3 text-gold-500" />
+                        {lead.phone}
+                      </a>
+                    </td>
+
+                    {/* Location */}
+                    <td className="px-6 py-4">
+                      <span className="text-luxury-300 text-xs whitespace-nowrap">
+                        {lead.location || "—"}
+                      </span>
                     </td>
 
                     {/* Inquiry type */}
@@ -212,25 +263,43 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                     </td>
 
                     {/* Property */}
-                    <td className="px-6 py-4">
-                      {lead.properties ? (
-                        <Link
-                          href={`/admin/properties/${lead.property_id}`}
-                          className="text-gold-500 text-xs hover:text-gold-400 transition-colors max-w-36 truncate block">
-                          {lead.properties.title}
-                        </Link>
-                      ) : (
-                        <span className="text-luxury-600 text-xs">
-                          General
-                        </span>
-                      )}
+                    <td className="px-6 py-4 max-w-36">
+                      {(() => {
+                        const title =
+                          lead.properties?.title ??
+                          lead.message?.match(/^\[PROPERTY:(.+?)\]/)?.[1] ??
+                          null;
+                        return title ? (
+                          <TooltipCell
+                            id={`${lead.id}-property`}
+                            text={title}
+                            href={lead.property_id ? `/admin/properties/${lead.property_id}` : undefined}
+                            textClassName="text-gold-500 text-xs"
+                            activeId={activeTooltip}
+                            setActiveId={setActiveTooltip}
+                          />
+                        ) : (
+                          <span className="text-luxury-600 text-xs">General</span>
+                        );
+                      })()}
                     </td>
 
                     {/* Message */}
                     <td className="px-6 py-4 max-w-44">
-                      <p className="text-luxury-400 text-xs truncate">
-                        {lead.message || "—"}
-                      </p>
+                      {(() => {
+                        const msg = lead.message?.replace(/^\[PROPERTY:[^\]]+\]\n?/, "") || null;
+                        return msg ? (
+                          <TooltipCell
+                            id={`${lead.id}-message`}
+                            text={msg}
+                            textClassName="text-luxury-400 text-xs"
+                            activeId={activeTooltip}
+                            setActiveId={setActiveTooltip}
+                          />
+                        ) : (
+                          <span className="text-luxury-600 text-xs">—</span>
+                        );
+                      })()}
                     </td>
 
                     {/* Date */}

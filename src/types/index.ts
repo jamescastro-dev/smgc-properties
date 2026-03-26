@@ -28,7 +28,6 @@ export interface Testimonial {
 
 export interface LeadForm {
   name: string;
-  email: string;
   phone: string;
   message: string;
   type: "buy" | "sell" | "rent";

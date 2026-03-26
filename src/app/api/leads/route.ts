@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, phone, email, message, type, location, budget, property_id } = body;
+    const { name, phone, message, type, location, budget, property_id, property_name } = body;
 
     if (!name || !phone) {
       return NextResponse.json(
@@ -13,16 +13,23 @@ export async function POST(request: Request) {
       );
     }
 
+    const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const validPropertyId = property_id && UUID_REGEX.test(property_id) ? property_id : null;
+
+    // Embed property name as a parseable prefix so admin always sees it
+    const storedMessage = property_name
+      ? `[PROPERTY:${property_name}]${message ? `\n${message}` : ""}`
+      : message || null;
+
     const supabase = await createClient();
     const { error } = await supabase.from("leads").insert({
       name,
       phone,
-      email: email || null,
-      message: message || null,
+      message: storedMessage,
       type: type || "buy",
       location: location || null,
       budget: budget || null,
-      property_id: property_id || null,
+      property_id: validPropertyId,
       status: "new",
     });
 

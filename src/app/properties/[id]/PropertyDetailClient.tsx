@@ -34,7 +34,11 @@ export default function PropertyDetailClient({ property, similar }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [inquiryError, setInquiryError] = useState("");
-  const [form, setForm] = useState({ name: "", phone: "", message: "" });
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    message: `I'm interested in ${property.title}. Please contact me.`,
+  });
   const [consent, setConsent] = useState(false);
 
   const handleShare = () => {
@@ -55,19 +59,15 @@ export default function PropertyDetailClient({ property, similar }: Props) {
     setInquiryError("");
 
     try {
-      // Only pass property_id if it's a valid UUID (from Supabase)
-      const isValidUUID =
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-          property.id,
-        );
-
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
           type: "buy",
-          property_id: isValidUUID ? property.id : null,
+          location: property.location,
+          property_id: property.id,
+          property_name: property.title,
         }),
       });
 
@@ -373,9 +373,14 @@ export default function PropertyDetailClient({ property, similar }: Props) {
                     type="tel"
                     name="phone"
                     value={form.phone}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
+                      setForm((prev) => ({ ...prev, phone: digits }));
+                    }}
                     required
-                    placeholder="Phone Number"
+                    pattern="\d{11}"
+                    inputMode="numeric"
+                    placeholder="09XXXXXXXXX"
                     className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
                   />
                   <textarea

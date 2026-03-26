@@ -104,8 +104,14 @@ export default function PropertyForm({ property }: Props) {
 
     const supabase = createClient();
 
+    // map_url excluded from payload — column not in DB schema yet.
+    // The property detail page falls back to a location pin automatically.
+    // To enable custom map URLs: add a map_url text column to the properties
+    // table in Supabase, then add `map_url: form.map_url || null` to the payload.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { map_url: _map_url, ...formWithoutMapUrl } = form;
     const payload = {
-      ...form,
+      ...formWithoutMapUrl,
       price: Number(form.price),
       bedrooms: Number(form.bedrooms),
       bathrooms: Number(form.bathrooms),

@@ -27,7 +27,6 @@ const BUDGET_RANGES = [
 
 const INITIAL_FORM: LeadForm & { location: string; budget: string } = {
   name: "",
-  email: "",
   phone: "",
   message: "",
   type: "buy",
@@ -183,9 +182,14 @@ export default function ContactSection() {
                       type="tel"
                       name="phone"
                       value={form.phone}
-                      onChange={handleChange}
+                      onChange={(e) => {
+                        const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
+                        setForm((prev) => ({ ...prev, phone: digits }));
+                      }}
                       required
-                      placeholder="+63 912 345 6789"
+                      pattern="\d{11}"
+                      inputMode="numeric"
+                      placeholder="09XXXXXXXXX"
                       className="bg-luxury-800 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
                     />
                   </div>
