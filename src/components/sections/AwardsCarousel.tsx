@@ -110,14 +110,14 @@ export default function AwardsCarousel({
               priority
             />
 
-            {/* Info overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+            {/* Info overlay — desktop only */}
+            <div className="hidden sm:block absolute bottom-0 left-0 right-0 p-6">
               <div className="flex items-end justify-between gap-4">
                 <div className="bg-black/60 rounded-xl px-4 py-3">
                   <span className="inline-block text-[10px] font-bold tracking-widest uppercase text-gold-400 mb-1">
                     {award.year}
                   </span>
-                  <h3 className="text-white font-extrabold text-lg sm:text-xl leading-tight mb-0.5">
+                  <h3 className="text-white font-extrabold text-xl leading-tight mb-0.5">
                     {award.title}
                   </h3>
                   <p className="text-gold-400/90 text-xs font-semibold tracking-wide">
@@ -129,6 +129,24 @@ export default function AwardsCarousel({
                 </span>
               </div>
             </div>
+          </div>
+
+          {/* Info below image — mobile only */}
+          <div className="sm:hidden mt-3 flex items-start justify-between gap-3 px-1">
+            <div>
+              <span className="inline-block text-[10px] font-bold tracking-widest uppercase text-gold-500 border border-gold-500/40 rounded-full px-3 py-0.5 mb-1.5">
+                {award.year}
+              </span>
+              <h3 className="text-gray-900 dark:text-white font-extrabold text-base leading-tight mb-0.5">
+                {award.title}
+              </h3>
+              <p className="text-gold-500/80 text-xs font-semibold tracking-wide">
+                {award.organization}
+              </p>
+            </div>
+            <span className="text-gray-500 dark:text-luxury-400 text-sm font-medium tabular-nums shrink-0 mt-0.5">
+              {current + 1} / {AWARDS.length}
+            </span>
           </div>
 
           {/* Prev arrow */}

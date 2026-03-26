@@ -41,7 +41,8 @@ export default function AccreditedDevelopers() {
         halfWidthRef.current = el.scrollWidth / 2;
       }
       if (!pausedRef.current && halfWidthRef.current > 0) {
-        xRef.current += 0.4;
+        const speed = window.innerWidth < 640 ? 0.55 : 0.4;
+        xRef.current += speed;
         if (xRef.current >= halfWidthRef.current) {
           xRef.current = 0;
         }
