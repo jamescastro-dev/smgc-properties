@@ -230,7 +230,7 @@ export default function PropertiesClient({ initialProperties }: Props) {
 
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className={`ml-auto flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-200 ${
+          className={`sm:ml-auto flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-200 ${
             showFilters || hasActiveFilters
               ? "bg-gold-500 border-gold-500 text-luxury-900"
               : "bg-luxury-800 border-luxury-700 text-luxury-400 hover:border-gold-500/50 hover:text-gold-500"
