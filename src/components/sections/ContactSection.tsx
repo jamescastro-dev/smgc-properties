@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Phone, Mail, MapPin, Send, CheckCircle } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
 import { LeadForm } from "@/types";
@@ -60,6 +61,7 @@ export default function ContactSection() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [consent, setConsent] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -278,6 +280,24 @@ export default function ContactSection() {
                   />
                 </div>
 
+                {/* Consent */}
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    required
+                    checked={consent}
+                    onChange={(e) => setConsent(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 accent-gold-500 shrink-0"
+                  />
+                  <span className="text-luxury-400 text-xs leading-relaxed">
+                    I agree to be contacted by Broker Shella regarding my inquiry. My personal information will be handled in accordance with the{" "}
+                    <Link href="/privacy" className="text-gold-500 hover:text-gold-400 underline underline-offset-2">
+                      Privacy Policy
+                    </Link>
+                    .
+                  </span>
+                </label>
+
                 {/* Submit */}
                 {error && (
                   <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3">
@@ -286,7 +306,7 @@ export default function ContactSection() {
                 )}
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !consent}
                   className="flex items-center justify-center gap-2 bg-gold-500 hover:bg-gold-600 disabled:opacity-70 disabled:cursor-not-allowed text-luxury-900 text-sm font-bold px-8 py-4 rounded-lg tracking-wide transition-colors duration-300">
                   {loading ? (
                     <>

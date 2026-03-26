@@ -7,7 +7,8 @@ export const SITE_CONFIG = {
   phone: "+63 917 849 0166",
   email: "shellamariecastro7@gmail.com",
   address: "City of Malolos, Bulacan, Philippines",
-  facebookPageId: "https://www.facebook.com/brokershella.properties/", // ← replace with real ID
+  facebookPageId: "https://www.facebook.com/brokershella.properties/",
+  prcLicense: "PRC No. 0012448",
   social: {
     facebook: "https://www.facebook.com/shellacastro.28",
     instagram: "https://instagram.com/smgc.properties",

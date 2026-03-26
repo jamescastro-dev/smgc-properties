@@ -144,9 +144,12 @@ export default function Footer() {
             © {new Date().getFullYear()} Castro Realty · Broker Shella Castro.
             All rights reserved.
           </p>
-          <p className="text-luxury-500 text-xs">
-            Licensed Real Estate Broker · PRC Accredited
-          </p>
+          <div className="flex items-center gap-4 text-xs text-luxury-500">
+            <span>Licensed Real Estate Broker · {SITE_CONFIG.prcLicense}</span>
+            <Link href="/privacy" className="hover:text-gold-500 transition-colors">
+              Privacy Policy
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

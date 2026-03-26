@@ -35,6 +35,7 @@ export default function PropertyDetailClient({ property, similar }: Props) {
   const [loading, setLoading] = useState(false);
   const [inquiryError, setInquiryError] = useState("");
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
+  const [consent, setConsent] = useState(false);
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -385,12 +386,30 @@ export default function PropertyDetailClient({ property, similar }: Props) {
                     placeholder={`I'm interested in ${property.title}. Please contact me.`}
                     className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors resize-none"
                   />
+                  {/* Consent */}
+                  <label className="flex items-start gap-2.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      required
+                      checked={consent}
+                      onChange={(e) => setConsent(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 accent-gold-500 shrink-0"
+                    />
+                    <span className="text-luxury-500 text-xs leading-relaxed">
+                      I agree to be contacted regarding this inquiry. See our{" "}
+                      <Link href="/privacy" className="text-gold-500 hover:text-gold-400 underline underline-offset-2">
+                        Privacy Policy
+                      </Link>
+                      .
+                    </span>
+                  </label>
+
                   {inquiryError && (
                     <p className="text-red-400 text-xs">{inquiryError}</p>
                   )}
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || !consent}
                     className="flex items-center justify-center gap-2 bg-gold-500 hover:bg-gold-600 disabled:opacity-70 disabled:cursor-not-allowed text-luxury-900 text-sm font-bold px-6 py-3.5 rounded-lg tracking-wide transition-colors">
                     {loading ? (
                       <>
