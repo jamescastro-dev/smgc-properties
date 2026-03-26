@@ -25,7 +25,7 @@ export default function HeroSection() {
   return (
     <section className="relative flex flex-col bg-luxury-900">
       {/* Search Bar */}
-      <div className="relative z-10">
+      <div className="relative z-20">
         <SearchBar />
       </div>
 

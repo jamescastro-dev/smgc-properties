@@ -192,13 +192,13 @@ export default function PropertiesClient({ initialProperties }: Props) {
           </div>
 
           {/* Sort */}
-          <div className="relative">
+          <div className="relative w-full sm:w-auto">
             <select
               value={sort}
               onChange={(e) =>
                 handleFilterChange(() => setSort(e.target.value as SortValue))
               }
-              className="bg-luxury-800 border border-luxury-700 hover:border-gold-500/50 rounded-lg px-4 py-2.5 text-luxury-50 text-sm outline-none appearance-none cursor-pointer pr-8 transition-colors">
+              className="w-full bg-luxury-800 border border-luxury-700 hover:border-gold-500/50 rounded-lg px-4 py-2.5 text-luxury-50 text-sm outline-none appearance-none cursor-pointer pr-8 transition-colors">
               {SORT_OPTIONS.map((opt) => (
                 <option
                   key={opt.value}
