@@ -132,7 +132,7 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="w-full bg-luxury-800 border-b border-gold-500/20 shadow-xl relative z-[9999]">
+    <div className="w-full bg-luxury-800 border-b border-gold-500/20 shadow-xl relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         {/* Main row */}
         <div className="flex items-center gap-2">
