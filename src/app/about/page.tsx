@@ -67,7 +67,7 @@ const SERVICES = [
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-luxury-900 pt-[89px]">
+    <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[89px]">
 
       {/* ── Hero ── */}
       <section className="relative bg-luxury-900 py-16 lg:py-20 overflow-hidden">

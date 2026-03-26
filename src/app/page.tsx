@@ -7,7 +7,7 @@ import ContactSection from "@/components/sections/ContactSection";
 
 export default function Home() {
   return (
-    <main className="pt-[89px]">
+    <main className="pt-16 sm:pt-[89px]">
       <HeroSection />
       <AccreditedDevelopers />
       <FeaturedProperties />

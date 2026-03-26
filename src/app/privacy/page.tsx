@@ -89,7 +89,7 @@ Website: www.privacy.gov.ph`,
 
 export default function PrivacyPage() {
   return (
-    <main className="min-h-screen bg-luxury-900 pt-[89px]">
+    <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[89px]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
         {/* Header */}

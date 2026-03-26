@@ -19,7 +19,7 @@ export default async function PropertiesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-luxury-900 pt-[89px]">
+    <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[89px]">
       <Suspense>
         <PropertiesClient initialProperties={properties} />
       </Suspense>

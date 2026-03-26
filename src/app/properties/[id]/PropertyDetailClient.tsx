@@ -96,7 +96,7 @@ export default function PropertyDetailClient({ property, similar }: Props) {
     );
 
   return (
-    <main className="min-h-screen bg-luxury-900 pt-[89px]">
+    <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[89px]">
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex items-center gap-2 text-xs text-luxury-400">

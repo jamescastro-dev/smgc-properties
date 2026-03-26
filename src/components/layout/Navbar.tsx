@@ -22,8 +22,8 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-luxury-900 shadow-lg">
-      {/* Top Bar */}
-      <div className="bg-luxury-800 border-b border-gold-500/20 py-1.5 px-4">
+      {/* Top Bar — hidden on mobile */}
+      <div className="hidden sm:block bg-luxury-800 border-b border-gold-500/20 py-1.5 px-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <p className="text-luxury-400 text-xs tracking-widest uppercase">
             Licensed Real Estate Broker
