@@ -12,6 +12,7 @@ export interface Property {
   location: string;
   subdivision?: string;
   map_url?: string;
+  video_url?: string;
   images: string[];
   featured: boolean;
   created_at?: string;

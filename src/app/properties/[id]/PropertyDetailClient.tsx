@@ -213,6 +213,30 @@ export default function PropertyDetailClient({ property, similar }: Props) {
               </div>
             )}
 
+            {/* Video tour */}
+            {property.video_url && (() => {
+              const url = property.video_url;
+              let embedUrl = url;
+              const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+              if (ytMatch) embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}`;
+              const fbMatch = url.match(/facebook\.com\/.*\/videos\/(\d+)/);
+              if (fbMatch) embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0`;
+              return (
+                <div className="flex flex-col gap-3">
+                  <h2 className="text-luxury-50 font-bold text-lg">Video Tour</h2>
+                  <div className="relative aspect-video rounded-2xl overflow-hidden bg-luxury-800 border border-luxury-700">
+                    <iframe
+                      src={embedUrl}
+                      title="Property Video Tour"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="absolute inset-0 w-full h-full"
+                    />
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Property details */}
             <div className="bg-luxury-800 border border-luxury-700 rounded-2xl p-8">
               {/* Title + Price */}
