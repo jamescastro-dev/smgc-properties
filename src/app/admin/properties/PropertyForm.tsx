@@ -11,16 +11,7 @@ import { Property } from "@/types";
 interface Props {
   property?: Partial<Property> & { id?: string };
 }
-
-const LOCATIONS = [
-  "San Jose del Monte, Bulacan",
-  "Meycauayan, Bulacan",
-  "Marilao, Bulacan",
-  "Bocaue, Bulacan",
-  "Caloocan, Metro Manila",
-  "Quezon City, Metro Manila",
-  "Other",
-];
+import { LOCATIONS } from "@/lib/constants";
 
 export default function PropertyForm({ property }: Props) {
   const router = useRouter();

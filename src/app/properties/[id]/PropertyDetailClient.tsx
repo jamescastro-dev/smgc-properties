@@ -325,11 +325,11 @@ export default function PropertyDetailClient({ property, similar }: Props) {
                 Call Now
               </a>
               <a
-                href={`https://wa.me/${SITE_CONFIG.phone.replace(/\D/g, "")}`}
+                href={`viber://chat?number=${SITE_CONFIG.phone.replace(/\D/g, "")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 flex items-center justify-center gap-2 border border-gold-500 text-gold-500 hover:bg-gold-500 hover:text-luxury-900 font-bold py-3.5 rounded-xl transition-all text-sm">
-                WhatsApp
+                Viber
               </a>
             </div>
 

@@ -14,3 +14,20 @@ export const SITE_CONFIG = {
     instagram: "https://instagram.com/smgc.properties",
   },
 } as const;
+
+export const LOCATIONS = [
+  "Malolos, Bulacan",
+  "Guiguinto, Bulacan",
+  "Plaridel, Bulacan",
+  "Baliwag, Bulacan",
+  "San Jose Del Monte, Bulacan",
+  "Meycauayan, Bulacan",
+  "Marilao, Bulacan",
+  "Bocaue, Bulacan",
+  "Caloocan, Metro Manila",
+  "Quezon City, Metro Manila",
+  "Tagaytay City",
+  "Cavite",
+  "Batangas City",
+  "Other",
+] as const;

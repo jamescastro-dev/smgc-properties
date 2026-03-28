@@ -3,18 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Phone, Mail, MapPin, Send, CheckCircle } from "lucide-react";
-import { SITE_CONFIG } from "@/lib/constants";
+import { SITE_CONFIG, LOCATIONS as BASE_LOCATIONS } from "@/lib/constants";
 import { LeadForm } from "@/types";
 
-const LOCATIONS = [
-  "Any Location",
-  "San Jose del Monte",
-  "Meycauayan",
-  "Marilao",
-  "Bocaue",
-  "Caloocan",
-  "Quezon City",
-] as const;
+const LOCATIONS = ["Any Location", ...BASE_LOCATIONS] as const;
 
 const BUDGET_RANGES = [
   "Any Budget",

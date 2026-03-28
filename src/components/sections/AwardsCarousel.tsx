@@ -56,7 +56,7 @@ const AWARDS = [
 ];
 
 export default function AwardsCarousel({
-  sectionClassName = "bg-gray-50 dark:bg-luxury-900",
+  sectionClassName = "bg-luxury-900",
 }: {
   sectionClassName?: string;
 }) {
@@ -86,10 +86,10 @@ export default function AwardsCarousel({
             </span>
             <span className="w-8 h-px bg-gold-500" />
           </div>
-          <h2 className="text-4xl font-extrabold text-gray-900 dark:text-luxury-50 tracking-tight mb-4">
+          <h2 className="text-4xl font-extrabold text-luxury-50 tracking-tight mb-4">
             Awards &amp; Recognition
           </h2>
-          <p className="text-gray-500 dark:text-luxury-400 text-base max-w-xl mx-auto leading-relaxed">
+          <p className="text-luxury-400 text-base max-w-xl mx-auto leading-relaxed">
             A decade of excellence, recognized by industry leaders and
             clients alike.
           </p>
@@ -99,7 +99,7 @@ export default function AwardsCarousel({
         <div className="relative group">
           <div
             key={current}
-            className="relative aspect-video rounded-2xl overflow-hidden bg-gray-200 dark:bg-luxury-800 animate-fade-in"
+            className="relative aspect-video rounded-2xl overflow-hidden bg-luxury-800 animate-fade-in"
           >
             <Image
               src={award.src}
@@ -137,14 +137,14 @@ export default function AwardsCarousel({
               <span className="inline-block text-[10px] font-bold tracking-widest uppercase text-gold-500 border border-gold-500/40 rounded-full px-3 py-0.5 mb-1.5">
                 {award.year}
               </span>
-              <h3 className="text-gray-900 dark:text-white font-extrabold text-base leading-tight mb-0.5">
+              <h3 className="text-luxury-50 font-extrabold text-base leading-tight mb-0.5">
                 {award.title}
               </h3>
               <p className="text-gold-500/80 text-xs font-semibold tracking-wide">
                 {award.organization}
               </p>
             </div>
-            <span className="text-gray-500 dark:text-luxury-400 text-sm font-medium tabular-nums shrink-0 mt-0.5">
+            <span className="text-luxury-400 text-sm font-medium tabular-nums shrink-0 mt-0.5">
               {current + 1} / {AWARDS.length}
             </span>
           </div>
@@ -175,10 +175,10 @@ export default function AwardsCarousel({
               key={i}
               onClick={() => setCurrent(i)}
               aria-label={`Go to award ${i + 1}`}
-              className={`relative aspect-video w-24 sm:w-32 rounded-lg overflow-hidden border-2 transition-all duration-200 shrink-0 bg-gray-200 dark:bg-luxury-800 ${
+              className={`relative aspect-video w-24 sm:w-32 rounded-lg overflow-hidden border-2 transition-all duration-200 shrink-0 bg-luxury-800 ${
                 i === current
                   ? "border-gold-500 opacity-100 shadow-lg shadow-gold-500/20"
-                  : "border-gray-300 dark:border-luxury-700 opacity-50 hover:opacity-75 hover:border-gray-400 dark:hover:border-luxury-500"
+                  : "border-luxury-700 opacity-50 hover:opacity-75 hover:border-luxury-500"
               }`}
             >
               <Image
