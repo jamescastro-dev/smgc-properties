@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -17,6 +17,8 @@ import {
   CheckCircle,
   ChevronLeft,
   ChevronRight,
+  X,
+  ZoomIn,
 } from "lucide-react";
 import { Property } from "@/types";
 import { formatPrice } from "@/lib/utils";
@@ -30,6 +32,7 @@ interface Props {
 
 export default function PropertyDetailClient({ property, similar }: Props) {
   const [activeImage, setActiveImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -85,15 +88,53 @@ export default function PropertyDetailClient({ property, similar }: Props) {
     }
   };
 
-  const prevImage = () =>
-    setActiveImage((prev) =>
-      prev === 0 ? property.images.length - 1 : prev - 1,
-    );
+  const prevImage = useCallback(
+    () =>
+      setActiveImage((prev) =>
+        prev === 0 ? property.images.length - 1 : prev - 1,
+      ),
+    [property.images.length],
+  );
 
-  const nextImage = () =>
-    setActiveImage((prev) =>
-      prev === property.images.length - 1 ? 0 : prev + 1,
-    );
+  const nextImage = useCallback(
+    () =>
+      setActiveImage((prev) =>
+        prev === property.images.length - 1 ? 0 : prev + 1,
+      ),
+    [property.images.length],
+  );
+
+  const openLightbox = () => setLightboxOpen(true);
+  const closeLightbox = () => setLightboxOpen(false);
+
+  // Touch swipe state for lightbox
+  const touchStartX = useRef<number | null>(null);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(delta) > 50) delta < 0 ? nextImage() : prevImage();
+    touchStartX.current = null;
+  };
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowLeft") prevImage();
+      if (e.key === "ArrowRight") nextImage();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [lightboxOpen, prevImage, nextImage]);
 
   return (
     <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[89px]">
@@ -140,14 +181,27 @@ export default function PropertyDetailClient({ property, similar }: Props) {
           <div className="flex flex-col gap-8">
             {/* Image gallery */}
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-luxury-800 border border-luxury-700">
-              <Image
-                src={property.images[activeImage]}
-                alt={property.title}
-                fill
-                sizes="(max-width: 1024px) 100vw, 60vw"
-                className="object-cover"
-                priority
-              />
+              <button
+                onClick={openLightbox}
+                className="absolute inset-0 z-10 cursor-zoom-in group/zoom"
+                aria-label="View full size image"
+              >
+                <Image
+                  src={property.images[activeImage]}
+                  alt={property.title}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 60vw"
+                  className="object-cover"
+                  priority
+                />
+                {/* Zoom hint — always visible on mobile, hover-only on desktop */}
+                <span className="absolute bottom-4 left-4 flex items-center gap-1.5 bg-luxury-900/80 backdrop-blur-sm text-luxury-300 text-xs px-3 py-1.5 rounded-lg border border-luxury-700 opacity-100 lg:opacity-0 lg:group-hover/zoom:opacity-100 transition-opacity pointer-events-none">
+                  <ZoomIn className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Click</span>
+                  <span className="sm:hidden">Tap</span>
+                  &nbsp;to expand
+                </span>
+              </button>
 
               {/* Badges */}
               <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
@@ -484,6 +538,99 @@ export default function PropertyDetailClient({ property, similar }: Props) {
           </div>
         )}
       </div>
+
+      {/* Lightbox */}
+      {lightboxOpen && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col bg-black/95"
+          onClick={closeLightbox}
+        >
+          {/* Top bar */}
+          <div
+            className="flex items-center justify-between px-4 py-3 shrink-0 z-10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-white/70 text-sm font-medium">
+              {activeImage + 1} / {property.images.length}
+            </div>
+            <button
+              onClick={closeLightbox}
+              className="w-10 h-10 rounded-full bg-white/10 active:bg-white/20 flex items-center justify-center text-white"
+              aria-label="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Image area — swipeable */}
+          <div
+            className="relative flex-1 flex items-center justify-center overflow-hidden"
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={property.images[activeImage]}
+              alt={property.title}
+              fill
+              sizes="100vw"
+              className="object-contain"
+              priority
+            />
+
+            {/* Prev / Next — hidden on mobile (swipe instead), visible on sm+ */}
+            {property.images.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                  className="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 items-center justify-center text-white transition-colors"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                  className="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 items-center justify-center text-white transition-colors"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Thumbnail strip + swipe hint */}
+          <div
+            className="shrink-0 pb-safe"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Swipe hint on mobile */}
+            {property.images.length > 1 && (
+              <p className="sm:hidden text-center text-white/40 text-xs pb-2">
+                Swipe left or right to navigate
+              </p>
+            )}
+
+            {property.images.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto px-4 pb-4 justify-start sm:justify-center">
+                {property.images.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveImage(i)}
+                    className={`relative shrink-0 w-14 h-10 rounded-md overflow-hidden border-2 transition-all ${
+                      activeImage === i
+                        ? "border-gold-500"
+                        : "border-white/20 active:border-white/50"
+                    }`}
+                  >
+                    <Image src={img} alt={`Photo ${i + 1}`} fill sizes="56px" className="object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </main>
   );
 }
