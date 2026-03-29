@@ -67,30 +67,36 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           )}
         </div>
 
-        <div className="border-t border-luxury-700 mt-auto pt-4">
-          <div className="flex items-center gap-4">
-            {property.bedrooms > 0 && (
-              <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
-                <Bed className="w-3.5 h-3.5 text-gold-500" />
-                <span>{property.bedrooms} Beds</span>
-              </div>
-            )}
-            <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
-              <Bath className="w-3.5 h-3.5 text-gold-500" />
-              <span>{property.bathrooms} Baths</span>
+        {(property.bedrooms > 0 || property.bathrooms > 0 || property.area > 0 || (property.garage ?? 0) > 0) && (
+          <div className="border-t border-luxury-700 mt-auto pt-4">
+            <div className="flex items-center gap-4">
+              {property.bedrooms > 0 && (
+                <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
+                  <Bed className="w-3.5 h-3.5 text-gold-500" />
+                  <span>{property.bedrooms} Beds</span>
+                </div>
+              )}
+              {property.bathrooms > 0 && (
+                <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
+                  <Bath className="w-3.5 h-3.5 text-gold-500" />
+                  <span>{property.bathrooms} Baths</span>
+                </div>
+              )}
+              {property.area > 0 && (
+                <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
+                  <Maximize2 className="w-3.5 h-3.5 text-gold-500" />
+                  <span>{property.area} sqm</span>
+                </div>
+              )}
+              {(property.garage ?? 0) > 0 && (
+                <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
+                  <Car className="w-3.5 h-3.5 text-gold-500" />
+                  <span>{property.garage}</span>
+                </div>
+              )}
             </div>
-            <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
-              <Maximize2 className="w-3.5 h-3.5 text-gold-500" />
-              <span>{property.area} sqm</span>
-            </div>
-            {(property.garage ?? 0) > 0 && (
-              <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
-                <Car className="w-3.5 h-3.5 text-gold-500" />
-                <span>{property.garage}</span>
-              </div>
-            )}
           </div>
-        </div>
+        )}
       </div>
     </Link>
   );

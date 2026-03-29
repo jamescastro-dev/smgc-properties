@@ -310,20 +310,24 @@ export default function PropertyDetailClient({ property, similar }: Props) {
                     <p className="text-luxury-400 text-xs">Bedrooms</p>
                   </div>
                 )}
-                <div className="flex flex-col items-center gap-2 bg-luxury-900 border border-luxury-700 rounded-xl py-4 flex-1 min-w-20">
-                  <Bath className="w-5 h-5 text-gold-500" />
-                  <p className="text-luxury-50 text-sm font-bold">
-                    {property.bathrooms}
-                  </p>
-                  <p className="text-luxury-400 text-xs">Bathrooms</p>
-                </div>
-                <div className="flex flex-col items-center gap-2 bg-luxury-900 border border-luxury-700 rounded-xl py-4 flex-1 min-w-20">
-                  <Maximize2 className="w-5 h-5 text-gold-500" />
-                  <p className="text-luxury-50 text-sm font-bold">
-                    {property.area}
-                  </p>
-                  <p className="text-luxury-400 text-xs">sqm</p>
-                </div>
+                {property.bathrooms > 0 && (
+                  <div className="flex flex-col items-center gap-2 bg-luxury-900 border border-luxury-700 rounded-xl py-4 flex-1 min-w-20">
+                    <Bath className="w-5 h-5 text-gold-500" />
+                    <p className="text-luxury-50 text-sm font-bold">
+                      {property.bathrooms}
+                    </p>
+                    <p className="text-luxury-400 text-xs">Bathrooms</p>
+                  </div>
+                )}
+                {property.area > 0 && (
+                  <div className="flex flex-col items-center gap-2 bg-luxury-900 border border-luxury-700 rounded-xl py-4 flex-1 min-w-20">
+                    <Maximize2 className="w-5 h-5 text-gold-500" />
+                    <p className="text-luxury-50 text-sm font-bold">
+                      {property.area}
+                    </p>
+                    <p className="text-luxury-400 text-xs">sqm</p>
+                  </div>
+                )}
                 {(property.garage ?? 0) > 0 && (
                   <div className="flex flex-col items-center gap-2 bg-luxury-900 border border-luxury-700 rounded-xl py-4 flex-1 min-w-20">
                     <Car className="w-5 h-5 text-gold-500" />
