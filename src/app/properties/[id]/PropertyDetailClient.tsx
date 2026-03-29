@@ -267,6 +267,31 @@ export default function PropertyDetailClient({ property, similar }: Props) {
               </div>
             )}
 
+            {/* Video Tour */}
+            {property.video_url && (() => {
+              const url = property.video_url;
+              const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+              if (!ytMatch) return null;
+              const embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}`;
+              return (
+                <div className="bg-luxury-800 border border-luxury-700 rounded-2xl overflow-hidden">
+                  <div className="px-6 py-4 border-b border-luxury-700">
+                    <h2 className="text-luxury-50 text-lg font-bold">Video Tour</h2>
+                  </div>
+                  <div className="relative aspect-video">
+                    <iframe
+                      src={embedUrl}
+                      title="Property Video Tour"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full"
+                    />
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Property details */}
             <div className="bg-luxury-800 border border-luxury-700 rounded-2xl p-8">
               {/* Title + Price */}

@@ -30,6 +30,7 @@ export default function PropertyForm({ property }: Props) {
     location: property?.location || LOCATIONS[0],
     subdivision: property?.subdivision || "",
     map_url: property?.map_url || "",
+    video_url: property?.video_url || "",
     featured: property?.featured || false,
   });
 
@@ -100,9 +101,10 @@ export default function PropertyForm({ property }: Props) {
     // To enable custom map URLs: add a map_url text column to the properties
     // table in Supabase, then add `map_url: form.map_url || null` to the payload.
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { map_url: _map_url, ...formWithoutMapUrl } = form;
+    const { map_url: _map_url, video_url: _video_url, ...formWithoutOptional } = form;
     const payload = {
-      ...formWithoutMapUrl,
+      ...formWithoutOptional,
+      video_url: form.video_url || null,
       price: Number(form.price),
       bedrooms: Number(form.bedrooms),
       bathrooms: Number(form.bathrooms),
@@ -326,6 +328,24 @@ export default function PropertyForm({ property }: Props) {
               />
               <p className="text-luxury-500 text-xs">
                 Optional — leave blank to use subdivision + location search. For exact pin: Google Maps → Share → Embed a map → copy the src URL.
+              </p>
+            </div>
+
+            {/* Video Tour URL */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-luxury-300 text-xs font-semibold tracking-widest uppercase">
+                Video Tour URL
+              </label>
+              <input
+                type="url"
+                name="video_url"
+                value={form.video_url}
+                onChange={handleChange}
+                placeholder="https://www.youtube.com/watch?v=..."
+                className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-xl px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
+              />
+              <p className="text-luxury-500 text-xs">
+                Optional — paste a YouTube link. Leave blank if no video tour.
               </p>
             </div>
 
