@@ -398,7 +398,7 @@ export default function PropertyDetailClient({ property, similar }: Props) {
           </div>
 
           {/* RIGHT: Sticky inquiry form */}
-          <div className="lg:sticky lg:top-[89px] lg:max-h-[calc(100vh-89px)] lg:overflow-y-auto h-fit flex flex-col gap-6 scrollbar-hide">
+          <div className="lg:sticky lg:top-[97px] lg:max-h-[calc(100vh-97px)] lg:overflow-y-auto h-fit flex flex-col gap-6 scrollbar-hide">
             {/* Quick contact buttons */}
             <div className="flex gap-3">
               <a
