@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useMemo, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   SlidersHorizontal,
   X,
@@ -47,6 +47,7 @@ interface Props {
 }
 
 export default function PropertiesClient({ initialProperties }: Props) {
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [listing, setListing] = useState<"all" | "sale" | "rent">(
@@ -116,6 +117,12 @@ export default function PropertiesClient({ initialProperties }: Props) {
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
+
+  useEffect(() => {
+    const param = listing === "sale" ? "For Sale" : listing === "rent" ? "For Rent" : null;
+    const url = param ? `/properties?listing=${encodeURIComponent(param)}` : "/properties";
+    router.replace(url, { scroll: false });
+  }, [listing, router]);
 
   const handleFilterChange = (fn: () => void) => {
     fn();
