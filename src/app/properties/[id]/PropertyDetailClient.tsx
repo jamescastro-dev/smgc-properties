@@ -369,7 +369,7 @@ export default function PropertyDetailClient({ property, similar }: Props) {
                 <h2 className="text-luxury-50 text-lg font-bold mb-3">
                   About this property
                 </h2>
-                <p className="text-luxury-400 text-sm leading-relaxed">
+                <p className="text-luxury-400 text-sm leading-relaxed whitespace-pre-wrap">
                   {property.description}
                 </p>
               </div>
