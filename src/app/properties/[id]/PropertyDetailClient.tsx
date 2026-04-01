@@ -484,7 +484,7 @@ export default function PropertyDetailClient({ property, similar }: Props) {
                       className="mt-0.5 w-4 h-4 accent-gold-500 shrink-0"
                     />
                     <span className="text-luxury-500 text-xs leading-relaxed">
-                      I agree to be contacted regarding this inquiry. See our{" "}
+                      I agree to be contacted regarding this inquiry. See the{" "}
                       <Link href="/privacy" className="text-gold-500 hover:text-gold-400 underline underline-offset-2">
                         Privacy Policy
                       </Link>

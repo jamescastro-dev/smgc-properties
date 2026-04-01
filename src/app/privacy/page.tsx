@@ -10,70 +10,70 @@ export const metadata: Metadata = {
 
 const SECTIONS = [
   {
-    title: "1. Who We Are",
-    content: `SMGC Properties, operating under Broker Shella (${SITE_CONFIG.prcLicense}), is a licensed real estate brokerage based in ${SITE_CONFIG.address}. We are the data controller responsible for your personal information collected through this website.`,
+    title: "1. Who I Am",
+    content: `SMGC Properties, operating under Broker Shella (${SITE_CONFIG.prcLicense}), is a licensed real estate brokerage based in ${SITE_CONFIG.address}. Broker Shella is the data controller responsible for your personal information collected through this website.`,
   },
   {
-    title: "2. What Information We Collect",
-    content: `When you submit an inquiry or contact form on this website, we collect the following personal information:
+    title: "2. What Information Is Collected",
+    content: `When you submit an inquiry or contact form on this website, the following personal information is collected:
 
 • Full name
 • Phone number
 • Email address (if provided)
 • Your message and property preferences (location, budget, inquiry type)
 
-We do not collect sensitive personal information as defined under RA 10173.`,
+Sensitive personal information as defined under RA 10173 is not collected.`,
   },
   {
-    title: "3. Why We Collect Your Information",
-    content: `We collect your personal information solely for the following purposes:
+    title: "3. Why Your Information Is Collected",
+    content: `Your personal information is collected solely for the following purposes:
 
 • To respond to your property inquiries
 • To provide you with property recommendations
 • To contact you regarding your real estate needs
-• To improve our services
+• To improve the service provided
 
 Your information will not be used for any purpose other than those stated above without your consent.`,
   },
   {
-    title: "4. How We Store and Protect Your Data",
-    content: `Your personal information is stored securely using Supabase, a cloud-based database platform with industry-standard encryption and security measures. Access to your data is restricted to authorized personnel only (Broker Shella and authorized staff).
+    title: "4. How Your Data Is Stored and Protected",
+    content: `Your personal information is stored securely using Supabase, a cloud-based database platform with industry-standard encryption and security measures. Access to your data is restricted to Broker Shella only.
 
-We retain your information only for as long as necessary to fulfill the purposes for which it was collected, or as required by law.`,
+Your information is retained only for as long as necessary to fulfill the purposes for which it was collected, or as required by law.`,
   },
   {
     title: "5. Sharing of Information",
-    content: `We do not sell, trade, or share your personal information with third parties for marketing purposes. Your information may only be disclosed in the following circumstances:
+    content: `Your personal information is never sold, traded, or shared with third parties for marketing purposes. Your information may only be disclosed in the following circumstances:
 
 • When required by law or by a government authority
 • With your explicit consent
 
-We do not transfer your data outside the Philippines without appropriate safeguards.`,
+Your data will not be transferred outside the Philippines without appropriate safeguards.`,
   },
   {
     title: "6. Your Rights Under RA 10173",
     content: `Under the Data Privacy Act of 2012, you have the following rights:
 
 • Right to be informed — know how your data is being used
-• Right to access — request a copy of your personal data we hold
+• Right to access — request a copy of your personal data on file
 • Right to correction — have inaccurate data corrected
 • Right to erasure — request deletion of your personal data
 • Right to object — withdraw consent and stop processing of your data
 • Right to lodge a complaint — file a complaint with the National Privacy Commission (NPC)
 
-To exercise any of these rights, contact us at the details below.`,
+To exercise any of these rights, contact Broker Shella at the details below.`,
   },
   {
     title: "7. Cookies",
-    content: `This website may use essential cookies to ensure proper functionality (e.g., theme preferences). We do not use tracking or advertising cookies. No personal data is collected through cookies.`,
+    content: `This website may use essential cookies to ensure proper functionality (e.g., theme preferences). Tracking or advertising cookies are not used. No personal data is collected through cookies.`,
   },
   {
     title: "8. Changes to This Policy",
-    content: `We may update this Privacy Policy from time to time. Any changes will be posted on this page with the updated effective date. Continued use of this website after changes constitutes acceptance of the updated policy.`,
+    content: `This Privacy Policy may be updated from time to time. Any changes will be posted on this page with the updated effective date. Continued use of this website after changes constitutes acceptance of the updated policy.`,
   },
   {
-    title: "9. Contact Us",
-    content: `If you have questions about this Privacy Policy or wish to exercise your data privacy rights, please contact us:
+    title: "9. Contact",
+    content: `If you have questions about this Privacy Policy or wish to exercise your data privacy rights, please reach out:
 
 Broker Shella Castro
 ${SITE_CONFIG.prcLicense}

@@ -106,7 +106,7 @@ export default function ContactSection() {
             Get Free Property Recommendations
           </h2>
           <p className="text-luxury-400 text-base max-w-xl mx-auto leading-relaxed mb-8">
-            Tell us what you're looking for and Broker Shella will find the best
+            Tell Broker Shella what you're looking for and she will find the best
             options for you in Bulacan and Metro Manila.
           </p>
 
@@ -271,7 +271,7 @@ export default function ContactSection() {
                     value={form.message}
                     onChange={handleChange}
                     rows={4}
-                    placeholder="Tell us what you're looking for…"
+                    placeholder="Tell Broker Shella what you're looking for…"
                     className="bg-luxury-800 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors resize-none"
                   />
                 </div>

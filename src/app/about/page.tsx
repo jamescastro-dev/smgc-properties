@@ -37,19 +37,19 @@ const SERVICES = [
     icon: Home,
     title: "Property Buying",
     description:
-      "Find the perfect home within your budget. We handle the search, negotiations, and paperwork for you.",
+      "Find the perfect home within your budget. Broker Shella handles the search, negotiations, and paperwork for you.",
   },
   {
     icon: KeyRound,
     title: "Property Selling",
     description:
-      "Get the best value for your property with our proven marketing strategies and wide network of buyers.",
+      "Get the best value for your property with proven marketing strategies and a wide network of buyers.",
   },
   {
     icon: Users,
     title: "Property Rental",
     description:
-      "Whether you're looking to rent or lease out your property, we connect the right tenants and landlords.",
+      "Whether you're looking to rent or lease out your property, Broker Shella connects the right tenants and landlords.",
   },
   {
     icon: FileText,
@@ -61,7 +61,7 @@ const SERVICES = [
     icon: Landmark,
     title: "Bank Loan Assistance",
     description:
-      "We guide you through bank financing options, loan applications, and connect you with lenders to secure the best rates for your property.",
+      "Broker Shella guides you through bank financing options, loan applications, and connects you with lenders to secure the best rates for your property.",
   },
 ];
 
@@ -263,7 +263,7 @@ export default function AboutPage() {
             <div className="inline-flex items-center gap-2 mb-4">
               <span className="w-8 h-px bg-gold-500" />
               <span className="text-gold-500 text-xs tracking-widest uppercase font-semibold">
-                What we offer
+                What Broker Shella offers
               </span>
               <span className="w-8 h-px bg-gold-500" />
             </div>
@@ -272,7 +272,7 @@ export default function AboutPage() {
             </h2>
             <p className="text-luxury-400 text-base max-w-xl mx-auto leading-relaxed">
               From finding the perfect property to completing all the paperwork
-              — we handle it all.
+              — she handles it all.
             </p>
           </div>
           <div className="flex flex-wrap justify-center gap-6">

@@ -30,19 +30,19 @@ const REASONS = [
     icon: HandshakeIcon,
     title: "End-to-End Assistance",
     description:
-      "From property search to contract signing and turnover, we guide you through every step of the process.",
+      "From property search to contract signing and turnover, Broker Shella guides you through every step of the process.",
   },
   {
     icon: Clock,
     title: "Fast & Reliable",
     description:
-      "Quick response times and no-nonsense communication. Your time is valuable and we respect that.",
+      "Quick response times and no-nonsense communication. Your time is valuable and she respects that.",
   },
   {
     icon: HeartHandshake,
     title: "Client-First Approach",
     description:
-      "We listen to your needs first. Our goal is not just a sale — it's finding the perfect home for your family.",
+      "Broker Shella listens to your needs first. The goal is not just a sale — it's finding the perfect home for your family.",
   },
 ];
 
@@ -56,7 +56,7 @@ export default function WhyChooseUs() {
           <div className="inline-flex items-center gap-2 mb-4">
             <span className="w-8 h-px bg-gold-500" />
             <span className="text-gold-500 text-xs tracking-widest uppercase font-semibold">
-              Why work with us
+              Why work with Broker Shella
             </span>
             <span className="w-8 h-px bg-gold-500" />
           </div>
