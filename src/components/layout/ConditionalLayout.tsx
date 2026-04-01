@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -15,7 +16,7 @@ export default function ConditionalLayout({
 
   return (
     <>
-      {!isAdmin && <Navbar />}
+      {!isAdmin && <Suspense><Navbar /></Suspense>}
       {children}
       {!isAdmin && <Footer />}
     </>

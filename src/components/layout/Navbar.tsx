@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Menu, X, Phone, Mail } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
 import ThemeToggle from "@/components/ui/ThemeToggle";
@@ -19,6 +19,14 @@ const NAV_LINKS = [
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const isLinkActive = (href: string) => {
+    if (href === "/buy") return pathname === "/properties" && searchParams.get("listing") === "For Sale";
+    if (href === "/rent") return pathname === "/properties" && searchParams.get("listing") === "For Rent";
+    if (href === "/properties") return pathname === "/properties" && !searchParams.get("listing");
+    return pathname === href;
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-luxury-900 shadow-lg">
@@ -61,7 +69,7 @@ export default function Navbar() {
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-8">
             {NAV_LINKS.map((link) => {
-              const isActive = pathname === link.href;
+              const isActive = isLinkActive(link.href);
               return (
                 <Link
                   key={link.href}
@@ -105,7 +113,7 @@ export default function Navbar() {
           <div className="md:hidden py-4 border-t border-luxury-800">
             <div className="flex flex-col gap-4">
               {NAV_LINKS.map((link) => {
-                const isActive = pathname === link.href;
+                const isActive = isLinkActive(link.href);
                 return (
                   <Link
                     key={link.href}
