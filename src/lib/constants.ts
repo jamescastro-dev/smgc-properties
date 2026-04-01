@@ -19,6 +19,7 @@ export const LOCATIONS = [
   "Malolos, Bulacan",
   "Guiguinto, Bulacan",
   "Plaridel, Bulacan",
+  "Pandi, Bulacan",
   "Baliwag, Bulacan",
   "San Jose Del Monte, Bulacan",
   "Meycauayan, Bulacan",
