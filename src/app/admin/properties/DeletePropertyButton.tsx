@@ -8,21 +8,30 @@ import { createClient } from "@/lib/supabase/client";
 export default function DeletePropertyButton({ id }: { id: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this property? This cannot be undone.")) return;
 
     setLoading(true);
+    setFailed(false);
     const supabase = createClient();
     const { error } = await supabase.from("properties").delete().eq("id", id);
     if (error) {
-      alert("Failed to delete property. Please try again.");
+      setFailed(true);
       setLoading(false);
       return;
     }
     router.refresh();
-    setLoading(false);
   };
+
+  if (failed) {
+    return (
+      <span className="text-red-400 text-xs font-medium" title="Delete failed — try again">
+        Failed
+      </span>
+    );
+  }
 
   return (
     <button

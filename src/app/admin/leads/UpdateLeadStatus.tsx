@@ -24,12 +24,14 @@ export default function UpdateLeadStatus({
   const router = useRouter();
   const [status, setStatus] = useState<Status>(currentStatus);
   const [loading, setLoading] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   const handleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value as Status;
     const prevStatus = status;
     setStatus(newStatus);
     setLoading(true);
+    setSaveError(false);
 
     const supabase = createClient();
     const { error } = await supabase
@@ -39,6 +41,7 @@ export default function UpdateLeadStatus({
 
     if (error) {
       setStatus(prevStatus);
+      setSaveError(true);
       setLoading(false);
       return;
     }
@@ -48,6 +51,7 @@ export default function UpdateLeadStatus({
   };
 
   return (
+    <div className="flex flex-col gap-1">
     <div className="relative inline-flex items-center">
       <select
         value={status}
@@ -73,6 +77,10 @@ export default function UpdateLeadStatus({
           <ChevronDown className="w-3 h-3 opacity-50" />
         )}
       </span>
+    </div>
+    {saveError && (
+      <span className="text-red-400 text-[10px]">Save failed</span>
+    )}
     </div>
   );
 }

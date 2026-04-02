@@ -36,6 +36,7 @@ export default function PropertyForm({ property }: Props) {
 
   const [images, setImages] = useState<string[]>(property?.images || []);
   const [uploading, setUploading] = useState(false);
+  const [removingUrl, setRemovingUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -81,12 +82,14 @@ export default function PropertyForm({ property }: Props) {
   };
 
   const removeImage = async (url: string) => {
+    setRemovingUrl(url);
     const supabase = createClient();
     const fileName = url.split("/").pop();
     if (fileName) {
       await supabase.storage.from("properties").remove([fileName]);
     }
     setImages((prev) => prev.filter((img) => img !== url));
+    setRemovingUrl(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -390,7 +393,7 @@ export default function PropertyForm({ property }: Props) {
                 {images.map((url, i) => (
                   <div
                     key={url}
-                    className="relative group aspect-[4/3] rounded-xl overflow-hidden bg-luxury-700 border border-luxury-600">
+                    className="relative group aspect-4/3 rounded-xl overflow-hidden bg-luxury-700 border border-luxury-600">
                     <Image
                       src={url}
                       alt={`Photo ${i + 1}`}
@@ -398,12 +401,24 @@ export default function PropertyForm({ property }: Props) {
                       sizes="200px"
                       className="object-cover"
                     />
+                    {/* Remove button — always visible on mobile, hover-only on desktop */}
                     <button
                       type="button"
                       onClick={() => removeImage(url)}
-                      className="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <X className="w-3.5 h-3.5 text-white" />
+                      disabled={removingUrl === url}
+                      className="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-500 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity disabled:opacity-60">
+                      {removingUrl === url ? (
+                        <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      ) : (
+                        <X className="w-3.5 h-3.5 text-white" />
+                      )}
                     </button>
+                    {/* Removing overlay */}
+                    {removingUrl === url && (
+                      <div className="absolute inset-0 bg-luxury-900/60 flex items-center justify-center">
+                        <span className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      </div>
+                    )}
                     {i === 0 && (
                       <span className="absolute bottom-2 left-2 text-[10px] font-bold tracking-widest uppercase bg-luxury-900/80 text-gold-500 px-2 py-1 rounded-md">
                         Cover
