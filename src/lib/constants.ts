@@ -21,6 +21,7 @@ export const LOCATIONS = [
   "Plaridel, Bulacan",
   "Pandi, Bulacan",
   "Baliwag, Bulacan",
+  "San Rafael, Bulacan",
   "San Jose Del Monte, Bulacan",
   "Meycauayan, Bulacan",
   "Marilao, Bulacan",
