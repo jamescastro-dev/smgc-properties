@@ -263,6 +263,7 @@ export default function PropertyForm({ property }: Props) {
                   value={form.area}
                   onChange={handleChange}
                   min={0}
+                  step="any"
                   placeholder="e.g. 120"
                   className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-xl px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
                 />

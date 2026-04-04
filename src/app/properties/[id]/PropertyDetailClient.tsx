@@ -329,7 +329,7 @@ export default function PropertyDetailClient({ property, similar }: Props) {
                     <p className="text-luxury-50 text-sm font-bold">
                       {property.bedrooms}
                     </p>
-                    <p className="text-luxury-400 text-xs">Bedrooms</p>
+                    <p className="text-luxury-400 text-xs">{property.bedrooms === 1 ? "Bedroom" : "Bedrooms"}</p>
                   </div>
                 )}
                 {property.bathrooms > 0 && (
@@ -338,7 +338,7 @@ export default function PropertyDetailClient({ property, similar }: Props) {
                     <p className="text-luxury-50 text-sm font-bold">
                       {property.bathrooms}
                     </p>
-                    <p className="text-luxury-400 text-xs">Bathrooms</p>
+                    <p className="text-luxury-400 text-xs">{property.bathrooms === 1 ? "Bathroom" : "Bathrooms"}</p>
                   </div>
                 )}
                 {property.area > 0 && (

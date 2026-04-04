@@ -73,13 +73,13 @@ export default function PropertyCard({ property }: PropertyCardProps) {
               {property.bedrooms > 0 && (
                 <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
                   <Bed className="w-3.5 h-3.5 text-gold-500" />
-                  <span>{property.bedrooms} Beds</span>
+                  <span>{property.bedrooms} {property.bedrooms === 1 ? "Bed" : "Beds"}</span>
                 </div>
               )}
               {property.bathrooms > 0 && (
                 <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
                   <Bath className="w-3.5 h-3.5 text-gold-500" />
-                  <span>{property.bathrooms} Baths</span>
+                  <span>{property.bathrooms} {property.bathrooms === 1 ? "Bath" : "Baths"}</span>
                 </div>
               )}
               {property.area > 0 && (
