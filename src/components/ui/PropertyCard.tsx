@@ -85,7 +85,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
               {property.area > 0 && (
                 <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
                   <Maximize2 className="w-3.5 h-3.5 text-gold-500" />
-                  <span>{property.area} sqm</span>
+                  <span>{Number.isInteger(property.area) ? property.area : property.area.toFixed(2)} sqm</span>
                 </div>
               )}
               {(property.garage ?? 0) > 0 && (

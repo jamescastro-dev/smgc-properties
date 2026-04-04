@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   SlidersHorizontal,
@@ -8,9 +9,11 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  MessageCircle,
 } from "lucide-react";
 import PropertyCard from "@/components/ui/PropertyCard";
 import { Property } from "@/types";
+import { LOCATIONS as BASE_LOCATIONS } from "@/lib/constants";
 
 const PROPERTY_TYPES = [
   "All Types",
@@ -21,15 +24,7 @@ const PROPERTY_TYPES = [
   "Commercial",
 ] as const;
 
-const LOCATIONS = [
-  "All Locations",
-  "San Jose del Monte",
-  "Meycauayan",
-  "Marilao",
-  "Bocaue",
-  "Caloocan",
-  "Quezon City",
-] as const;
+const LOCATIONS = ["All Locations", ...BASE_LOCATIONS] as const;
 
 const SORT_OPTIONS = [
   { label: "Newest First", value: "newest" },
@@ -381,22 +376,60 @@ export default function PropertiesClient({ initialProperties }: Props) {
             </div>
           )}
         </>
+      ) : keyword ? (
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <div className="w-16 h-16 rounded-full bg-luxury-800 border border-luxury-700 flex items-center justify-center mb-6">
+            <MessageCircle className="w-6 h-6 text-gold-500" />
+          </div>
+          <h3 className="text-luxury-50 text-xl font-bold mb-2">
+            Not yet updated
+          </h3>
+          <p className="text-luxury-400 text-sm mb-2 max-w-sm">
+            No listings for{" "}
+            <span className="text-luxury-50 font-semibold">{keyword}</span> yet.
+          </p>
+          <p className="text-luxury-500 text-sm mb-8 max-w-sm">
+            Contact Broker Shella directly — she may have available units not yet posted.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link
+              href="/contact"
+              className="bg-gold-500 hover:bg-gold-600 text-luxury-900 text-sm font-bold px-6 py-3 rounded-lg tracking-wide transition-colors">
+              Contact Broker Shella
+            </Link>
+            <button
+              onClick={clearFilters}
+              className="border border-luxury-600 hover:border-gold-500/50 text-luxury-400 hover:text-gold-500 text-sm font-medium px-6 py-3 rounded-lg transition-all">
+              Browse All Properties
+            </button>
+          </div>
+        </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <div className="w-16 h-16 rounded-full bg-luxury-800 border border-luxury-700 flex items-center justify-center mb-6">
-            <SlidersHorizontal className="w-6 h-6 text-luxury-500" />
+            <MessageCircle className="w-6 h-6 text-gold-500" />
           </div>
           <h3 className="text-luxury-50 text-xl font-bold mb-2">
-            No Properties Found
+            Not yet updated
           </h3>
-          <p className="text-luxury-400 text-sm mb-6 max-w-sm">
-            No properties match your current filters.
+          <p className="text-luxury-400 text-sm mb-2 max-w-sm">
+            No listings match your search yet.
           </p>
-          <button
-            onClick={clearFilters}
-            className="bg-gold-500 hover:bg-gold-600 text-luxury-900 text-sm font-bold px-6 py-3 rounded-lg tracking-wide transition-colors">
-            Clear Filters
-          </button>
+          <p className="text-luxury-500 text-sm mb-8 max-w-sm">
+            Contact Broker Shella directly — she may have available units not yet posted.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link
+              href="/contact"
+              className="bg-gold-500 hover:bg-gold-600 text-luxury-900 text-sm font-bold px-6 py-3 rounded-lg tracking-wide transition-colors">
+              Contact Broker Shella
+            </Link>
+            <button
+              onClick={clearFilters}
+              className="border border-luxury-600 hover:border-gold-500/50 text-luxury-400 hover:text-gold-500 text-sm font-medium px-6 py-3 rounded-lg transition-all">
+              Browse All Properties
+            </button>
+          </div>
         </div>
       )}
 

@@ -275,9 +275,6 @@ export default function PropertyDetailClient({ property, similar }: Props) {
               const embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}`;
               return (
                 <div className="bg-luxury-800 border border-luxury-700 rounded-2xl overflow-hidden">
-                  <div className="px-6 py-4 border-b border-luxury-700">
-                    <h2 className="text-luxury-50 text-lg font-bold">Video Tour</h2>
-                  </div>
                   <div className="relative aspect-video">
                     <iframe
                       src={embedUrl}
@@ -348,7 +345,7 @@ export default function PropertyDetailClient({ property, similar }: Props) {
                   <div className="flex flex-col items-center gap-2 bg-luxury-900 border border-luxury-700 rounded-xl py-4 flex-1 min-w-20">
                     <Maximize2 className="w-5 h-5 text-gold-500" />
                     <p className="text-luxury-50 text-sm font-bold">
-                      {property.area}
+                      {Number.isInteger(property.area) ? property.area : property.area.toFixed(2)}
                     </p>
                     <p className="text-luxury-400 text-xs">sqm</p>
                   </div>

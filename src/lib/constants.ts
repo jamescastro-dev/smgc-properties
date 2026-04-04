@@ -26,7 +26,6 @@ export const LOCATIONS = [
   "Marilao, Bulacan",
   "Bocaue, Bulacan",
   "Caloocan, Metro Manila",
-  "Quezon City, Metro Manila",
   "Tagaytay City",
   "Cavite",
   "Batangas City",

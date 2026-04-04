@@ -1,18 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { useRef, useEffect, useCallback } from "react";
 
-const DEVELOPERS = [
-  "Archer Realty",
+const SUBDIVISIONS = [
   "St. Agatha Homes",
   "Evara Residences",
   "Santa Clara",
   "Alegria",
   "Amihana",
   "SMDC",
+  "Plaridel Heights",
   "Robinsons Homes",
   "Serene Townhomes",
-  "Cross Roads",
+  "Cross Roads","SMDC",
   "Polaris",
   "Camella",
   "Asian Land",
@@ -33,6 +34,7 @@ export default function AccreditedDevelopers() {
   const halfWidthRef = useRef(0);
   const dragRef = useRef({ active: false, startX: 0, startOffset: 0 });
   const pausedRef = useRef(false);
+  const didDragRef = useRef(false);
 
   const tick = useCallback(() => {
     const el = trackRef.current;
@@ -59,11 +61,13 @@ export default function AccreditedDevelopers() {
 
   const onDragStart = (clientX: number) => {
     pausedRef.current = true;
+    didDragRef.current = false;
     dragRef.current = { active: true, startX: clientX, startOffset: xRef.current };
   };
 
   const onDragMove = (clientX: number) => {
     if (!dragRef.current.active || !trackRef.current) return;
+    if (Math.abs(clientX - dragRef.current.startX) > 5) didDragRef.current = true;
     const half = halfWidthRef.current;
     let next = dragRef.current.startOffset - (clientX - dragRef.current.startX);
     if (next < 0) next = half + next;
@@ -83,7 +87,7 @@ export default function AccreditedDevelopers() {
         <div className="inline-flex items-center gap-2">
           <span className="w-8 h-px bg-gold-500" />
           <span className="text-gold-500 text-xs tracking-widest uppercase font-semibold">
-            Accredited Developers
+            Partnered Subdivisions
           </span>
           <span className="w-8 h-px bg-gold-500" />
         </div>
@@ -107,14 +111,16 @@ export default function AccreditedDevelopers() {
           ref={trackRef}
           className="flex gap-6 will-change-transform cursor-grab active:cursor-grabbing select-none py-1"
         >
-          {[...DEVELOPERS, ...DEVELOPERS].map((name, i) => (
-            <span
+          {[...SUBDIVISIONS, ...SUBDIVISIONS].map((name, i) => (
+            <Link
               key={i}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-luxury-700 bg-luxury-900 text-luxury-300 text-sm font-medium tracking-wide shrink-0"
+              href={`/properties?keyword=${encodeURIComponent(name)}`}
+              onClick={(e) => { if (didDragRef.current) e.preventDefault(); }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-luxury-700 bg-luxury-900 text-luxury-300 text-sm font-medium tracking-wide shrink-0 hover:border-gold-500/50 hover:text-gold-500 transition-colors"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-gold-500 shrink-0" />
               {name}
-            </span>
+            </Link>
           ))}
         </div>
       </div>

@@ -372,7 +372,7 @@ export default function ContactSection() {
                 Free Consultation
               </p>
               <p className="text-luxury-400 text-xs leading-relaxed">
-                Monday to Saturday, 8AM – 6PM. Expect a reply within 24 hours.
+                Monday to Saturday, 6AM – 8PM. Expect a reply within 24 hours.
               </p>
             </div>
           </div>
