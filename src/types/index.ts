@@ -9,6 +9,7 @@ export interface Property {
   bathrooms: number;
   area: number;
   garage?: number;
+  property_type?: string;
   location: string;
   subdivision?: string;
   map_url?: string;

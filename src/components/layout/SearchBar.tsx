@@ -10,16 +10,9 @@ import {
   SlidersHorizontal,
   Tag,
 } from "lucide-react";
-import { LOCATIONS as BASE_LOCATIONS } from "@/lib/constants";
+import { LOCATIONS as BASE_LOCATIONS, PROPERTY_TYPES as BASE_PROPERTY_TYPES } from "@/lib/constants";
 
-const PROPERTY_TYPES = [
-  "All Types",
-  "House & Lot",
-  "Condominium",
-  "Townhouse",
-  "Vacant Lot",
-  "Commercial",
-] as const;
+const PROPERTY_TYPES = ["All Types", ...BASE_PROPERTY_TYPES] as const;
 
 const LOCATIONS = ["All Locations", ...BASE_LOCATIONS] as const;
 

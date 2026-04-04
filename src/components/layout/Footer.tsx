@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Phone, Mail, MapPin, Facebook, Instagram } from "lucide-react";
-import { SITE_CONFIG } from "@/lib/constants";
+import { SITE_CONFIG, PROPERTY_TYPES as BASE_PROPERTY_TYPES } from "@/lib/constants";
 
 const QUICK_LINKS = [
   { label: "Home", href: "/" },
@@ -13,13 +13,10 @@ const QUICK_LINKS = [
   { label: "Contact", href: "/contact" },
 ];
 
-const PROPERTY_TYPES = [
-  { label: "House & Lot", href: "/properties?type=House+%26+Lot" },
-  { label: "Condominium", href: "/properties?type=Condominium" },
-  { label: "Townhouse", href: "/properties?type=Townhouse" },
-  { label: "Vacant Lot", href: "/properties?type=Vacant+Lot" },
-  { label: "Commercial", href: "/properties?type=Commercial" },
-];
+const PROPERTY_TYPES = BASE_PROPERTY_TYPES.map((t) => ({
+  label: t,
+  href: `/properties?type=${encodeURIComponent(t)}`,
+}));
 
 export default function Footer() {
   return (

@@ -11,7 +11,7 @@ import { Property } from "@/types";
 interface Props {
   property?: Partial<Property> & { id?: string };
 }
-import { LOCATIONS } from "@/lib/constants";
+import { LOCATIONS, PROPERTY_TYPES } from "@/lib/constants";
 
 export default function PropertyForm({ property }: Props) {
   const router = useRouter();
@@ -27,6 +27,7 @@ export default function PropertyForm({ property }: Props) {
     bathrooms: property?.bathrooms || 0,
     area: property?.area || "",
     garage: property?.garage || 0,
+    property_type: property?.property_type || PROPERTY_TYPES[0],
     location: property?.location || LOCATIONS[0],
     subdivision: property?.subdivision || "",
     map_url: property?.map_url || "",
@@ -190,7 +191,7 @@ export default function PropertyForm({ property }: Props) {
               />
             </div>
 
-            {/* Price + Type */}
+            {/* Price + Listing Type + Property Type */}
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
                 <label className="text-luxury-300 text-xs font-semibold tracking-widest uppercase">
@@ -215,14 +216,26 @@ export default function PropertyForm({ property }: Props) {
                   value={form.type}
                   onChange={handleChange}
                   className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-xl px-4 py-3 text-luxury-50 text-sm outline-none transition-colors">
-                  <option value="sale" className="bg-luxury-800">
-                    For Sale
-                  </option>
-                  <option value="rent" className="bg-luxury-800">
-                    For Rent
-                  </option>
+                  <option value="sale" className="bg-luxury-800">For Sale</option>
+                  <option value="rent" className="bg-luxury-800">For Rent</option>
                 </select>
               </div>
+            </div>
+
+            {/* Property Type */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-luxury-300 text-xs font-semibold tracking-widest uppercase">
+                Property Type
+              </label>
+              <select
+                name="property_type"
+                value={form.property_type}
+                onChange={handleChange}
+                className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-xl px-4 py-3 text-luxury-50 text-sm outline-none transition-colors">
+                {PROPERTY_TYPES.map((t) => (
+                  <option key={t} value={t} className="bg-luxury-800">{t}</option>
+                ))}
+              </select>
             </div>
 
             {/* Bedrooms + Bathrooms + Area + Garage */}

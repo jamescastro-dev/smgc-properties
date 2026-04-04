@@ -13,17 +13,9 @@ import {
 } from "lucide-react";
 import PropertyCard from "@/components/ui/PropertyCard";
 import { Property } from "@/types";
-import { LOCATIONS as BASE_LOCATIONS } from "@/lib/constants";
+import { LOCATIONS as BASE_LOCATIONS, PROPERTY_TYPES as BASE_PROPERTY_TYPES } from "@/lib/constants";
 
-const PROPERTY_TYPES = [
-  "All Types",
-  "House & Lot",
-  "Condominium",
-  "Townhouse",
-  "Vacant Lot",
-  "Commercial",
-] as const;
-
+const PROPERTY_TYPES = ["All Types", ...BASE_PROPERTY_TYPES] as const;
 const LOCATIONS = ["All Locations", ...BASE_LOCATIONS] as const;
 
 const SORT_OPTIONS = [
@@ -68,9 +60,7 @@ export default function PropertiesClient({ initialProperties }: Props) {
       results = results.filter((p) => p.type === listing);
     }
     if (type !== "All Types") {
-      results = results.filter((p) =>
-        p.title.toLowerCase().includes(type.toLowerCase())
-      );
+      results = results.filter((p) => p.property_type === type);
     }
     if (location !== "All Locations") {
       results = results.filter((p) =>

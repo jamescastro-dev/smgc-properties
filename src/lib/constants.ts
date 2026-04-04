@@ -15,6 +15,14 @@ export const SITE_CONFIG = {
   },
 } as const;
 
+export const PROPERTY_TYPES = [
+  "House & Lot",
+  "Condominium",
+  "Townhouse",
+  "Vacant Lot",
+  "Commercial",
+] as const;
+
 export const LOCATIONS = [
   "Malolos, Bulacan",
   "Guiguinto, Bulacan",
