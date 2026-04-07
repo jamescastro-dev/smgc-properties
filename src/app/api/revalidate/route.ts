@@ -13,7 +13,7 @@ export async function POST() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    revalidateTag("properties");
+    revalidateTag("properties", "app-router");
     return NextResponse.json({ revalidated: true }, { status: 200 });
   } catch {
     return NextResponse.json(
