@@ -14,14 +14,16 @@ export default function PropertyCard({ property }: PropertyCardProps) {
       href={`/properties/${property.id}`}
       className="group relative flex flex-col bg-luxury-800 border border-luxury-700 rounded-2xl overflow-hidden hover:border-gold-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
       {/* Image */}
-      <div className="relative overflow-hidden aspect-[4/3] bg-luxury-700">
-        <Image
-          src={property.images[0]}
-          alt={property.title}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+      <div className="relative overflow-hidden aspect-4/3 bg-luxury-700">
+        {property.images?.[0] && (
+          <Image
+            src={property.images[0]}
+            alt={property.title}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        )}
 
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">

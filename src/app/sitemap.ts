@@ -3,7 +3,7 @@ import { getAllProperties } from "@/lib/supabase/properties";
 import { FEATURED_PROPERTIES } from "@/lib/data";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://brokershella.com";
+  const baseUrl = "https://smgcproperties.com";
 
   let properties = await getAllProperties();
   if (properties.length === 0) properties = FEATURED_PROPERTIES;

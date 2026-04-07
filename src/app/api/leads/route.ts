@@ -38,7 +38,8 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch {
+  } catch (err) {
+    console.error("[leads] unexpected error:", err);
     return NextResponse.json(
       { error: "Something went wrong." },
       { status: 500 }

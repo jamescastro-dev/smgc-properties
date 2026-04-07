@@ -106,7 +106,7 @@ export default function PrivacyPage() {
           <p className="text-luxury-400 text-sm leading-relaxed">
             Effective date: March 2026. This policy applies to all personal information
             collected through{" "}
-            <span className="text-luxury-300">brokershella.com</span> and is
+            <span className="text-luxury-300">smgcproperties.com</span> and is
             compliant with the{" "}
             <span className="text-luxury-300">
               Data Privacy Act of 2012 (Republic Act No. 10173)
