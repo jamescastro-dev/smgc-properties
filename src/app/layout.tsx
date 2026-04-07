@@ -7,7 +7,7 @@ import ThemeProvider from "@/components/providers/ThemeProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://brokershella.com"),
+  metadataBase: new URL("https://smgcproperties.com"),
   title: {
     default: "Broker Shella | SMGC Properties — Buy, Sell & Rent in Bulacan",
     template: "%s | Broker Shella",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_PH",
-    url: "https://brokershella.com",
+    url: "https://smgcproperties.com",
     siteName: "Broker Shella | SMGC Properties",
     title: "Broker Shella | SMGC Properties — Buy, Sell & Rent in Bulacan",
     description:
