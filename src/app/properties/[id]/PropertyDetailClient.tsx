@@ -528,7 +528,7 @@ export default function PropertyDetailClient({ property, similar }: Props) {
                 </div>
               </div>
               <p className="text-luxury-400 text-xs leading-relaxed">
-                With 20+ years of experience in Bulacan and Metro Manila real
+                With 20+ years of experience in Bulacan and Luzon real
                 estate, Broker Shella will guide you through every step.
               </p>
             </div>

@@ -18,7 +18,7 @@ import AwardsCarousel from "@/components/sections/AwardsCarousel";
 export const metadata: Metadata = {
   title: "About Broker Shella | SMGC Properties",
   description:
-    "Learn about Broker Shella Castro — a licensed real estate broker with 10+ years of experience helping families find their dream homes in Bulacan and Metro Manila.",
+    "Learn about Broker Shella Castro — a licensed real estate broker with 10+ years of experience helping families find their dream homes in Bulacan and Luzon.",
 };
 
 const STATS = [
@@ -102,7 +102,7 @@ export default function AboutPage() {
                 Broker Shella Castro has helped hundreds of Filipino families
                 find their dream homes across{" "}
                 <span className="text-luxury-50 font-medium">Bulacan</span> and{" "}
-                <span className="text-luxury-50 font-medium">Metro Manila</span>.
+                <span className="text-luxury-50 font-medium">Luzon</span>.
               </p>
 
               {/* Stats */}

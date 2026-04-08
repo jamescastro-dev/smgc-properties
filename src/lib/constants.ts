@@ -3,7 +3,7 @@ export const SITE_CONFIG = {
   subtitle: "SMGC Properties",
   tagline: "Find Your Perfect Home",
   description:
-    "Expert real estate services for buying, selling, and renting properties across Bulacan and Metro Manila.",
+    "Expert real estate services for buying, selling, and renting properties across Bulacan and Luzon.",
   phone: "+63 917 849 0166",
   email: "shellamariecastro7@gmail.com",
   address: "City of Malolos, Bulacan, Philippines",

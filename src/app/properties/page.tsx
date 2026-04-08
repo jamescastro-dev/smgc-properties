@@ -9,7 +9,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Properties | Broker Shella — SMGC Properties",
   description:
-    "Browse all available properties for sale and rent in Bulacan and Metro Manila.",
+    "Browse all available properties for sale and rent in Bulacan and Luzon.",
 };
 
 export default async function PropertiesPage() {

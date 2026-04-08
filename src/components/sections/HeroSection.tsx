@@ -57,7 +57,7 @@ export default function HeroSection() {
                 Expert guidance for buying, selling, and renting properties
                 across{" "}
                 <span className="text-luxury-50 font-medium">Bulacan</span> and{" "}
-                <span className="text-luxury-50 font-medium">Metro Manila</span>
+                <span className="text-luxury-50 font-medium">Luzon</span>
                 . Your trusted partner in real estate.
               </p>
 

@@ -107,7 +107,7 @@ export default function ContactSection() {
           </h2>
           <p className="text-luxury-400 text-base max-w-xl mx-auto leading-relaxed mb-8">
             Tell Broker Shella what you're looking for and she will find the best
-            options for you in Bulacan and Metro Manila.
+            options for you in Bulacan and Luzon.
           </p>
 
           {/* Trust signals */}

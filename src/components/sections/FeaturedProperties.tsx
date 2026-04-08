@@ -29,7 +29,7 @@ export default async function FeaturedProperties() {
             </h2>
             <p className="text-luxury-400 text-base mt-3 max-w-lg">
               Carefully selected properties that offer the best value across
-              Bulacan and Metro Manila.
+              Bulacan and Luzon.
             </p>
           </div>
           <Link

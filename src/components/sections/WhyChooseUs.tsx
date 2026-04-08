@@ -24,7 +24,7 @@ const REASONS = [
     icon: MapPin,
     title: "Local Market Expert",
     description:
-      "Deep knowledge of Bulacan and Metro Manila property markets — pricing, trends, and the best locations for your budget.",
+      "Deep knowledge of Bulacan and Luzon property markets — pricing, trends, and the best locations for your budget.",
   },
   {
     icon: HandshakeIcon,

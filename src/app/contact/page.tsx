@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Contact Us | SMGC Properties — Broker Shella",
   description:
-    "Get in touch with Broker Shella Castro for a free consultation on buying, selling, or renting properties in Bulacan and Metro Manila.",
+    "Get in touch with Broker Shella Castro for a free consultation on buying, selling, or renting properties in Bulacan and Luzon.",
 };
 
 export default function ContactPage() {
