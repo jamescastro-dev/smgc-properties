@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Property } from "@/types";
 import { unstable_cache } from "next/cache";
+import { slugify } from "@/lib/utils";
 
 const fetchFeaturedProperties = unstable_cache(
   async (supabaseUrl: string, supabaseKey: string): Promise<Property[]> => {
@@ -112,7 +113,6 @@ export async function getPropertyById(id: string): Promise<Property | null> {
 
 export async function getPropertyBySlug(slug: string): Promise<Property | null> {
   const properties = await getAllProperties();
-  const { slugify } = await import("@/lib/utils");
   return properties.find((p) => slugify(p.title) === slug) ?? null;
 }
 
