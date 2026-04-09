@@ -46,7 +46,6 @@ const REASONS = [
   },
 ];
 
-
 export default function WhyChooseUs() {
   return (
     <section className="bg-luxury-800 py-24">
@@ -64,7 +63,7 @@ export default function WhyChooseUs() {
             Why Choose Broker Shella?
           </h2>
           <p className="text-luxury-400 text-base max-w-xl mx-auto leading-relaxed">
-            With over 10 years of experience and hundreds of happy clients,
+            With over 20+ years of experience and hundreds of happy clients,
             Broker Shella delivers results you can trust.
           </p>
         </div>
@@ -87,7 +86,6 @@ export default function WhyChooseUs() {
             </div>
           ))}
         </div>
-
       </div>
     </section>
   );

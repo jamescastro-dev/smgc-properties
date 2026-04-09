@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc:*)",
+      "Bash(del \"c:\\\\Users\\\\James\\\\dev\\\\castro-realty\\\\src\\\\middleware.ts\")",
+      "Bash(git push:*)",
+      "Bash(ls /c/Users/James/dev/castro-realty/public/*.jpg /c/Users/James/dev/castro-realty/public/*.png)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git filter-branch:*)",
+      "Bash(git show:*)",
+      "Bash(xargs grep:*)",
+      "Bash(npm list:*)",
+      "Bash(grep -r \"revalidateTag\" node_modules/next/dist/server/revalidate*)"
+    ]
+  }
+}
