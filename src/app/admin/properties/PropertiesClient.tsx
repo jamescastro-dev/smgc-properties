@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Plus, Pencil, Eye, Building2, Search, X } from "lucide-react";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, slugify } from "@/lib/utils";
 import DeletePropertyButton from "./DeletePropertyButton";
 import Pagination from "@/components/ui/Pagination";
 import { Property } from "@/types";
@@ -187,7 +187,7 @@ export default function PropertiesClient({
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
                       <Link
-                        href={`/properties/${property.id}`}
+                        href={`/properties/${slugify(property.title)}`}
                         target="_blank"
                         title="View on site"
                         className="text-luxury-400 hover:text-gold-500 transition-colors">
@@ -278,7 +278,7 @@ export default function PropertiesClient({
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3 opacity-60 group-hover:opacity-100 transition-opacity">
-                          <Link href={`/properties/${property.id}`} target="_blank" className="text-luxury-400 hover:text-gold-500 transition-colors" title="View on site">
+                          <Link href={`/properties/${slugify(property.title)}`} target="_blank" className="text-luxury-400 hover:text-gold-500 transition-colors" title="View on site">
                             <Eye className="w-4 h-4" />
                           </Link>
                           <Link href={`/admin/properties/${property.id}`} className="text-luxury-400 hover:text-gold-500 transition-colors" title="Edit">

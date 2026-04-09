@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Bed, Bath, Maximize2, Star, Car } from "lucide-react";
 import { Property } from "@/types";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, slugify } from "@/lib/utils";
 
 interface PropertyCardProps {
   property: Property;
@@ -11,7 +11,7 @@ interface PropertyCardProps {
 export default function PropertyCard({ property }: PropertyCardProps) {
   return (
     <Link
-      href={`/properties/${property.id}`}
+      href={`/properties/${slugify(property.title)}`}
       className="group relative flex flex-col bg-luxury-800 border border-luxury-700 rounded-2xl overflow-hidden hover:border-gold-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
       {/* Image */}
       <div className="relative overflow-hidden aspect-4/3 bg-luxury-700">

@@ -110,6 +110,12 @@ export async function getPropertyById(id: string): Promise<Property | null> {
   return fetchPropertyById(url, key, id);
 }
 
+export async function getPropertyBySlug(slug: string): Promise<Property | null> {
+  const properties = await getAllProperties();
+  const { slugify } = await import("@/lib/utils");
+  return properties.find((p) => slugify(p.title) === slug) ?? null;
+}
+
 export async function getSimilarProperties(
   id: string,
   type: string
