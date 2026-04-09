@@ -26,6 +26,7 @@ export default function PropertyForm({ property }: Props) {
     bedrooms: property?.bedrooms || 0,
     bathrooms: property?.bathrooms || 0,
     area: property?.area || "",
+    lot_area: property?.lot_area || "",
     garage: property?.garage || 0,
     property_type: property?.property_type || PROPERTY_TYPES[0],
     location: property?.location || LOCATIONS[0],
@@ -113,6 +114,7 @@ export default function PropertyForm({ property }: Props) {
       bedrooms: Number(form.bedrooms),
       bathrooms: Number(form.bathrooms),
       area: Number(form.area),
+      lot_area: form.lot_area ? Number(form.lot_area) : null,
       garage: Number(form.garage),
       images,
     };
@@ -238,7 +240,7 @@ export default function PropertyForm({ property }: Props) {
               </select>
             </div>
 
-            {/* Bedrooms + Bathrooms + Area + Garage */}
+            {/* Bedrooms + Bathrooms + Floor Area + Lot Area + Garage */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="flex flex-col gap-1.5">
                 <label className="text-luxury-300 text-xs font-semibold tracking-widest uppercase">
@@ -268,7 +270,7 @@ export default function PropertyForm({ property }: Props) {
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-luxury-300 text-xs font-semibold tracking-widest uppercase">
-                  Area (sqm)
+                  Floor Area (sqm)
                 </label>
                 <input
                   type="number"
@@ -277,7 +279,22 @@ export default function PropertyForm({ property }: Props) {
                   onChange={handleChange}
                   min={0}
                   step="any"
-                  placeholder="e.g. 120"
+                  placeholder="e.g. 81"
+                  className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-xl px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-luxury-300 text-xs font-semibold tracking-widest uppercase">
+                  Lot Area (sqm)
+                </label>
+                <input
+                  type="number"
+                  name="lot_area"
+                  value={form.lot_area}
+                  onChange={handleChange}
+                  min={0}
+                  step="any"
+                  placeholder="e.g. 144"
                   className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-xl px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
                 />
               </div>

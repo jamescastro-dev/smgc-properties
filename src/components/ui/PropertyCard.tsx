@@ -87,7 +87,13 @@ export default function PropertyCard({ property }: PropertyCardProps) {
               {property.area > 0 && (
                 <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
                   <Maximize2 className="w-3.5 h-3.5 text-gold-500" />
-                  <span>{Number.isInteger(property.area) ? property.area : property.area.toFixed(2)} sqm</span>
+                  <span>{Number.isInteger(property.area) ? property.area : property.area.toFixed(2)} sqm floor</span>
+                </div>
+              )}
+              {(property.lot_area ?? 0) > 0 && (
+                <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
+                  <Maximize2 className="w-3.5 h-3.5 text-gold-500" />
+                  <span>{Number.isInteger(property.lot_area!) ? property.lot_area : property.lot_area!.toFixed(2)} sqm lot</span>
                 </div>
               )}
               {(property.garage ?? 0) > 0 && (

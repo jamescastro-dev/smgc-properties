@@ -8,6 +8,7 @@ export interface Property {
   bedrooms: number;
   bathrooms: number;
   area: number;
+  lot_area?: number;
   garage?: number;
   property_type?: string;
   location: string;

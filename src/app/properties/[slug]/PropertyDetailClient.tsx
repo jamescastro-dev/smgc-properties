@@ -347,7 +347,16 @@ export default function PropertyDetailClient({ property, similar }: Props) {
                     <p className="text-luxury-50 text-sm font-bold">
                       {Number.isInteger(property.area) ? property.area : property.area.toFixed(2)}
                     </p>
-                    <p className="text-luxury-400 text-xs">sqm</p>
+                    <p className="text-luxury-400 text-xs">Floor Area</p>
+                  </div>
+                )}
+                {(property.lot_area ?? 0) > 0 && (
+                  <div className="flex flex-col items-center gap-2 bg-luxury-900 border border-luxury-700 rounded-xl py-4 flex-1 min-w-20">
+                    <Maximize2 className="w-5 h-5 text-gold-500" />
+                    <p className="text-luxury-50 text-sm font-bold">
+                      {Number.isInteger(property.lot_area!) ? property.lot_area : property.lot_area!.toFixed(2)}
+                    </p>
+                    <p className="text-luxury-400 text-xs">Lot Area</p>
                   </div>
                 )}
                 {(property.garage ?? 0) > 0 && (
