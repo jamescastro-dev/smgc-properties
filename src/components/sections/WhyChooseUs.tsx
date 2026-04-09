@@ -63,7 +63,7 @@ export default function WhyChooseUs() {
             Why Choose Broker Shella?
           </h2>
           <p className="text-luxury-400 text-base max-w-xl mx-auto leading-relaxed">
-            With over 20+ years of experience and hundreds of happy clients,
+            With 20+ years of experience and hundreds of happy clients,
             Broker Shella delivers results you can trust.
           </p>
         </div>
