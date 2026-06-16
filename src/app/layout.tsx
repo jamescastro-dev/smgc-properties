@@ -32,6 +32,9 @@ export const metadata: Metadata = {
     "SMGC Properties",
   ],
   authors: [{ name: "Broker Shella Castro" }],
+  verification: {
+    google: "V0PS9A4H3DvQnXQ2hukGBzT__A67y_LFxhQKrnjgzRs",
+  },
   openGraph: {
     type: "website",
     locale: "en_PH",
