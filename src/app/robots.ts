@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: "/admin/",
     },
-    sitemap: "https://smgcproperties.com/sitemap.xml",
+    sitemap: "https://www.smgcproperties.com/sitemap.xml",
   };
 }

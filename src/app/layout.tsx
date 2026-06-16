@@ -8,7 +8,7 @@ import { Analytics } from "@vercel/analytics/next";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://smgcproperties.com"),
+  metadataBase: new URL("https://www.smgcproperties.com"),
   title: {
     default: "Broker Shella | SMGC Properties — Buy, Sell & Rent in Bulacan & Luzon",
     template: "%s | Broker Shella — SMGC Properties",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_PH",
-    url: "https://smgcproperties.com",
+    url: "https://www.smgcproperties.com",
     siteName: "Broker Shella | SMGC Properties",
     title: "Broker Shella | SMGC Properties — Buy, Sell & Rent in Bulacan & Luzon",
     description:
