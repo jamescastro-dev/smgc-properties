@@ -13,6 +13,7 @@ import {
   X,
   Calculator,
   ChevronRight,
+  ShieldCheck,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -20,6 +21,7 @@ const NAV_ITEMS = [
   { label: "Properties", href: "/admin/properties", icon: Building2 },
   { label: "Leads", href: "/admin/leads", icon: Users },
   { label: "Calculator", href: "/admin/calculator", icon: Calculator },
+  { label: "Security", href: "/admin/security", icon: ShieldCheck },
 ] as const;
 
 export default function AdminLayout({

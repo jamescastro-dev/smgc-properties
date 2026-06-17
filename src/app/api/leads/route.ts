@@ -66,10 +66,17 @@ export async function POST(request: Request) {
     if (
       String(name).length > 120 ||
       String(phone).length > 20 ||
-      (message && String(message).length > 4000)
+      (message && String(message).length > 4000) ||
+      (location && String(location).length > 120) ||
+      (budget && String(budget).length > 60) ||
+      (property_name && String(property_name).length > 200)
     ) {
       return NextResponse.json({ error: "Invalid input." }, { status: 400 });
     }
+
+    // Constrain type to the known set; anything else falls back to "buy"
+    const ALLOWED_TYPES = ["buy", "sell", "rent"];
+    const validType = ALLOWED_TYPES.includes(type) ? type : "buy";
 
     const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     const validPropertyId = property_id && UUID_REGEX.test(property_id) ? property_id : null;
@@ -84,7 +91,7 @@ export async function POST(request: Request) {
       name,
       phone,
       message: storedMessage,
-      type: type || "buy",
+      type: validType,
       location: location || null,
       budget: budget || null,
       property_id: validPropertyId,
@@ -92,7 +99,11 @@ export async function POST(request: Request) {
     });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error("[leads] insert failed:", error.message);
+      return NextResponse.json(
+        { error: "Could not submit your inquiry. Please try again." },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ success: true }, { status: 200 });

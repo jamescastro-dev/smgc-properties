@@ -5,10 +5,13 @@ import PropertiesClient from "./PropertiesClient";
 
 export default async function AdminPropertiesPage() {
   const supabase = await createClient();
-  const { data: properties } = await supabase
+  const { data: properties, error } = await supabase
     .from("properties")
     .select("*")
     .order("created_at", { ascending: false });
+
+  if (error)
+    console.error("[admin/properties] query failed:", error.message);
 
   return (
     <div className="flex flex-col gap-6 w-full">

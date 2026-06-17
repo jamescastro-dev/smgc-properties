@@ -13,13 +13,21 @@ import {
 export default async function AdminDashboardPage() {
   const supabase = await createClient();
 
-  const [{ data: properties }, { data: leads }] = await Promise.all([
+  const [
+    { data: properties, error: propertiesError },
+    { data: leads, error: leadsError },
+  ] = await Promise.all([
     supabase.from("properties").select("id, status"),
     supabase
       .from("leads")
       .select("id, name, phone, type, status, budget, location, created_at")
       .order("created_at", { ascending: false }),
   ]);
+
+  if (propertiesError)
+    console.error("[admin/dashboard] properties query failed:", propertiesError.message);
+  if (leadsError)
+    console.error("[admin/dashboard] leads query failed:", leadsError.message);
 
   // Property counts
   const allProperties = properties ?? [];

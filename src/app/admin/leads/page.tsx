@@ -3,10 +3,12 @@ import LeadsClient from "./LeadsClient";
 
 export default async function AdminLeadsPage() {
   const supabase = await createClient();
-  const { data: leads } = await supabase
+  const { data: leads, error } = await supabase
     .from("leads")
     .select("*")
     .order("created_at", { ascending: false });
+
+  if (error) console.error("[admin/leads] query failed:", error.message);
 
   // Manually resolve property titles since FK may not be defined
   const propertyIds = [

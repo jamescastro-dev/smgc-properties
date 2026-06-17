@@ -18,7 +18,10 @@ const fetchFeaturedProperties = unstable_cache(
       .order("created_at", { ascending: false })
       .limit(6);
 
-    if (error) return [];
+    if (error) {
+      console.error("[properties] getFeaturedProperties failed:", error.message);
+      return [];
+    }
     return (data || []) as Property[];
   },
   ["featured-properties"],
@@ -37,7 +40,10 @@ const fetchAllProperties = unstable_cache(
       .order("sort_order", { ascending: true, nullsFirst: false })
       .order("created_at", { ascending: false });
 
-    if (error) return [];
+    if (error) {
+      console.error("[properties] getAllProperties failed:", error.message);
+      return [];
+    }
     return (data || []) as Property[];
   },
   ["all-properties"],
@@ -60,7 +66,10 @@ const fetchPropertyById = unstable_cache(
       .eq("id", id)
       .single();
 
-    if (error) return null;
+    if (error) {
+      console.error("[properties] getPropertyById failed:", error.message);
+      return null;
+    }
     return data as Property;
   },
   ["property-by-id"],
@@ -86,7 +95,10 @@ const fetchSimilarProperties = unstable_cache(
       .eq("status", "available")
       .limit(3);
 
-    if (error) return [];
+    if (error) {
+      console.error("[properties] getSimilarProperties failed:", error.message);
+      return [];
+    }
     return (data || []) as Property[];
   },
   ["similar-properties"],
