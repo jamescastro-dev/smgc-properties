@@ -17,3 +17,19 @@ export function formatPrice(price: number, type: "sale" | "rent"): string {
 
   return type === "rent" ? `${formatted}/mo` : formatted;
 }
+
+export function formatPriceCompact(price: number, type: "sale" | "rent"): string {
+  let formatted: string;
+
+  if (price >= 1_000_000) {
+    const millions = price / 1_000_000;
+    formatted = `₱${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1)}M`;
+  } else if (price >= 1_000) {
+    const thousands = price / 1_000;
+    formatted = `₱${thousands % 1 === 0 ? thousands.toFixed(0) : thousands.toFixed(1)}K`;
+  } else {
+    formatted = `₱${price.toLocaleString("en-PH")}`;
+  }
+
+  return type === "rent" ? `${formatted}/mo` : formatted;
+}

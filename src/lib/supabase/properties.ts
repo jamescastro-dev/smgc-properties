@@ -14,6 +14,7 @@ const fetchFeaturedProperties = unstable_cache(
       .select("*")
       .eq("status", "available")
       .eq("featured", true)
+      .order("sort_order", { ascending: true, nullsFirst: false })
       .order("created_at", { ascending: false })
       .limit(6);
 
@@ -33,6 +34,7 @@ const fetchAllProperties = unstable_cache(
     const { data, error } = await supabase
       .from("properties")
       .select("*")
+      .order("sort_order", { ascending: true, nullsFirst: false })
       .order("created_at", { ascending: false });
 
     if (error) return [];

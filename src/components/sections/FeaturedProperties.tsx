@@ -24,7 +24,7 @@ export default async function FeaturedProperties() {
                 Hand-picked listings
               </span>
             </div>
-            <h2 className="text-4xl font-extrabold text-luxury-50 tracking-tight">
+            <h2 className="text-4xl font-display font-semibold text-luxury-50 tracking-tight">
               Featured Properties
             </h2>
             <p className="text-luxury-400 text-base mt-3 max-w-lg">

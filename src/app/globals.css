@@ -22,8 +22,9 @@ html {
   --color-gold-600: #b8973e;
   --color-gold-700: #a07830;
 
-  --font-sans: "Inter", sans-serif;
-  --font-serif: "Georgia", serif;
+  --font-sans: var(--font-inter), "Inter", sans-serif;
+  --font-display: var(--font-fraunces), "Fraunces", Georgia, serif;
+  --font-serif: var(--font-fraunces), Georgia, serif;
 }
 
 /* Force dark theme for admin (ignores client light/dark toggle) */

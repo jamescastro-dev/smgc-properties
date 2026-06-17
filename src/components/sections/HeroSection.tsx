@@ -38,14 +38,14 @@ export default function HeroSection() {
             <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
               {/* Pill badge */}
               <div className="inline-flex items-center gap-2.5 bg-gold-500/10 border border-gold-500/30 rounded-full px-4 py-1.5 mb-6">
-                <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-gold-500" />
                 <span className="text-gold-500 text-[11px] tracking-[0.15em] uppercase font-semibold">
                   Licensed Real Estate Broker · Philippines
                 </span>
               </div>
 
               {/* Headline */}
-              <h1 className="text-[clamp(2.2rem,4vw,3.25rem)] font-extrabold text-luxury-50 leading-[1.08] tracking-tight mb-5">
+              <h1 className="text-[clamp(2.5rem,5vw,3.75rem)] font-display font-bold text-luxury-50 leading-[1.05] tracking-tight mb-5">
                 Find Your<br className="hidden lg:block" />{" "}
                 <span className="text-gold-500">Dream Home</span>
                 <br />
@@ -62,16 +62,16 @@ export default function HeroSection() {
               </p>
 
               {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mb-10">
+              <div className="flex gap-2 sm:gap-3 mb-10 w-full sm:w-auto">
                 <Link
                   href="/properties"
-                  className="flex items-center justify-center gap-2 bg-gold-500 hover:bg-gold-600 text-luxury-900 text-sm font-bold px-7 py-3.5 rounded-lg tracking-wide transition-colors">
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gold-500 hover:bg-gold-600 text-luxury-900 text-xs sm:text-sm font-bold px-4 sm:px-7 py-3.5 rounded-lg tracking-wide transition-colors">
                   Browse Properties
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 hidden sm:block" />
                 </Link>
                 <Link
                   href="/contact"
-                  className="flex items-center justify-center gap-2 border border-luxury-600 hover:border-gold-500 text-luxury-50 hover:text-gold-500 text-sm font-semibold px-7 py-3.5 rounded-lg tracking-wide transition-all duration-300">
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 border border-luxury-600 hover:border-gold-500 text-luxury-50 hover:text-gold-500 text-xs sm:text-sm font-semibold px-4 sm:px-7 py-3.5 rounded-lg tracking-wide transition-all duration-300">
                   Book a Consultation
                 </Link>
               </div>

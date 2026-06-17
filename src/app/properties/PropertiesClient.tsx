@@ -166,7 +166,7 @@ export default function PropertiesClient({ initialProperties }: Props) {
         </div>
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-extrabold text-luxury-50 tracking-tight">
+            <h1 className="text-4xl font-display font-semibold text-luxury-50 tracking-tight">
               Properties
             </h1>
             <p className="text-luxury-400 text-sm mt-2">

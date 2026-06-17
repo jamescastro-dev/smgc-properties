@@ -34,6 +34,7 @@ export default function PropertyForm({ property }: Props) {
     map_url: property?.map_url || "",
     video_url: property?.video_url || "",
     featured: property?.featured || false,
+    sort_order: property?.sort_order ?? "",
   });
 
   const [images, setImages] = useState<string[]>(property?.images || []);
@@ -116,6 +117,7 @@ export default function PropertyForm({ property }: Props) {
       area: Number(form.area),
       lot_area: form.lot_area ? Number(form.lot_area) : null,
       garage: Number(form.garage),
+      sort_order: form.sort_order === "" ? null : Number(form.sort_order),
       images,
     };
 
@@ -510,6 +512,24 @@ export default function PropertyForm({ property }: Props) {
                 />
                 <div className="w-11 h-6 bg-luxury-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold-500" />
               </label>
+            </div>
+
+            {/* Display order */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-luxury-300 text-xs font-semibold tracking-widest uppercase">
+                Display Order
+              </label>
+              <input
+                type="number"
+                name="sort_order"
+                value={form.sort_order}
+                onChange={handleChange}
+                placeholder="e.g. 10"
+                className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-xl px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
+              />
+              <p className="text-luxury-500 text-xs">
+                Lower number shows first. Leave blank to send to the bottom.
+              </p>
             </div>
           </div>
 

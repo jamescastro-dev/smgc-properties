@@ -100,7 +100,7 @@ export default function PrivacyPage() {
               Legal
             </span>
           </div>
-          <h1 className="text-4xl font-extrabold text-luxury-50 tracking-tight mb-4">
+          <h1 className="text-4xl font-display font-semibold text-luxury-50 tracking-tight mb-4">
             Privacy Policy
           </h1>
           <p className="text-luxury-400 text-sm leading-relaxed">

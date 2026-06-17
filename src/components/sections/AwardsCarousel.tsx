@@ -61,137 +61,110 @@ export default function AwardsCarousel({
   sectionClassName?: string;
 }) {
   const [current, setCurrent] = useState(0);
+  const n = AWARDS.length;
 
-  const prev = useCallback(
-    () => setCurrent((i) => (i === 0 ? AWARDS.length - 1 : i - 1)),
-    []
-  );
-  const next = useCallback(
-    () => setCurrent((i) => (i === AWARDS.length - 1 ? 0 : i + 1)),
-    []
-  );
+  const prev = useCallback(() => setCurrent((i) => (i === 0 ? n - 1 : i - 1)), [n]);
+  const next = useCallback(() => setCurrent((i) => (i === n - 1 ? 0 : i + 1)), [n]);
 
   const award = AWARDS[current];
+  const prevIdx = (current - 1 + n) % n;
+  const nextIdx = (current + 1) % n;
 
   return (
-    <section className={`${sectionClassName} py-16`}>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-
+    <section className={`${sectionClassName} py-12`}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* ── Section header ── */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 mb-4">
+        <div className="text-center mb-7">
+          <div className="inline-flex items-center gap-2 mb-3">
             <span className="w-8 h-px bg-gold-500" />
             <span className="text-gold-500 text-xs tracking-widest uppercase font-semibold">
               Recognition
             </span>
             <span className="w-8 h-px bg-gold-500" />
           </div>
-          <h2 className="text-4xl font-extrabold text-luxury-50 tracking-tight mb-4">
+          <h2 className="text-3xl sm:text-4xl font-display font-semibold text-luxury-50 tracking-tight mb-3">
             Awards &amp; Recognition
           </h2>
-          <p className="text-luxury-400 text-base max-w-xl mx-auto leading-relaxed">
-            A decade of excellence, recognized by industry leaders and
-            clients alike.
+          <p className="text-luxury-400 text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
+            A decade of excellence, recognized by industry leaders and clients
+            alike.
           </p>
         </div>
 
-        {/* ── Main slide ── */}
-        <div className="relative group">
-          <div
-            key={current}
-            className="relative aspect-video rounded-2xl overflow-hidden bg-luxury-800 animate-fade-in"
-          >
-            <Image
-              src={award.src}
-              alt={award.title}
-              fill
-              sizes="(max-width: 768px) 100vw, 90vw"
-              className="object-contain"
-              priority
-            />
+        {/* ── Coverflow (wide frame, height-capped, caption on image) ── */}
+        <div className="relative">
+          {/* Stage */}
+          <div className="relative flex items-center justify-center overflow-hidden">
+            {/* Prev peek */}
+            <div className="hidden sm:block absolute left-0 top-1/2 -translate-y-1/2 -translate-x-[40%] w-[58%] h-[260px] sm:h-[380px] rounded-xl overflow-hidden opacity-25 pointer-events-none">
+              <Image src={AWARDS[prevIdx].src} alt="" fill sizes="40vw" className="object-cover" />
+              <div className="absolute inset-0 bg-luxury-900/50" />
+            </div>
 
-            {/* Info overlay — desktop only */}
-            <div className="hidden sm:block absolute bottom-0 left-0 right-0 p-6">
-              <div className="flex items-end justify-between gap-4">
-                <div className="bg-black/60 rounded-xl px-4 py-3">
-                  <span className="inline-block text-[10px] font-bold tracking-widest uppercase text-gold-400 mb-1">
-                    {award.year}
-                  </span>
-                  <h3 className="text-white font-extrabold text-xl leading-tight mb-0.5">
-                    {award.title}
-                  </h3>
-                  <p className="text-gold-400/90 text-xs font-semibold tracking-wide">
-                    {award.organization}
-                  </p>
-                </div>
-                <span className="text-white text-sm font-medium tabular-nums shrink-0 bg-black/60 rounded-lg px-2 py-1">
-                  {current + 1} / {AWARDS.length}
+            {/* Next peek */}
+            <div className="hidden sm:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-[40%] w-[58%] h-[260px] sm:h-[380px] rounded-xl overflow-hidden opacity-25 pointer-events-none">
+              <Image src={AWARDS[nextIdx].src} alt="" fill sizes="40vw" className="object-cover" />
+              <div className="absolute inset-0 bg-luxury-900/50" />
+            </div>
+
+            {/* Center slide + caption overlay */}
+            <div
+              key={current}
+              className="relative w-full sm:w-[66%] aspect-3/2 sm:aspect-auto sm:h-[440px] rounded-2xl overflow-hidden bg-luxury-800 border border-luxury-700 shadow-2xl shadow-black/50 z-10 animate-fade-in"
+            >
+              <Image
+                src={award.src}
+                alt={award.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 720px"
+                className="object-contain"
+                priority
+              />
+              {/* Caption on image */}
+              <div className="absolute inset-x-0 bottom-0 px-5 py-4 sm:px-7 sm:py-5 bg-linear-to-t from-luxury-900 via-luxury-900/85 to-transparent">
+                <span className="inline-block text-[10px] sm:text-[11px] font-bold tracking-[0.12em] uppercase text-luxury-900 bg-gold-500 rounded-full px-3 py-1 mb-2.5 shadow-md">
+                  {award.year}
                 </span>
+                <h3 className="font-display text-lg sm:text-2xl font-semibold text-luxury-50 leading-tight">
+                  {award.title}
+                </h3>
+                <p className="text-luxury-300 text-xs sm:text-sm mt-0.5">
+                  {award.organization}
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Info below image — mobile only */}
-          <div className="sm:hidden mt-3 flex items-start justify-between gap-3 px-1">
-            <div>
-              <span className="inline-block text-[10px] font-bold tracking-widest uppercase text-gold-500 border border-gold-500/40 rounded-full px-3 py-0.5 mb-1.5">
-                {award.year}
-              </span>
-              <h3 className="text-luxury-50 font-extrabold text-base leading-tight mb-0.5">
-                {award.title}
-              </h3>
-              <p className="text-gold-500/80 text-xs font-semibold tracking-wide">
-                {award.organization}
-              </p>
-            </div>
-            <span className="text-luxury-400 text-sm font-medium tabular-nums shrink-0 mt-0.5">
-              {current + 1} / {AWARDS.length}
-            </span>
-          </div>
-
-          {/* Prev arrow */}
+          {/* Arrows */}
           <button
             onClick={prev}
             aria-label="Previous award"
-            className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 border border-white/20 hover:border-gold-500/60 flex items-center justify-center text-white hover:text-gold-400 transition-all duration-200 opacity-70 group-hover:opacity-100"
-          >
+            className="absolute left-1 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-luxury-50 text-luxury-900 hover:bg-gold-500 flex items-center justify-center shadow-lg transition-colors">
             <ChevronLeft className="w-5 h-5" />
           </button>
-
-          {/* Next arrow */}
           <button
             onClick={next}
             aria-label="Next award"
-            className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 border border-white/20 hover:border-gold-500/60 flex items-center justify-center text-white hover:text-gold-400 transition-all duration-200 opacity-70 group-hover:opacity-100"
-          >
+            className="absolute right-1 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-luxury-50 text-luxury-900 hover:bg-gold-500 flex items-center justify-center shadow-lg transition-colors">
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
 
-        {/* ── Thumbnail strip ── */}
-        <div className="flex gap-3 mt-4 overflow-x-auto pb-1 scrollbar-none">
-          {AWARDS.map((a, i) => (
+        {/* ── Dots ── */}
+        <div className="flex items-center justify-center gap-2 mt-6">
+          {AWARDS.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrent(i)}
               aria-label={`Go to award ${i + 1}`}
-              className={`relative aspect-video w-24 sm:w-32 rounded-lg overflow-hidden border-2 transition-all duration-200 shrink-0 bg-luxury-800 ${
+              className={`h-1.5 rounded-full transition-all duration-200 ${
                 i === current
-                  ? "border-gold-500 opacity-100 shadow-lg shadow-gold-500/20"
-                  : "border-luxury-700 opacity-50 hover:opacity-75 hover:border-luxury-500"
+                  ? "w-6 bg-gold-500"
+                  : "w-1.5 bg-luxury-600 hover:bg-luxury-500"
               }`}
-            >
-              <Image
-                src={a.src}
-                alt={a.title}
-                fill
-                sizes="128px"
-                className="object-contain"
-              />
-            </button>
+            />
           ))}
         </div>
-
       </div>
     </section>
   );

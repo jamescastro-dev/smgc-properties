@@ -88,12 +88,12 @@ export default function AboutPage() {
             {/* Left: Text */}
             <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
               <div className="inline-flex items-center gap-2.5 bg-gold-500/10 border border-gold-500/30 rounded-full px-4 py-1.5 mb-6">
-                <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-gold-500" />
                 <span className="text-gold-500 text-[11px] tracking-[0.15em] uppercase font-semibold">
                   About Broker Shella
                 </span>
               </div>
-              <h1 className="text-[clamp(2.2rem,4vw,3.25rem)] font-extrabold text-luxury-50 leading-[1.08] tracking-tight mb-5">
+              <h1 className="text-[clamp(2.5rem,5vw,3.75rem)] font-display font-bold text-luxury-50 leading-[1.05] tracking-tight mb-5">
                 A Broker Who Truly{" "}
                 <span className="text-gold-500">Cares</span>
               </h1>
@@ -180,7 +180,7 @@ export default function AboutPage() {
                 {/* Availability chip — desktop only */}
                 <div className="hidden lg:block absolute -left-3 top-1/2 -translate-y-1/2 bg-luxury-800 border border-luxury-700 rounded-2xl px-4 py-3 z-20">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="w-2 h-2 rounded-full bg-gold-500 animate-pulse" />
+                    <span className="w-2 h-2 rounded-full bg-gold-500" />
                     <span className="text-gold-500 text-[10px] font-bold tracking-widest uppercase">
                       Available Now
                     </span>
@@ -259,39 +259,51 @@ export default function AboutPage() {
       {/* ── Services ── */}
       <section className="bg-luxury-800 py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 mb-4">
-              <span className="w-8 h-px bg-gold-500" />
-              <span className="text-gold-500 text-xs tracking-widest uppercase font-semibold">
-                What Broker Shella offers
-              </span>
-              <span className="w-8 h-px bg-gold-500" />
-            </div>
-            <h2 className="text-4xl font-extrabold text-luxury-50 tracking-tight mb-4">
-              Services Offered
-            </h2>
-            <p className="text-luxury-400 text-base max-w-xl mx-auto leading-relaxed">
-              From finding the perfect property to completing all the paperwork
-              — she handles it all.
-            </p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-6">
-            {SERVICES.map((service) => (
-              <div
-                key={service.title}
-                className="group flex flex-col bg-luxury-900 border border-luxury-700 hover:border-gold-500/40 rounded-2xl p-7 transition-all duration-300 hover:-translate-y-1 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
-              >
-                <div className="w-12 h-12 rounded-xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center mb-5 group-hover:bg-gold-500/20 transition-colors">
-                  <service.icon className="w-5 h-5 text-gold-500" />
-                </div>
-                <h3 className="text-luxury-50 font-bold text-base mb-2 group-hover:text-gold-500 transition-colors">
-                  {service.title}
-                </h3>
-                <p className="text-luxury-400 text-sm leading-relaxed">
-                  {service.description}
-                </p>
+          <div className="grid lg:grid-cols-[0.85fr_1.15fr] gap-12 lg:gap-20 items-start">
+            {/* Left — heading (sticky on desktop) */}
+            <div className="lg:sticky lg:top-28">
+              <div className="inline-flex items-center gap-2 mb-5">
+                <span className="w-8 h-px bg-gold-500" />
+                <span className="text-gold-500 text-xs tracking-widest uppercase font-semibold">
+                  What Broker Shella offers
+                </span>
               </div>
-            ))}
+              <h2 className="text-4xl lg:text-[2.75rem] font-display font-semibold text-luxury-50 tracking-tight leading-[1.1] mb-5">
+                Services Offered
+              </h2>
+              <p className="text-luxury-400 text-base leading-relaxed mb-8 max-w-md">
+                From finding the perfect property to completing all the
+                paperwork — she handles it all.
+              </p>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-600 text-luxury-900 text-sm font-bold px-6 py-3.5 rounded-lg tracking-wide transition-colors">
+                Book a Free Consultation
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            {/* Right — services list */}
+            <div className="border-t border-luxury-700">
+              {SERVICES.map((service) => (
+                <div
+                  key={service.title}
+                  className="group flex items-start gap-5 py-6 border-b border-luxury-700"
+                >
+                  <div className="flex items-center justify-center w-11 h-11 rounded-full bg-gold-500/10 border border-gold-500/25 shrink-0 group-hover:bg-gold-500 transition-colors duration-300">
+                    <service.icon className="w-5 h-5 text-gold-500 group-hover:text-luxury-900 transition-colors duration-300" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-luxury-50 font-semibold text-lg mb-1 group-hover:text-gold-500 transition-colors">
+                      {service.title}
+                    </h3>
+                    <p className="text-luxury-400 text-sm leading-relaxed max-w-xl">
+                      {service.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -299,7 +311,7 @@ export default function AboutPage() {
       {/* ── CTA ── */}
       <section className="bg-luxury-900 py-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-extrabold text-luxury-50 tracking-tight mb-4">
+          <h2 className="text-4xl font-display font-semibold text-luxury-50 tracking-tight mb-4">
             Ready to Find Your Dream Home?
           </h2>
           <p className="text-luxury-400 text-base leading-relaxed mb-10">

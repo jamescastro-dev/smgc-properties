@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
-import { Phone, Mail, MapPin, Send, CheckCircle } from "lucide-react";
+import Image from "next/image";
+import { Phone, Mail, MapPin, Send, CheckCircle, MessageCircle } from "lucide-react";
 import { SITE_CONFIG, LOCATIONS as BASE_LOCATIONS } from "@/lib/constants";
 import { LeadForm } from "@/types";
 
@@ -53,6 +54,7 @@ export default function ContactSection() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [consent, setConsent] = useState(false);
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -71,7 +73,10 @@ export default function ContactSection() {
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          company: honeypotRef.current?.value || "",
+        }),
       });
 
       const data = await res.json();
@@ -91,45 +96,125 @@ export default function ContactSection() {
   };
 
   return (
-    <section className="bg-luxury-800 py-10">
+    <section className="bg-luxury-800 py-16 lg:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section header */}
-        <div className="text-center mb-10">
+        {/* ── Header (leads the section) ── */}
+        <div className="mb-12">
           <div className="inline-flex items-center gap-2 mb-4">
             <span className="w-8 h-px bg-gold-500" />
             <span className="text-gold-500 text-xs tracking-widest uppercase font-semibold">
               Get in touch
             </span>
-            <span className="w-8 h-px bg-gold-500" />
           </div>
-          <h2 className="text-4xl font-extrabold text-luxury-50 tracking-tight mb-4">
+          <h2 className="text-4xl lg:text-5xl font-display font-semibold text-luxury-50 tracking-tight leading-[1.1] mb-4">
             Get Free Property Recommendations
           </h2>
-          <p className="text-luxury-400 text-base max-w-xl mx-auto leading-relaxed mb-8">
-            Tell Broker Shella what you're looking for and she will find the best
-            options for you in Bulacan and Luzon.
+          <p className="text-luxury-400 text-base leading-relaxed max-w-2xl">
+            Tell Broker Shella what you're looking for and she will find the
+            best options for you in Bulacan and Luzon.
           </p>
-
-          {/* Trust signals */}
-          <div className="flex flex-wrap justify-center gap-6">
-            {[
-              "20+ Years Experience",
-              "1000+ Properties Sold",
-              "PRC Licensed Broker",
-            ].map((signal) => (
-              <div
-                key={signal}
-                className="flex items-center gap-2 text-xs text-gold-500 font-semibold tracking-wide">
-                <span className="w-1.5 h-1.5 rounded-full bg-gold-500" />
-                {signal}
-              </div>
-            ))}
-          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 pb-10 items-start">
-          {/* Form */}
-          <div className="bg-luxury-900 border border-luxury-700/60 rounded-2xl p-8">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+
+          {/* ── Info rail (right on desktop) ── */}
+          <div className="lg:sticky lg:top-28 lg:order-2">
+            {/* Agent */}
+            <div className="flex items-center gap-4 mb-7">
+              <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-gold-500/30 shrink-0">
+                <Image
+                  src="/shella.jpg"
+                  alt="Broker Shella Castro"
+                  fill
+                  sizes="64px"
+                  className="object-cover object-top"
+                  priority
+                />
+              </div>
+              <div>
+                <p className="text-luxury-50 font-semibold text-base leading-tight">
+                  Shella Castro
+                </p>
+                <p className="text-gold-500 text-[11px] tracking-widest uppercase font-semibold mt-1">
+                  Licensed Broker · {SITE_CONFIG.prcLicense}
+                </p>
+              </div>
+            </div>
+            {/* Quick actions — Call + Viber */}
+            <div className="flex gap-3">
+              <a
+                href={`tel:${SITE_CONFIG.phone}`}
+                className="flex-1 inline-flex items-center justify-center gap-2 bg-gold-500 hover:bg-gold-600 text-luxury-900 font-bold px-5 py-3.5 rounded-lg tracking-wide transition-colors">
+                <Phone className="w-4 h-4" />
+                Call Now
+              </a>
+              <a
+                href={`viber://chat?number=${SITE_CONFIG.phone.replace(/\D/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-2 border border-gold-500 text-gold-500 hover:bg-gold-500 hover:text-luxury-900 font-bold px-5 py-3.5 rounded-lg tracking-wide transition-all duration-300">
+                <MessageCircle className="w-4 h-4" />
+                Viber
+              </a>
+            </div>
+
+            {/* Contact methods */}
+            <div className="flex flex-col divide-y divide-luxury-700 border-y border-luxury-700 mt-8">
+              {CONTACT_INFO.map((item) => (
+                <div key={item.label} className="flex items-center gap-4 py-4">
+                  <div className="w-10 h-10 rounded-full bg-gold-500/10 border border-gold-500/25 flex items-center justify-center shrink-0">
+                    <item.icon className="w-4 h-4 text-gold-500" />
+                  </div>
+                  <div>
+                    <p className="text-luxury-500 text-[11px] tracking-widest uppercase font-semibold mb-0.5">
+                      {item.label}
+                    </p>
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        className="text-luxury-50 text-sm font-medium hover:text-gold-500 transition-colors">
+                        {item.value}
+                      </a>
+                    ) : (
+                      <p className="text-luxury-50 text-sm font-medium">
+                        {item.value}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Trust signals */}
+            <div className="flex flex-wrap gap-x-6 gap-y-2 mt-8">
+              {[
+                "20+ Years Experience",
+                "1000+ Properties Sold",
+                "PRC Licensed Broker",
+              ].map((signal) => (
+                <div
+                  key={signal}
+                  className="flex items-center gap-2 text-xs text-gold-500 font-semibold tracking-wide">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold-500" />
+                  {signal}
+                </div>
+              ))}
+            </div>
+
+            {/* Availability */}
+            <div className="flex items-center gap-3 bg-gold-500/10 border border-gold-500/25 rounded-xl px-4 py-3 mt-8">
+              <span className="w-2 h-2 rounded-full bg-gold-500 shrink-0" />
+              <p className="text-luxury-300 text-xs leading-relaxed">
+                <span className="text-luxury-50 font-semibold">Available now</span>{" "}
+                · Mon–Sat, 6AM–8PM · replies within 24 hours
+              </p>
+            </div>
+
+          </div>
+
+          {/* ── Form (left on desktop) ── */}
+          <div className="flex flex-col gap-5 lg:order-1">
+            <div className="bg-luxury-900 border border-luxury-700/60 rounded-2xl p-7 sm:p-8 shadow-xl shadow-black/20">
             {submitted ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="w-16 h-16 rounded-full bg-gold-500/10 border border-gold-500/30 flex items-center justify-center mb-6">
@@ -150,6 +235,16 @@ export default function ContactSection() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                {/* Honeypot — hidden from users, bait for bots; must stay empty */}
+                <input
+                  ref={honeypotRef}
+                  type="text"
+                  name="company"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="absolute -left-[9999px] h-0 w-0 opacity-0"
+                />
                 {/* Name + Phone */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="flex flex-col gap-1.5">
@@ -318,64 +413,9 @@ export default function ContactSection() {
                 </button>
               </form>
             )}
-          </div>
-
-          {/* Sidebar */}
-          <div className="flex flex-col gap-4">
-            {/* Call CTA */}
-            <a
-              href={`tel:${SITE_CONFIG.phone}`}
-              className="flex items-center justify-center gap-2.5 bg-gold-500 hover:bg-gold-600 text-luxury-900 font-bold py-4 rounded-xl transition-colors duration-300">
-              <Phone className="w-4 h-4" />
-              Call Now
-            </a>
-
-            {/* Divider */}
-            <div className="border-t border-luxury-700 my-1" />
-
-            {/* Contact info cards */}
-            {CONTACT_INFO.map((item) => (
-              <div
-                key={item.label}
-                className="flex items-start gap-4 bg-luxury-900 border border-luxury-700/60 rounded-xl p-5">
-                <div className="w-9 h-9 rounded-lg bg-gold-500/10 border border-gold-500/20 flex items-center justify-center shrink-0">
-                  <item.icon className="w-4 h-4 text-gold-500" />
-                </div>
-                <div>
-                  <p className="text-luxury-400 text-xs tracking-widest uppercase font-semibold mb-1">
-                    {item.label}
-                  </p>
-                  {item.href ? (
-                    <a
-                      href={item.href}
-                      className="text-luxury-50 text-sm font-medium hover:text-gold-500 transition-colors">
-                      {item.value}
-                    </a>
-                  ) : (
-                    <p className="text-luxury-50 text-sm font-medium">
-                      {item.value}
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
-
-            {/* Availability card */}
-            <div className="bg-gold-500/10 border border-gold-500/30 rounded-xl p-5 mt-2">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="w-2 h-2 rounded-full bg-gold-500 animate-pulse" />
-                <span className="text-gold-500 text-xs font-bold tracking-widest uppercase">
-                  Available Now
-                </span>
-              </div>
-              <p className="text-luxury-50 text-sm font-semibold mb-1">
-                Free Consultation
-              </p>
-              <p className="text-luxury-400 text-xs leading-relaxed">
-                Monday to Saturday, 6AM – 8PM. Expect a reply within 24 hours.
-              </p>
             </div>
           </div>
+
         </div>
       </div>
     </section>

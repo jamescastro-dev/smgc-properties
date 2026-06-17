@@ -30,13 +30,7 @@ export const LOCATIONS = [
   "Pandi, Bulacan",
   "Baliwag, Bulacan",
   "San Rafael, Bulacan",
-  "San Jose Del Monte, Bulacan",
-  "Meycauayan, Bulacan",
   "Marilao, Bulacan",
-  "Bocaue, Bulacan",
-  "Caloocan, Metro Manila",
-  "Tagaytay City",
-  "Cavite",
   "Batangas City",
   "Other",
 ] as const;

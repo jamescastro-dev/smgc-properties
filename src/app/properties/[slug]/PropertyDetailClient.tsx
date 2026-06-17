@@ -21,7 +21,7 @@ import {
   ZoomIn,
 } from "lucide-react";
 import { Property } from "@/types";
-import { formatPrice } from "@/lib/utils";
+import { formatPriceCompact } from "@/lib/utils";
 import PropertyCard from "@/components/ui/PropertyCard";
 import { SITE_CONFIG } from "@/lib/constants";
 
@@ -43,6 +43,7 @@ export default function PropertyDetailClient({ property, similar }: Props) {
     message: `I'm interested in ${property.title}. Please contact me.`,
   });
   const [consent, setConsent] = useState(false);
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -71,6 +72,7 @@ export default function PropertyDetailClient({ property, similar }: Props) {
           location: property.location,
           property_id: property.id,
           property_name: property.title,
+          company: honeypotRef.current?.value || "",
         }),
       });
 
@@ -294,7 +296,7 @@ export default function PropertyDetailClient({ property, similar }: Props) {
               {/* Title + Price */}
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
                 <div>
-                  <h1 className="text-2xl font-extrabold text-luxury-50 leading-tight mb-2">
+                  <h1 className="text-2xl font-display font-semibold text-luxury-50 leading-tight mb-2">
                     {property.title}
                   </h1>
                   <div className="flex flex-col gap-1">
@@ -311,13 +313,8 @@ export default function PropertyDetailClient({ property, similar }: Props) {
                 </div>
                 <div className="shrink-0">
                   <p className="text-3xl font-black text-gold-500 leading-none">
-                    {formatPrice(property.price, property.type)}
+                    {formatPriceCompact(property.price, property.type)}
                   </p>
-                  {property.type === "rent" && (
-                    <p className="text-luxury-400 text-xs mt-1 text-right">
-                      per month
-                    </p>
-                  )}
                 </div>
               </div>
 
@@ -371,11 +368,11 @@ export default function PropertyDetailClient({ property, similar }: Props) {
               </div>
 
               {/* Description */}
-              <div>
-                <h2 className="text-luxury-50 text-lg font-bold mb-3">
+              <div className="border-t border-luxury-700 pt-8">
+                <h2 className="text-luxury-50 font-display text-2xl font-semibold mb-4">
                   About this property
                 </h2>
-                <p className="text-luxury-400 text-sm leading-relaxed whitespace-pre-wrap">
+                <p className="text-luxury-300 text-[15px] leading-[1.85] whitespace-pre-wrap max-w-2xl">
                   {property.description}
                 </p>
               </div>
@@ -383,17 +380,21 @@ export default function PropertyDetailClient({ property, similar }: Props) {
 
             {/* Google Maps */}
             <div className="bg-luxury-800 border border-luxury-700 rounded-2xl overflow-hidden">
-              <div className="px-6 py-4 border-b border-luxury-700">
-                <h2 className="text-luxury-50 text-lg font-bold">Location</h2>
-                <div className="flex items-center gap-1.5 text-luxury-400 text-sm mt-1">
-                  <MapPin className="w-3.5 h-3.5 text-gold-500" />
-                  {property.location}
-                </div>
+              <div className="flex items-center justify-between gap-3 px-6 py-4 border-b border-luxury-700">
+                <h2 className="text-luxury-50 font-display text-xl font-semibold truncate">
+                  {property.subdivision || property.location}
+                </h2>
+                {property.subdivision && (
+                  <div className="flex items-center gap-1.5 text-luxury-400 text-sm shrink-0">
+                    <MapPin className="w-3.5 h-3.5 text-gold-500 shrink-0" />
+                    {property.location}
+                  </div>
+                )}
               </div>
               <iframe
                 src={property.map_url || `https://maps.google.com/maps?q=${encodeURIComponent([property.subdivision, property.location].filter(Boolean).join(", "))}&output=embed`}
                 width="100%"
-                height="300"
+                height="420"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
@@ -449,6 +450,16 @@ export default function PropertyDetailClient({ property, similar }: Props) {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                  {/* Honeypot — hidden from users, bait for bots; must stay empty */}
+                  <input
+                    ref={honeypotRef}
+                    type="text"
+                    name="company"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    className="absolute -left-[9999px] h-0 w-0 opacity-0"
+                  />
                   <input
                     type="text"
                     name="name"
@@ -555,7 +566,7 @@ export default function PropertyDetailClient({ property, similar }: Props) {
                     You might also like
                   </span>
                 </div>
-                <h2 className="text-2xl font-extrabold text-luxury-50">
+                <h2 className="text-2xl font-display font-semibold text-luxury-50">
                   Similar Properties
                 </h2>
               </div>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Bed, Bath, Maximize2, Star, Car } from "lucide-react";
 import { Property } from "@/types";
-import { formatPrice, slugify } from "@/lib/utils";
+import { formatPriceCompact, slugify } from "@/lib/utils";
 
 interface PropertyCardProps {
   property: Property;
@@ -46,7 +46,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         {/* Price overlay */}
         <div className="absolute bottom-3 left-3 z-10">
           <p className="text-luxury-50 font-black text-lg leading-none bg-luxury-900/80 backdrop-blur-sm px-3 py-1.5 rounded-lg">
-            {formatPrice(property.price, property.type)}
+            {formatPriceCompact(property.price, property.type)}
           </p>
         </div>
       </div>

@@ -5,7 +5,6 @@ import { useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Menu, X, Phone, Mail } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
-import ThemeToggle from "@/components/ui/ThemeToggle";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -82,9 +81,8 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Desktop CTA + Theme Toggle */}
+          {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <ThemeToggle />
             <Link
               href="/contact"
               className="border border-gold-500 text-gold-500 hover:bg-gold-500 hover:text-luxury-900 text-sm font-bold px-5 py-2.5 rounded-sm tracking-wide transition-all duration-300">
@@ -92,9 +90,8 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Mobile Toggle */}
+          {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-3">
-            <ThemeToggle />
             <button
               className="text-luxury-50 hover:text-gold-500 transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
