@@ -59,5 +59,48 @@ export default async function PropertyDetailPage({ params }: Props) {
     ).slice(0, 3)
   );
 
-  return <PropertyDetailClient property={property} similar={similar} />;
+  const url = `https://www.smgcproperties.com/properties/${slugify(property.title)}`;
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.smgcproperties.com" },
+        { "@type": "ListItem", position: 2, name: "Properties", item: "https://www.smgcproperties.com/properties" },
+        { "@type": "ListItem", position: 3, name: property.title, item: url },
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: property.title,
+      description: property.description,
+      image: property.images,
+      category: property.property_type || "Real Estate",
+      offers: {
+        "@type": "Offer",
+        price: property.price,
+        priceCurrency: "PHP",
+        availability:
+          property.status === "available"
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
+        url,
+        seller: {
+          "@type": "RealEstateAgent",
+          name: "Broker Shella — SMGC Properties",
+        },
+      },
+    },
+  ];
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <PropertyDetailClient property={property} similar={similar} />
+    </>
+  );
 }
