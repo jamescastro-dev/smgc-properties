@@ -151,18 +151,22 @@ export default function AwardsCarousel({
         </div>
 
         {/* ── Dots ── */}
-        <div className="flex items-center justify-center gap-2 mt-6">
+        <div className="flex items-center justify-center gap-1 mt-5">
           {AWARDS.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrent(i)}
               aria-label={`Go to award ${i + 1}`}
-              className={`h-1.5 rounded-full transition-all duration-200 ${
-                i === current
-                  ? "w-6 bg-gold-500"
-                  : "w-1.5 bg-luxury-600 hover:bg-luxury-500"
-              }`}
-            />
+              className="group/dot flex items-center justify-center p-2.5"
+            >
+              <span
+                className={`h-1.5 rounded-full transition-all duration-200 ${
+                  i === current
+                    ? "w-6 bg-gold-500"
+                    : "w-1.5 bg-luxury-600 group-hover/dot:bg-luxury-500"
+                }`}
+              />
+            </button>
           ))}
         </div>
       </div>

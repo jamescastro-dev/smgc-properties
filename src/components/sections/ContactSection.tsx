@@ -166,7 +166,7 @@ export default function ContactSection() {
                     <item.icon className="w-4 h-4 text-gold-500" />
                   </div>
                   <div>
-                    <p className="text-luxury-500 text-[11px] tracking-widest uppercase font-semibold mb-0.5">
+                    <p className="text-luxury-400 text-[11px] tracking-widest uppercase font-semibold mb-0.5">
                       {item.label}
                     </p>
                     {item.href ? (
@@ -315,6 +315,7 @@ export default function ContactSection() {
                     <div className="relative">
                       <select
                         name="location"
+                        aria-label="Preferred location"
                         value={form.location}
                         onChange={handleChange}
                         className="w-full bg-luxury-800 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg px-4 py-3 text-luxury-50 text-sm outline-none appearance-none transition-colors pr-10">
@@ -337,6 +338,7 @@ export default function ContactSection() {
                     <div className="relative">
                       <select
                         name="budget"
+                        aria-label="Budget range"
                         value={form.budget}
                         onChange={handleChange}
                         className="w-full bg-luxury-800 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg px-4 py-3 text-luxury-50 text-sm outline-none appearance-none transition-colors pr-10">

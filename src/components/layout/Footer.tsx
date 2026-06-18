@@ -45,6 +45,7 @@ export default function Footer() {
                 href={SITE_CONFIG.social.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Facebook"
                 className="w-9 h-9 rounded-lg bg-luxury-800 border border-luxury-700 hover:border-gold-500/50 flex items-center justify-center text-luxury-400 hover:text-gold-500 transition-all">
                 <Facebook className="w-4 h-4" />
               </a>
@@ -52,6 +53,7 @@ export default function Footer() {
                 href={SITE_CONFIG.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Instagram"
                 className="w-9 h-9 rounded-lg bg-luxury-800 border border-luxury-700 hover:border-gold-500/50 flex items-center justify-center text-luxury-400 hover:text-gold-500 transition-all">
                 <Instagram className="w-4 h-4" />
               </a>
@@ -60,9 +62,9 @@ export default function Footer() {
 
           {/* Quick links */}
           <div>
-            <h4 className="text-luxury-50 text-sm font-bold tracking-widest uppercase mb-6">
+            <h3 className="text-luxury-50 text-sm font-bold tracking-widest uppercase mb-6">
               Quick Links
-            </h4>
+            </h3>
             <ul className="flex flex-col gap-3">
               {QUICK_LINKS.map((link) => (
                 <li key={link.href}>
@@ -78,9 +80,9 @@ export default function Footer() {
 
           {/* Property types */}
           <div>
-            <h4 className="text-luxury-50 text-sm font-bold tracking-widest uppercase mb-6">
+            <h3 className="text-luxury-50 text-sm font-bold tracking-widest uppercase mb-6">
               Property Types
-            </h4>
+            </h3>
             <ul className="flex flex-col gap-3">
               {PROPERTY_TYPES.map((type) => (
                 <li key={type.href}>
@@ -96,9 +98,9 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="text-luxury-50 text-sm font-bold tracking-widest uppercase mb-6">
+            <h3 className="text-luxury-50 text-sm font-bold tracking-widest uppercase mb-6">
               Contact Us
-            </h4>
+            </h3>
             <ul className="flex flex-col gap-4">
               <li>
                 <a
@@ -137,11 +139,11 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-luxury-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-luxury-500 text-xs">
+          <p className="text-luxury-400 text-xs">
             © {new Date().getFullYear()} SMGC Properties · Broker Shella Castro.
             All rights reserved.
           </p>
-          <div className="flex items-center gap-4 text-xs text-luxury-500">
+          <div className="flex items-center gap-4 text-xs text-luxury-400">
             <span>Licensed Real Estate Broker · {SITE_CONFIG.prcLicense}</span>
             <Link href="/privacy" className="hover:text-gold-500 transition-colors">
               Privacy Policy

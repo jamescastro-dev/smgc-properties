@@ -63,7 +63,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             <span className="truncate">{property.location}</span>
           </div>
           {property.subdivision && (
-            <p className="text-luxury-500 text-xs pl-5">
+            <p className="text-luxury-400 text-xs pl-5">
               {property.subdivision}
             </p>
           )}

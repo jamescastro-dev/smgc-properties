@@ -82,7 +82,7 @@ export default function WhyChooseUs() {
               <div
                 key={reason.title}
                 className="group flex items-start gap-5 sm:gap-7 py-7 border-b border-luxury-700">
-                <span className="font-display text-3xl text-luxury-600 group-hover:text-gold-500 transition-colors leading-none tabular-nums pt-1">
+                <span className="font-display text-3xl text-luxury-500 group-hover:text-gold-500 transition-colors leading-none tabular-nums pt-1">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <div className="flex-1">

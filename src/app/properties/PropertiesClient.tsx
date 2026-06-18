@@ -186,6 +186,7 @@ export default function PropertiesClient({ initialProperties }: Props) {
           {/* Sort */}
           <div className="relative w-full sm:w-auto">
             <select
+              aria-label="Sort properties"
               value={sort}
               onChange={(e) =>
                 handleFilterChange(() => setSort(e.target.value as SortValue))

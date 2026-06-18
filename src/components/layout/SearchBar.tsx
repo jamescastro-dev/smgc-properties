@@ -138,6 +138,7 @@ export default function SearchBar() {
           {/* Filter toggle — mobile */}
           <button
             onClick={() => setShowFilters(!showFilters)}
+            aria-label="Toggle filters"
             className={`lg:hidden flex items-center gap-2 border px-3 py-3 rounded-sm text-sm font-medium transition-all shrink-0 ${
               showFilters
                 ? "bg-gold-500 border-gold-500 text-luxury-900"
