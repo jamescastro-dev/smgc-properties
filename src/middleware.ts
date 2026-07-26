@@ -35,7 +35,9 @@ export async function middleware(request: NextRequest) {
   if (!isLoginPage && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/login";
-    return NextResponse.redirect(url);
+    const res = NextResponse.redirect(url);
+    res.headers.set("X-Robots-Tag", "noindex, nofollow");
+    return res;
   }
 
   if (user) {
@@ -52,7 +54,9 @@ export async function middleware(request: NextRequest) {
     if (!isLoginPage && needsMfa) {
       const url = request.nextUrl.clone();
       url.pathname = "/admin/login";
-      return NextResponse.redirect(url);
+      const res = NextResponse.redirect(url);
+      res.headers.set("X-Robots-Tag", "noindex, nofollow");
+      return res;
     }
 
     // Fully authenticated and idling on the login page → go to the dashboard.
@@ -60,10 +64,13 @@ export async function middleware(request: NextRequest) {
     if (isLoginPage && !needsMfa) {
       const url = request.nextUrl.clone();
       url.pathname = "/admin";
-      return NextResponse.redirect(url);
+      const res = NextResponse.redirect(url);
+      res.headers.set("X-Robots-Tag", "noindex, nofollow");
+      return res;
     }
   }
 
+  supabaseResponse.headers.set("X-Robots-Tag", "noindex, nofollow");
   return supabaseResponse;
 }
 
