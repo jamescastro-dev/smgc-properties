@@ -22,10 +22,12 @@ export function formatPriceCompact(price: number, type: "sale" | "rent"): string
   let formatted: string;
 
   if (price >= 1_000_000) {
-    const millions = price / 1_000_000;
+    // Truncate to 1 decimal (never round up) so promo prices like ₱2,999,999
+    // stay under the mark → "₱2.9M", not "₱3.0M".
+    const millions = Math.floor(price / 100_000) / 10;
     formatted = `₱${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1)}M`;
   } else if (price >= 1_000) {
-    const thousands = price / 1_000;
+    const thousands = Math.floor(price / 100) / 10;
     formatted = `₱${thousands % 1 === 0 ? thousands.toFixed(0) : thousands.toFixed(1)}K`;
   } else {
     formatted = `₱${price.toLocaleString("en-PH")}`;
