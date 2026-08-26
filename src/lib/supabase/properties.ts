@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
-import { Property } from "@/types";
+import { Property, Subdivision } from "@/types";
 import { unstable_cache } from "next/cache";
-import { slugify } from "@/lib/utils";
+import { slugify, subdivisionName } from "@/lib/utils";
 
 const fetchFeaturedProperties = unstable_cache(
   async (supabaseUrl: string, supabaseKey: string): Promise<Property[]> => {
@@ -136,4 +136,54 @@ export async function getSimilarProperties(
 ): Promise<Property[]> {
   const { url, key } = getSupabaseCredentials();
   return fetchSimilarProperties(url, key, id, type);
+}
+
+/**
+ * Group available listings by development. Derived from getAllProperties so it
+ * reuses that cache entry rather than opening a second query path.
+ */
+export async function getSubdivisions(): Promise<Subdivision[]> {
+  const properties = await getAllProperties();
+  const groups = new Map<string, Subdivision>();
+
+  for (const property of properties) {
+    if (!property.subdivision || property.status !== "available") continue;
+    const name = subdivisionName(property.subdivision);
+    if (!name) continue;
+
+    const slug = slugify(name);
+    const group = groups.get(slug);
+
+    if (!group) {
+      groups.set(slug, {
+        name,
+        slug,
+        locations: property.location ? [property.location] : [],
+        properties: [property],
+        minPrice: property.price,
+        maxPrice: property.price,
+      });
+      continue;
+    }
+
+    group.properties.push(property);
+    group.minPrice = Math.min(group.minPrice, property.price);
+    group.maxPrice = Math.max(group.maxPrice, property.price);
+    if (property.location && !group.locations.includes(property.location)) {
+      group.locations.push(property.location);
+    }
+  }
+
+  // Only developments with more than one listing earn a hub page — a single
+  // listing would just duplicate its own detail page and compete with it.
+  return [...groups.values()]
+    .filter((g) => g.properties.length > 1)
+    .sort((a, b) => b.properties.length - a.properties.length);
+}
+
+export async function getSubdivisionBySlug(
+  slug: string
+): Promise<Subdivision | null> {
+  const subdivisions = await getSubdivisions();
+  return subdivisions.find((s) => s.slug === slug) ?? null;
 }

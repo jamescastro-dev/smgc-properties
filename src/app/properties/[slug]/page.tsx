@@ -4,9 +4,10 @@ import {
   getPropertyById,
   getSimilarProperties,
   getAllProperties,
+  getSubdivisionBySlug,
 } from "@/lib/supabase/properties";
 import { FEATURED_PROPERTIES } from "@/lib/data";
-import { slugify } from "@/lib/utils";
+import { slugify, subdivisionName } from "@/lib/utils";
 import PropertyDetailClient from "./PropertyDetailClient";
 import type { Metadata } from "next";
 
@@ -33,16 +34,39 @@ async function resolveProperty(slug: string) {
   return property;
 }
 
+// Listing descriptions are authored for humans — emoji, line breaks and
+// financing tables. Google shows ~155 chars, so flatten and clip on a word
+// boundary rather than letting it truncate mid-table.
+function metaDescription(property: { description?: string | null }): string {
+  const flat = (property.description ?? "")
+    .replace(/\s+/g, " ")
+    .replace(
+      /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{2B00}-\u{2BFF}]/gu,
+      ""
+    )
+    .replace(/\s+/g, " ")
+    .trim();
+  if (flat.length <= 155) return flat;
+  const clipped = flat.slice(0, 155);
+  return `${clipped.slice(0, clipped.lastIndexOf(" "))}…`;
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const property = await resolveProperty(slug);
   if (!property) return { title: "Property Not Found" };
+  const description = metaDescription(property);
   return {
-    title: `${property.title} | Broker Shella`,
-    description: property.description,
+    // Bare title — the root layout's template appends the brand. Adding it
+    // here too produced "… | Broker Shella | Broker Shella — SMGC Properties".
+    title: property.title,
+    description,
+    alternates: {
+      canonical: `/properties/${slugify(property.title)}`,
+    },
     openGraph: {
       title: property.title,
-      description: property.description,
+      description,
       images: property.images?.[0] ? [property.images[0]] : [],
     },
   };
@@ -58,6 +82,12 @@ export default async function PropertyDetailPage({ params }: Props) {
       (p) => p.id !== property.id && p.type === property.type
     ).slice(0, 3)
   );
+
+  // Only link the development when it actually has a hub page (>1 listing).
+  const subdivisionSlug = property.subdivision
+    ? (await getSubdivisionBySlug(slugify(subdivisionName(property.subdivision))))
+        ?.slug ?? null
+    : null;
 
   const url = `https://www.smgcproperties.com/properties/${slugify(property.title)}`;
   const jsonLd = [
@@ -100,7 +130,11 @@ export default async function PropertyDetailPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PropertyDetailClient property={property} similar={similar} />
+      <PropertyDetailClient
+        property={property}
+        similar={similar}
+        subdivisionSlug={subdivisionSlug}
+      />
     </>
   );
 }

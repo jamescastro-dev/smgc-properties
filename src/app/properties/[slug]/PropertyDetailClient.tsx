@@ -28,9 +28,15 @@ import { SITE_CONFIG } from "@/lib/constants";
 interface Props {
   property: Property;
   similar: Property[];
+  /** Slug of this development's hub page, when one exists. */
+  subdivisionSlug?: string | null;
 }
 
-export default function PropertyDetailClient({ property, similar }: Props) {
+export default function PropertyDetailClient({
+  property,
+  similar,
+  subdivisionSlug,
+}: Props) {
   const [activeImage, setActiveImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -304,11 +310,18 @@ export default function PropertyDetailClient({ property, similar }: Props) {
                       <MapPin className="w-4 h-4 text-gold-500 shrink-0" />
                       {property.location}
                     </div>
-                    {property.subdivision && (
-                      <p className="text-luxury-500 text-xs pl-6">
-                        {property.subdivision}
-                      </p>
-                    )}
+                    {property.subdivision &&
+                      (subdivisionSlug ? (
+                        <Link
+                          href={`/subdivisions/${subdivisionSlug}`}
+                          className="text-gold-500 text-xs pl-6 hover:underline underline-offset-2">
+                          View all units in {property.subdivision}
+                        </Link>
+                      ) : (
+                        <p className="text-luxury-500 text-xs pl-6">
+                          {property.subdivision}
+                        </p>
+                      ))}
                   </div>
                 </div>
                 <div className="shrink-0">

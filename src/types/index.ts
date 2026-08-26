@@ -21,6 +21,17 @@ export interface Property {
   created_at?: string;
 }
 
+/** A development (e.g. St. Agatha Homes) with every listing we carry in it. */
+export interface Subdivision {
+  name: string;
+  slug: string;
+  /** Distinct municipalities the development's listings sit in. */
+  locations: string[];
+  properties: Property[];
+  minPrice: number;
+  maxPrice: number;
+}
+
 export interface Testimonial {
   id: string;
   name: string;

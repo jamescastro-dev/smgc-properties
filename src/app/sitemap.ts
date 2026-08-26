@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { getAllProperties } from "@/lib/supabase/properties";
+import { getAllProperties, getSubdivisions } from "@/lib/supabase/properties";
 import { FEATURED_PROPERTIES } from "@/lib/data";
 import { slugify } from "@/lib/utils";
 
@@ -14,6 +14,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(p.created_at || new Date()),
     changeFrequency: "weekly" as const,
     priority: 0.8,
+  }));
+
+  // Development hub pages — these target subdivision-name searches
+  // ("St. Agatha Homes"), so they rank above the individual unit pages.
+  const subdivisions = await getSubdivisions().catch(() => []);
+  const subdivisionUrls = subdivisions.map((s) => ({
+    url: `${baseUrl}/subdivisions/${s.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.9,
   }));
 
   return [
@@ -41,6 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    ...subdivisionUrls,
     ...propertyUrls,
   ];
 }
