@@ -2,6 +2,18 @@
 
 Real estate listings and lead management for a Philippine property broker. Built with Next.js, Supabase, and Tailwind CSS.
 
+**Live site:** [www.smgcproperties.com](https://www.smgcproperties.com/) — a production site in active use by a PRC-licensed real estate broker.
+
+## Screenshots
+
+![Home page on desktop: hero headline "Find Your Dream Home with Broker Shella" beside a portrait of the broker, with a property search bar above](docs/screenshots/home-desktop.webp)
+
+![Properties page on desktop: grid of listing cards with photos, prices, locations and All / For Sale / For Rent filters](docs/screenshots/properties-desktop.webp)
+
+![Property detail page on desktop: listing photo with promo price and features, next to Call Now, Viber and an inquiry form](docs/screenshots/property-detail-desktop.webp)
+
+<img src="docs/screenshots/home-mobile.webp" alt="Home page on a 390px-wide phone screen: stacked hero headline, Browse Properties and Book a Consultation buttons, and experience stats" width="300">
+
 ## Features
 
 - Property listings with search and filters (buy / rent)
@@ -13,6 +25,8 @@ Real estate listings and lead management for a Philippine property broker. Built
 ## Tech Stack
 
 - [Next.js 16](https://nextjs.org/) — React framework with App Router
+- [React 19](https://react.dev/) — UI library
+- [TypeScript](https://www.typescriptlang.org/) — strict mode
 - [Supabase](https://supabase.com/) — database and authentication
 - [Tailwind CSS v4](https://tailwindcss.com/) — styling
 - [next-themes](https://github.com/pacocoursey/next-themes) — theme management
@@ -46,4 +60,4 @@ Deploy on [Vercel](https://vercel.com/) — connect your GitHub repo and add the
 
 ## License
 
-MIT
+All rights reserved. Source shared for portfolio purposes.

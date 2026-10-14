@@ -16,9 +16,9 @@ import { SITE_CONFIG } from "@/lib/constants";
 import AwardsCarousel from "@/components/sections/AwardsCarousel";
 
 export const metadata: Metadata = {
-  title: "About Broker Shella | SMGC Properties",
+  title: "About Shella Castro",
   description:
-    "Learn about Broker Shella Castro — a licensed real estate broker with 10+ years of experience helping families find their dream homes in Bulacan and Luzon.",
+    "Learn about Broker Shella Castro — a licensed real estate broker with 20+ years of experience helping families find their dream homes in Bulacan and Luzon.",
 };
 
 const STATS = [

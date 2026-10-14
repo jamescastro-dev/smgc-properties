@@ -3,7 +3,7 @@ import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Broker Shella — SMGC Properties",
+  title: "Privacy Policy",
   description:
     "Learn how SMGC Properties collects, uses, and protects your personal information in accordance with the Data Privacy Act of 2012 (RA 10173).",
 };

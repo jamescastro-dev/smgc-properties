@@ -7,7 +7,7 @@ import { FEATURED_PROPERTIES } from "@/lib/data";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Properties | Broker Shella — SMGC Properties",
+  title: "Properties",
   description:
     "Browse all available properties for sale and rent in Bulacan and Luzon.",
 };
