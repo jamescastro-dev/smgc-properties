@@ -5,8 +5,16 @@ import AwardsCarousel from "@/components/sections/AwardsCarousel";
 import AccreditedDevelopers from "@/components/sections/AccreditedDevelopers";
 import ContactSection from "@/components/sections/ContactSection";
 import { SITE_CONFIG } from "@/lib/constants";
+import type { Metadata } from "next";
 
 const BASE_URL = "https://www.smgcproperties.com";
+
+// Title, description and social cards come from the root layout — they were
+// written for the home page. Only the canonical lives here, since setting it in
+// the layout would make every page without its own claim to be the home page.
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 const brokerJsonLd = {
   "@context": "https://schema.org",

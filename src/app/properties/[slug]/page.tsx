@@ -7,6 +7,7 @@ import {
   getSubdivisionBySlug,
 } from "@/lib/supabase/properties";
 import { propertySlug, slugify, subdivisionName } from "@/lib/utils";
+import { pageMetadata } from "@/lib/seo";
 import PropertyDetailClient from "./PropertyDetailClient";
 import MobileContactBar from "@/components/layout/MobileContactBar";
 import type { Metadata } from "next";
@@ -53,21 +54,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const property = await resolveProperty(slug);
   if (!property) return { title: "Property Not Found" };
-  const description = metaDescription(property);
-  return {
+  return pageMetadata({
     // Bare title — the root layout's template appends the brand. Adding it
     // here too produced "… | Broker Shella | Broker Shella — SMGC Properties".
     title: property.title,
-    description,
-    alternates: {
-      canonical: `/properties/${propertySlug(property)}`,
-    },
-    openGraph: {
-      title: property.title,
-      description,
-      images: property.images?.[0] ? [property.images[0]] : [],
-    },
-  };
+    description: metaDescription(property),
+    path: `/properties/${propertySlug(property)}`,
+    images: property.images?.slice(0, 1),
+  });
 }
 
 export default async function PropertyDetailPage({ params }: Props) {

@@ -8,6 +8,7 @@ import {
 } from "@/lib/supabase/properties";
 import { formatPriceCompact, propertySlug } from "@/lib/utils";
 import PropertyCard from "@/components/ui/PropertyCard";
+import { pageMetadata } from "@/lib/seo";
 import MobileContactBar from "@/components/layout/MobileContactBar";
 import type { Subdivision } from "@/types";
 
@@ -49,22 +50,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const where = locationLabel(subdivision.locations);
   const count = subdivision.properties.length;
 
-  return {
+  return pageMetadata({
     title: `${subdivision.name} — House and Lot for Sale in ${where}`,
     description: `${subdivision.name} in ${where}: ${count} house and lot units for sale from ${priceRange(
       subdivision
     )}. Official pricing, floor plans and site viewing with Broker Shella, PRC-licensed real estate broker.`,
-    alternates: { canonical: `/subdivisions/${subdivision.slug}` },
-    openGraph: {
-      title: `${subdivision.name} — House and Lot for Sale in ${where}`,
-      description: `${count} available units at ${subdivision.name}, ${where}. Prices from ${priceRange(
-        subdivision
-      )}.`,
-      images: subdivision.properties[0]?.images?.[0]
-        ? [subdivision.properties[0].images[0]]
-        : [],
-    },
-  };
+    path: `/subdivisions/${subdivision.slug}`,
+    images: subdivision.properties[0]?.images?.slice(0, 1),
+  });
 }
 
 export default async function SubdivisionPage({ params }: Props) {

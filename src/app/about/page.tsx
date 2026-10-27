@@ -13,13 +13,15 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
+import { pageMetadata } from "@/lib/seo";
 import AwardsCarousel from "@/components/sections/AwardsCarousel";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "About Shella Castro",
   description:
     "Learn about Broker Shella Castro — a licensed real estate broker with 20+ years of experience helping families find their dream homes in Bulacan and Luzon.",
-};
+  path: "/about",
+});
 
 const STATS = [
   { value: "20+", label: "Years Experience" },

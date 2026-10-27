@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import PropertiesClient from "./PropertiesClient";
 import PropertyCard from "@/components/ui/PropertyCard";
 import { getAllProperties } from "@/lib/supabase/properties";
+import { pageMetadata } from "@/lib/seo";
 import {
   ITEMS_PER_PAGE,
   PropertyQuery,
@@ -24,12 +25,12 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   // main list. Plain pagination is unique content, so each page is its own
   // canonical (Google's guidance; canonicalising page 2 to page 1 hides it).
   const paginatedOnly = !hasFilters(q) && q.page > 1;
-  return {
+  return pageMetadata({
     title: paginatedOnly ? `Properties — Page ${q.page}` : "Properties",
     description:
       "Browse all available properties for sale and rent in Bulacan and Luzon.",
-    alternates: { canonical: paginatedOnly ? `/properties?page=${q.page}` : "/properties" },
-  };
+    path: paginatedOnly ? `/properties?page=${q.page}` : "/properties",
+  });
 }
 
 export default async function PropertiesPage({ searchParams }: Props) {

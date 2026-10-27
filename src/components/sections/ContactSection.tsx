@@ -50,7 +50,12 @@ const CONTACT_INFO = [
   },
 ];
 
-export default function ContactSection() {
+export default function ContactSection({
+  headingLevel: Heading = "h2",
+}: {
+  /** h1 when this section is the whole page (/contact), h2 on the home page. */
+  headingLevel?: "h1" | "h2";
+}) {
   const [form, setForm] = useState(INITIAL_FORM);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -109,9 +114,9 @@ export default function ContactSection() {
               Get in touch
             </span>
           </div>
-          <h2 className="text-4xl lg:text-5xl font-display font-semibold text-luxury-50 tracking-tight leading-[1.1] mb-4">
+          <Heading className="text-4xl lg:text-5xl font-display font-semibold text-luxury-50 tracking-tight leading-[1.1] mb-4">
             Get Free Property Recommendations
-          </h2>
+          </Heading>
           <p className="text-luxury-400 text-base leading-relaxed max-w-2xl">
             Tell Broker Shella what you're looking for and she will find the
             best options for you in Bulacan and Luzon.

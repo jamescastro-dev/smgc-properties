@@ -1,12 +1,14 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/constants";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Privacy Policy",
   description:
     "Learn how SMGC Properties collects, uses, and protects your personal information in accordance with the Data Privacy Act of 2012 (RA 10173).",
-};
+  path: "/privacy",
+});
 
 const SECTIONS = [
   {
