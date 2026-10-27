@@ -7,6 +7,7 @@ import { X, Save, ArrowLeft, ImagePlus } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Property } from "@/types";
+import { slugify } from "@/lib/utils";
 
 interface Props {
   property?: Partial<Property> & { id?: string };
@@ -51,6 +52,7 @@ export default function PropertyForm({ property }: Props) {
 
   const [form, setForm] = useState({
     title: property?.title || "",
+    slug: property?.slug || "",
     description: property?.description || "",
     price: property?.price || "",
     type: property?.type || "sale",
@@ -81,6 +83,10 @@ export default function PropertyForm({ property }: Props) {
   useEffect(() => {
     if (error) errorRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [error]);
+
+  // What a blank URL field resolves to on save: the current URL when editing
+  // (the DB keeps it), otherwise one generated from the title.
+  const fallbackSlug = isEditing ? (property?.slug ?? "") : slugify(form.title);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -170,25 +176,23 @@ export default function PropertyForm({ property }: Props) {
       garage: Number(form.garage),
       sort_order: form.sort_order === "" ? null : Number(form.sort_order),
       images,
+      // Blank → the DB trigger generates one from the title (new listing) or
+      // keeps the current one (edit). A changed slug is archived by the
+      // trigger so the old link 308-redirects (see 20261027_property_slugs.sql).
+      slug: slugify(form.slug) || null,
     };
 
-    if (isEditing) {
-      const { error } = await supabase
-        .from("properties")
-        .update(payload)
-        .eq("id", property.id);
-      if (error) {
-        setError(error.message);
-        setLoading(false);
-        return;
-      }
-    } else {
-      const { error } = await supabase.from("properties").insert(payload);
-      if (error) {
-        setError(error.message);
-        setLoading(false);
-        return;
-      }
+    const { error } = isEditing
+      ? await supabase.from("properties").update(payload).eq("id", property.id)
+      : await supabase.from("properties").insert(payload);
+    if (error) {
+      setError(
+        error.code === "23505" && error.message.includes("slug")
+          ? "That URL is already used by another listing. Pick a different one."
+          : error.message,
+      );
+      setLoading(false);
+      return;
     }
 
     // Revalidate cache
@@ -229,6 +233,47 @@ export default function PropertyForm({ property }: Props) {
                 placeholder="e.g. Modern Family Home in San Jose del Monte"
                 className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-xl px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
               />
+            </div>
+
+            {/* URL slug — set once, then stable: renaming the title never
+                changes it, so links already shared on Facebook keep working. */}
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="slug"
+                className="text-luxury-300 text-xs font-semibold tracking-widest uppercase">
+                Page URL
+              </label>
+              <div className="flex items-stretch bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus-within:border-gold-500 rounded-xl overflow-hidden transition-colors">
+                <span className="hidden sm:flex items-center pl-4 text-luxury-500 text-sm select-none whitespace-nowrap">
+                  /properties/
+                </span>
+                <input
+                  id="slug"
+                  type="text"
+                  name="slug"
+                  value={form.slug}
+                  onChange={handleChange}
+                  onBlur={() => setForm((prev) => ({ ...prev, slug: slugify(prev.slug) }))}
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  placeholder={fallbackSlug || "generated-from-the-title"}
+                  className="flex-1 min-w-0 bg-transparent px-4 sm:pl-0.5 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none"
+                />
+              </div>
+              <p className="text-luxury-500 text-xs leading-relaxed break-all">
+                smgcproperties.com/properties/
+                <span className="text-luxury-300">
+                  {slugify(form.slug) || fallbackSlug || "…"}
+                </span>
+              </p>
+              <p className="text-luxury-500 text-xs leading-relaxed">
+                {isEditing
+                  ? form.slug && slugify(form.slug) !== property?.slug
+                    ? "Changing this moves the page — the old link will automatically redirect here."
+                    : "Stays the same even if you rename the title, so shared links keep working."
+                  : "Leave blank to create it from the title. It won't change if you rename the listing later."}
+              </p>
             </div>
 
             {/* Description */}
