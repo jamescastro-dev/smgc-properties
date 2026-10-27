@@ -8,6 +8,7 @@ import {
 } from "@/lib/supabase/properties";
 import { formatPriceCompact, slugify } from "@/lib/utils";
 import PropertyCard from "@/components/ui/PropertyCard";
+import MobileContactBar from "@/components/layout/MobileContactBar";
 import type { Subdivision } from "@/types";
 
 interface Props {
@@ -275,6 +276,7 @@ export default async function SubdivisionPage({ params }: Props) {
           </Link>
         </section>
       </div>
+      <MobileContactBar />
     </main>
   );
 }

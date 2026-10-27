@@ -13,7 +13,10 @@ export async function POST() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    revalidateTag("properties", "app-router");
+    // Expire immediately so an edited or deleted listing is gone on the very
+    // next request. ("max" would serve the stale copy once; an unknown profile
+    // name throws inside Next and expires nothing.)
+    revalidateTag("properties", { expire: 0 });
     return NextResponse.json({ revalidated: true }, { status: 200 });
   } catch {
     return NextResponse.json(

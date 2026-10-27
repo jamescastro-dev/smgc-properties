@@ -4,6 +4,14 @@ html {
   scrollbar-gutter: stable;
 }
 
+/* Keep the footer clear of the fixed MobileContactBar (72px + home indicator)
+   on the pages that render it. Matches the bar's lg:hidden breakpoint. */
+@media (max-width: 1023.98px) {
+  body:has([data-mobile-contact-bar]) {
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  }
+}
+
 @theme {
   --color-luxury-50: #f9f9f9;
   --color-luxury-100: #f0f0f0;

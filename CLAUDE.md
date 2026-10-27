@@ -42,8 +42,9 @@ src/
 
 - **Reads** go through `src/lib/supabase/properties.ts`. Each fetcher is wrapped in `unstable_cache` with `{ revalidate: 60, tags: ["properties"] }`. These run a plain `supabase-js` client (Supabase URL + anon key passed in as args) because **`unstable_cache` cannot read cookies** — don't call the cookie-based server client inside them.
 - **Writes** (admin) mutate Supabase, then `POST /api/revalidate`, which calls `revalidateTag("properties")` so the cached reads refresh.
-- **Property pages** use clean slugs: `getPropertyBySlug` matches `slugify(title)`. `/properties/[slug]` falls back UUID → static `FEATURED_PROPERTIES` (`src/lib/data.ts`) when the DB is unavailable, so the site degrades gracefully.
+- **Property pages** use clean slugs: `getPropertyBySlug` matches `slugify(title)`. `/properties/[slug]` falls back to a UUID lookup for old links. There is deliberately no static/demo fallback — if the DB is unavailable, pages show empty states rather than fake listings.
 - Tables: `properties`, `leads`. Lead messages embed the property as a `[PROPERTY:<name>]` prefix so admins always see context.
+- **Leads:** phones are stored as E.164 (`+639171234567`) — the forms use `components/ui/PhoneInput` (country picker, PH default) and `/api/leads` re-validates with `normalizePhone` (`lib/phone.ts`). `leads.source` (jsonb) records attribution — landing page, UTM tags, referrer, form, submit page — captured by `lib/leadSource.ts`. Schema changes live in `supabase/migrations/` and are run by hand in the Supabase SQL editor.
 
 ## Auth
 

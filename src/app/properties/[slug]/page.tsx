@@ -6,9 +6,9 @@ import {
   getAllProperties,
   getSubdivisionBySlug,
 } from "@/lib/supabase/properties";
-import { FEATURED_PROPERTIES } from "@/lib/data";
 import { slugify, subdivisionName } from "@/lib/utils";
 import PropertyDetailClient from "./PropertyDetailClient";
+import MobileContactBar from "@/components/layout/MobileContactBar";
 import type { Metadata } from "next";
 
 interface Props {
@@ -16,22 +16,15 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  try {
-    const properties = await getAllProperties();
-    return properties.map((p) => ({ slug: slugify(p.title) }));
-  } catch {
-    return FEATURED_PROPERTIES.map((p) => ({ slug: slugify(p.title) }));
-  }
+  const properties = await getAllProperties();
+  return properties.map((p) => ({ slug: slugify(p.title) }));
 }
 
 export const revalidate = 60;
 
 async function resolveProperty(slug: string) {
   // Try slug first, fall back to UUID for backward compatibility
-  let property = await getPropertyBySlug(slug);
-  if (!property) property = await getPropertyById(slug);
-  if (!property) property = FEATURED_PROPERTIES.find((p) => slugify(p.title) === slug || p.id === slug) || null;
-  return property;
+  return (await getPropertyBySlug(slug)) ?? (await getPropertyById(slug));
 }
 
 // Listing descriptions are authored for humans — emoji, line breaks and
@@ -77,11 +70,7 @@ export default async function PropertyDetailPage({ params }: Props) {
   const property = await resolveProperty(slug);
   if (!property) notFound();
 
-  const similar = await getSimilarProperties(property.id, property.type).catch(() =>
-    FEATURED_PROPERTIES.filter(
-      (p) => p.id !== property.id && p.type === property.type
-    ).slice(0, 3)
-  );
+  const similar = await getSimilarProperties(property.id, property.type);
 
   // Only link the development when it actually has a hub page (>1 listing).
   const subdivisionSlug = property.subdivision
@@ -135,6 +124,7 @@ export default async function PropertyDetailPage({ params }: Props) {
         similar={similar}
         subdivisionSlug={subdivisionSlug}
       />
+      <MobileContactBar />
     </>
   );
 }

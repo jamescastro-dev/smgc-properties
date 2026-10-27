@@ -2,14 +2,11 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import PropertyCard from "@/components/ui/PropertyCard";
 import { getFeaturedProperties } from "@/lib/supabase/properties";
-import { FEATURED_PROPERTIES } from "@/lib/data";
 
 export default async function FeaturedProperties() {
-  // Try Supabase first, fall back to dummy data if empty
-  let properties = await getFeaturedProperties();
-  if (properties.length === 0) {
-    properties = FEATURED_PROPERTIES.slice(0, 6);
-  }
+  // Hide the section rather than show placeholder listings that aren't for sale.
+  const properties = await getFeaturedProperties();
+  if (properties.length === 0) return null;
 
   return (
     <section className="bg-luxury-900 py-24">

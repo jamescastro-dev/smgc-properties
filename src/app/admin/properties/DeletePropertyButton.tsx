@@ -22,6 +22,8 @@ export default function DeletePropertyButton({ id }: { id: string }) {
       setLoading(false);
       return;
     }
+    // Bust the public listing cache so the deleted property drops off the site now.
+    await fetch("/api/revalidate", { method: "POST" });
     router.refresh();
   };
 

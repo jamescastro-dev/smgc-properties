@@ -6,6 +6,8 @@ import Image from "next/image";
 import { Phone, Mail, MapPin, Send, CheckCircle, MessageCircle } from "lucide-react";
 import { SITE_CONFIG, LOCATIONS as BASE_LOCATIONS } from "@/lib/constants";
 import { LeadForm } from "@/types";
+import { getLeadSource } from "@/lib/leadSource";
+import PhoneInput from "@/components/ui/PhoneInput";
 
 const LOCATIONS = ["Any Location", ...BASE_LOCATIONS] as const;
 
@@ -75,6 +77,7 @@ export default function ContactSection() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          source: getLeadSource("contact"),
           company: honeypotRef.current?.value || "",
         }),
       });
@@ -265,19 +268,9 @@ export default function ContactSection() {
                     <label className="text-luxury-300 text-xs font-semibold tracking-widest uppercase">
                       Phone Number <span className="text-gold-500">*</span>
                     </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={form.phone}
-                      onChange={(e) => {
-                        const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
-                        setForm((prev) => ({ ...prev, phone: digits }));
-                      }}
-                      required
-                      pattern="\d{11}"
-                      inputMode="numeric"
-                      placeholder="09XXXXXXXXX"
-                      className="bg-luxury-800 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
+                    <PhoneInput
+                      onChange={(phone) => setForm((prev) => ({ ...prev, phone }))}
+                      fieldClassName="bg-luxury-800 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
                     />
                   </div>
                 </div>

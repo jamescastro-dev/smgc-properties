@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Users, Phone, Search, X } from "lucide-react";
 import UpdateLeadStatus from "./UpdateLeadStatus";
 import Pagination from "@/components/ui/Pagination";
+import { describeLeadSource, type LeadSource } from "@/lib/leadSource";
 
 function TooltipCell({
   id,
@@ -81,6 +82,7 @@ interface Lead {
   created_at: string;
   property_id?: string | null;
   properties?: { title: string } | null;
+  source?: LeadSource | null;
 }
 
 const inquiryBadge = (t: string) =>
@@ -240,8 +242,9 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                       <p className="text-luxury-500 text-xs mt-1.5 line-clamp-2">{msg}</p>
                     )}
 
-                    <p className="text-luxury-600 text-xs mt-2">
+                    <p className="text-luxury-600 text-xs mt-2 truncate">
                       {new Date(lead.created_at).toLocaleDateString("en-PH")}
+                      {describeLeadSource(lead.source) && ` · via ${describeLeadSource(lead.source)}`}
                     </p>
                   </div>
                 );
@@ -323,6 +326,13 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                         <span className="text-luxury-500 text-xs whitespace-nowrap">
                           {new Date(lead.created_at).toLocaleDateString("en-PH")}
                         </span>
+                        {describeLeadSource(lead.source) && (
+                          <span
+                            className="block text-luxury-600 text-[11px] max-w-40 truncate"
+                            title={describeLeadSource(lead.source) ?? undefined}>
+                            via {describeLeadSource(lead.source)}
+                          </span>
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         <UpdateLeadStatus

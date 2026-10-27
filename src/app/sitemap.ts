@@ -1,13 +1,11 @@
 import { MetadataRoute } from "next";
 import { getAllProperties, getSubdivisions } from "@/lib/supabase/properties";
-import { FEATURED_PROPERTIES } from "@/lib/data";
 import { slugify } from "@/lib/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://www.smgcproperties.com";
 
-  let properties = await getAllProperties();
-  if (properties.length === 0) properties = FEATURED_PROPERTIES;
+  const properties = await getAllProperties();
 
   const propertyUrls = properties.map((p) => ({
     url: `${baseUrl}/properties/${slugify(p.title)}`,

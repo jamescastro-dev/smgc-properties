@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { normalizePhone } from "@/lib/phone";
+import { sanitizeLeadSource } from "@/lib/leadSource";
 
 // Best-effort in-memory rate limit (per warm serverless instance).
 // For stricter limits across instances, back this with Upstash/Supabase.
@@ -35,6 +37,7 @@ export async function POST(request: Request) {
       budget,
       property_id,
       property_name,
+      source,
       company, // honeypot — must stay empty
     } = body;
 
@@ -74,6 +77,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid input." }, { status: 400 });
     }
 
+    // Stored as E.164 (+639171234567); the form's own check can be bypassed.
+    const validPhone = normalizePhone(phone);
+    if (!validPhone) {
+      return NextResponse.json(
+        { error: "Please enter a valid phone number." },
+        { status: 400 }
+      );
+    }
+
     // Constrain type to the known set; anything else falls back to "buy"
     const ALLOWED_TYPES = ["buy", "sell", "rent"];
     const validType = ALLOWED_TYPES.includes(type) ? type : "buy";
@@ -86,17 +98,28 @@ export async function POST(request: Request) {
       ? `[PROPERTY:${property_name}]${message ? `\n${message}` : ""}`
       : message || null;
 
-    const supabase = await createClient();
-    const { error } = await supabase.from("leads").insert({
+    const lead = {
       name,
-      phone,
+      phone: validPhone,
       message: storedMessage,
       type: validType,
       location: location || null,
       budget: budget || null,
       property_id: validPropertyId,
       status: "new",
-    });
+    };
+
+    const supabase = await createClient();
+    let { error } = await supabase
+      .from("leads")
+      .insert({ ...lead, source: sanitizeLeadSource(source) });
+
+    // If the `source` column hasn't been added yet (PGRST204 = unknown column),
+    // save the lead without it — attribution is nice to have, the lead is not.
+    if (error?.code === "PGRST204") {
+      console.error("[leads] source column missing; saving without it");
+      ({ error } = await supabase.from("leads").insert(lead));
+    }
 
     if (error) {
       console.error("[leads] insert failed:", error.message);

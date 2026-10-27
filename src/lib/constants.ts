@@ -8,6 +8,8 @@ export const SITE_CONFIG = {
   email: "shellamariecastro7@gmail.com",
   address: "City of Malolos, Bulacan, Philippines",
   facebookPageId: "https://www.facebook.com/brokershella.properties/",
+  // Opens a Messenger chat with the business Page (same username as above).
+  messenger: "https://m.me/brokershella.properties",
   prcLicense: "PRC No. 0012448",
   social: {
     facebook: "https://www.facebook.com/shellacastro.28",

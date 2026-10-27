@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import { Property } from "@/types";
 import { formatPriceCompact } from "@/lib/utils";
+import { getLeadSource } from "@/lib/leadSource";
+import PhoneInput from "@/components/ui/PhoneInput";
 import PropertyCard from "@/components/ui/PropertyCard";
 import { SITE_CONFIG } from "@/lib/constants";
 
@@ -78,6 +80,7 @@ export default function PropertyDetailClient({
           location: property.location,
           property_id: property.id,
           property_name: property.title,
+          source: getLeadSource("listing"),
           company: honeypotRef.current?.value || "",
         }),
       });
@@ -482,19 +485,9 @@ export default function PropertyDetailClient({
                     placeholder="Your Name"
                     className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
                   />
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={form.phone}
-                    onChange={(e) => {
-                      const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
-                      setForm((prev) => ({ ...prev, phone: digits }));
-                    }}
-                    required
-                    pattern="\d{11}"
-                    inputMode="numeric"
-                    placeholder="09XXXXXXXXX"
-                    className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
+                  <PhoneInput
+                    onChange={(phone) => setForm((prev) => ({ ...prev, phone }))}
+                    fieldClassName="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
                   />
                   <textarea
                     name="message"

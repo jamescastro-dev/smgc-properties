@@ -1,10 +1,11 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { SITE_CONFIG } from "@/lib/constants";
+import { captureLeadSource } from "@/lib/leadSource";
 
 export default function ConditionalLayout({
   children,
@@ -13,6 +14,11 @@ export default function ConditionalLayout({
 }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
+
+  // Remember how this visitor arrived, for attribution on any lead they send.
+  useEffect(() => {
+    if (!isAdmin) captureLeadSource();
+  }, [isAdmin]);
 
   return (
     <>
