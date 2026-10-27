@@ -32,12 +32,15 @@ interface Props {
   similar: Property[];
   /** Slug of this development's hub page, when one exists. */
   subdivisionSlug?: string | null;
+  /** Slug of this listing's town landing page, when one exists. */
+  townSlug?: string | null;
 }
 
 export default function PropertyDetailClient({
   property,
   similar,
   subdivisionSlug,
+  townSlug,
 }: Props) {
   const offMarket = unavailableLabel(property);
   const [activeImage, setActiveImage] = useState(0);
@@ -321,7 +324,15 @@ export default function PropertyDetailClient({
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-1.5 text-luxury-400 text-sm">
                       <MapPin className="w-4 h-4 text-gold-500 shrink-0" />
-                      {property.location}
+                      {townSlug ? (
+                        <Link
+                          href={`/locations/${townSlug}`}
+                          className="hover:text-gold-500 underline decoration-luxury-600 underline-offset-2 transition-colors">
+                          {property.location}
+                        </Link>
+                      ) : (
+                        property.location
+                      )}
                     </div>
                     {property.subdivision &&
                       (subdivisionSlug ? (

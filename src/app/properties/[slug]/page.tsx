@@ -5,6 +5,7 @@ import {
   getSimilarProperties,
   getAllProperties,
   getSubdivisionBySlug,
+  getTownBySlug,
 } from "@/lib/supabase/properties";
 import { propertySlug, slugify, subdivisionName } from "@/lib/utils";
 import { pageMetadata } from "@/lib/seo";
@@ -83,6 +84,11 @@ export default async function PropertyDetailPage({ params }: Props) {
         ?.slug ?? null
     : null;
 
+  // Same for the town: link "Malolos, Bulacan" only when it has a landing page.
+  const townSlug = property.location
+    ? (await getTownBySlug(slugify(property.location.trim())))?.slug ?? null
+    : null;
+
   const url = `https://www.smgcproperties.com/properties/${propertySlug(property)}`;
   const jsonLd = [
     {
@@ -128,6 +134,7 @@ export default async function PropertyDetailPage({ params }: Props) {
         property={property}
         similar={similar}
         subdivisionSlug={subdivisionSlug}
+        townSlug={townSlug}
       />
       <MobileContactBar />
     </>

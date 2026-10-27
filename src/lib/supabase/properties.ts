@@ -1,4 +1,4 @@
-import { Property, Subdivision } from "@/types";
+import { Property, Subdivision, Town } from "@/types";
 import { unstable_cache } from "next/cache";
 import { propertySlug, slugify, subdivisionName } from "@/lib/utils";
 
@@ -189,6 +189,64 @@ export async function getSubdivisions(): Promise<Subdivision[]> {
   return [...groups.values()]
     .filter((g) => g.properties.length > 1)
     .sort((a, b) => b.properties.length - a.properties.length);
+}
+
+/**
+ * Town landing pages ("House and lot for sale in Malolos"), derived from the
+ * same cached listing set as the hubs. A town qualifies with 2+ available
+ * listings from 2+ developments: a single-development town would duplicate its
+ * hub page, whose title already targets "… for Sale in <town>".
+ */
+export async function getTowns(): Promise<Town[]> {
+  const [properties, hubs] = await Promise.all([getAllProperties(), getSubdivisions()]);
+  const hubSlugs = new Set(hubs.map((h) => h.slug));
+  const groups = new Map<string, Property[]>();
+
+  for (const property of properties) {
+    const location = property.location?.trim();
+    if (property.status !== "available" || !location || location === "Other") continue;
+    groups.set(location, [...(groups.get(location) ?? []), property]);
+  }
+
+  const towns: Town[] = [];
+  for (const [name, listings] of groups) {
+    const devs = new Map<string, Town["developments"][number]>();
+    for (const p of listings) {
+      // Listings without a development each count as their own entry.
+      const dev = (p.subdivision && subdivisionName(p.subdivision)) || p.title;
+      const existing = devs.get(dev);
+      if (existing) {
+        existing.count++;
+        existing.minPrice = Math.min(existing.minPrice, p.price);
+      } else {
+        const hubSlug = p.subdivision ? slugify(dev) : null;
+        devs.set(dev, {
+          name: dev,
+          hubSlug: hubSlug && hubSlugs.has(hubSlug) ? hubSlug : null,
+          count: 1,
+          minPrice: p.price,
+        });
+      }
+    }
+    if (listings.length < 2 || devs.size < 2) continue;
+
+    const prices = listings.map((p) => p.price);
+    towns.push({
+      name,
+      slug: slugify(name),
+      properties: listings,
+      developments: [...devs.values()].sort((a, b) => b.count - a.count),
+      minPrice: Math.min(...prices),
+      maxPrice: Math.max(...prices),
+    });
+  }
+
+  return towns.sort((a, b) => b.properties.length - a.properties.length);
+}
+
+export async function getTownBySlug(slug: string): Promise<Town | null> {
+  const towns = await getTowns();
+  return towns.find((t) => t.slug === slug) ?? null;
 }
 
 export async function getSubdivisionBySlug(

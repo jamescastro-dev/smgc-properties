@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import {
   getSubdivisions,
   getSubdivisionBySlug,
+  getTowns,
 } from "@/lib/supabase/properties";
 import { formatPriceCompact, propertySlug } from "@/lib/utils";
 import PropertyCard from "@/components/ui/PropertyCard";
@@ -112,6 +113,12 @@ export default async function SubdivisionPage({ params }: Props) {
   const range = priceRange(subdivision);
   const url = `${BASE_URL}/subdivisions/${subdivision.slug}`;
   const offer = offering(subdivision);
+
+  // Towns this development sits in that have their own landing page — link
+  // across so buyers comparing a town can see the other developments there.
+  const towns = (await getTowns()).filter((t) =>
+    subdivision.locations.some((l) => l.trim() === t.name)
+  );
 
   const bedroomCounts = [
     ...new Set(
@@ -230,6 +237,15 @@ export default async function SubdivisionPage({ params }: Props) {
             range from {range}. Browse every available model below, or get in
             touch to schedule a site viewing.
           </p>
+          {towns.map((t) => (
+            <Link
+              key={t.slug}
+              href={`/locations/${t.slug}`}
+              className="inline-flex items-center gap-1.5 mt-4 mr-4 text-gold-500 text-sm font-semibold hover:text-gold-400 transition-colors">
+              More homes for sale in {t.name.split(",")[0]}
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          ))}
         </header>
 
         {/* Key facts */}

@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { getAllProperties, getSubdivisions } from "@/lib/supabase/properties";
+import { getAllProperties, getSubdivisions, getTowns } from "@/lib/supabase/properties";
 import { propertySlug } from "@/lib/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -20,6 +20,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const subdivisions = await getSubdivisions().catch(() => []);
   const subdivisionUrls = subdivisions.map((s) => ({
     url: `${baseUrl}/subdivisions/${s.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.9,
+  }));
+
+  // Town landing pages — "house and lot for sale in <town>" searches.
+  const towns = await getTowns().catch(() => []);
+  const townUrls = towns.map((t) => ({
+    url: `${baseUrl}/locations/${t.slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.9,
@@ -50,6 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    ...townUrls,
     ...subdivisionUrls,
     ...propertyUrls,
   ];

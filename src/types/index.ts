@@ -36,6 +36,18 @@ export interface Subdivision {
   maxPrice: number;
 }
 
+/** A town/city with listings from several developments (e.g. Malolos, Bulacan). */
+export interface Town {
+  /** The listing `location` value, e.g. "Malolos, Bulacan". */
+  name: string;
+  slug: string;
+  properties: Property[];
+  /** Developments in town, largest first; `hubSlug` set when it has a hub page. */
+  developments: { name: string; hubSlug: string | null; count: number; minPrice: number }[];
+  minPrice: number;
+  maxPrice: number;
+}
+
 export interface Testimonial {
   id: string;
   name: string;
