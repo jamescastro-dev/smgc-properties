@@ -21,7 +21,7 @@ import {
   ZoomIn,
 } from "lucide-react";
 import { Property } from "@/types";
-import { formatPriceCompact, unavailableLabel } from "@/lib/utils";
+import { formatPriceExact, unavailableLabel } from "@/lib/utils";
 import { getLeadSource } from "@/lib/leadSource";
 import PhoneInput from "@/components/ui/PhoneInput";
 import PropertyCard from "@/components/ui/PropertyCard";
@@ -43,6 +43,15 @@ export default function PropertyDetailClient({
   townSlug,
 }: Props) {
   const offMarket = unavailableLabel(property);
+
+  const sqm = (n: number) => `${Number.isInteger(n) ? n : n.toFixed(2)} sqm`;
+  const specs = [
+    property.bedrooms > 0 && { icon: Bed, value: String(property.bedrooms), label: property.bedrooms === 1 ? "Bedroom" : "Bedrooms" },
+    property.bathrooms > 0 && { icon: Bath, value: String(property.bathrooms), label: property.bathrooms === 1 ? "Bathroom" : "Bathrooms" },
+    property.area > 0 && { icon: Maximize2, value: sqm(property.area), label: "Floor area" },
+    (property.lot_area ?? 0) > 0 && { icon: Maximize2, value: sqm(property.lot_area!), label: "Lot area" },
+    (property.garage ?? 0) > 0 && { icon: Car, value: `${property.garage} ${property.garage === 1 ? "car" : "cars"}`, label: "Garage" },
+  ].filter((x): x is { icon: typeof Bed; value: string; label: string } => Boolean(x));
   const [activeImage, setActiveImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -250,11 +259,13 @@ export default function PropertyDetailClient({
                 <>
                   <button
                     onClick={prevImage}
+                    aria-label="Previous photo"
                     className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-luxury-900/80 backdrop-blur-sm border border-luxury-700 flex items-center justify-center text-luxury-50 hover:border-gold-500/50 hover:text-gold-500 transition-all z-10">
                     <ChevronLeft className="w-5 h-5" />
                   </button>
                   <button
                     onClick={nextImage}
+                    aria-label="Next photo"
                     className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-luxury-900/80 backdrop-blur-sm border border-luxury-700 flex items-center justify-center text-luxury-50 hover:border-gold-500/50 hover:text-gold-500 transition-all z-10">
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -291,30 +302,8 @@ export default function PropertyDetailClient({
               </div>
             )}
 
-            {/* Video Tour */}
-            {property.video_url && (() => {
-              const url = property.video_url;
-              const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-              if (!ytMatch) return null;
-              const embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}`;
-              return (
-                <div className="bg-luxury-800 border border-luxury-700 rounded-2xl overflow-hidden">
-                  <div className="relative aspect-video">
-                    <iframe
-                      src={embedUrl}
-                      title="Property Video Tour"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      loading="lazy"
-                      className="absolute inset-0 w-full h-full"
-                    />
-                  </div>
-                </div>
-              );
-            })()}
-
             {/* Property details */}
-            <div className="bg-luxury-800 border border-luxury-700 rounded-2xl p-8">
+            <div className="bg-luxury-800 border border-luxury-700 rounded-2xl p-5 sm:p-8">
               {/* Title + Price */}
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
                 <div>
@@ -349,60 +338,29 @@ export default function PropertyDetailClient({
                   </div>
                 </div>
                 <div className="shrink-0">
-                  <p className="text-3xl font-black text-gold-500 leading-none">
-                    {formatPriceCompact(property.price, property.type)}
+                  <p className="text-3xl font-black text-gold-500 leading-none tabular-nums">
+                    {formatPriceExact(property.price, property.type)}
                   </p>
                 </div>
               </div>
 
-              {/* Specs */}
-              <div className="flex flex-wrap gap-3 mb-8">
-                {property.bedrooms > 0 && (
-                  <div className="flex flex-col items-center gap-2 bg-luxury-900 border border-luxury-700 rounded-xl py-4 flex-1 min-w-20">
-                    <Bed className="w-5 h-5 text-gold-500" />
-                    <p className="text-luxury-50 text-sm font-bold">
-                      {property.bedrooms}
-                    </p>
-                    <p className="text-luxury-400 text-xs">{property.bedrooms === 1 ? "Bedroom" : "Bedrooms"}</p>
-                  </div>
-                )}
-                {property.bathrooms > 0 && (
-                  <div className="flex flex-col items-center gap-2 bg-luxury-900 border border-luxury-700 rounded-xl py-4 flex-1 min-w-20">
-                    <Bath className="w-5 h-5 text-gold-500" />
-                    <p className="text-luxury-50 text-sm font-bold">
-                      {property.bathrooms}
-                    </p>
-                    <p className="text-luxury-400 text-xs">{property.bathrooms === 1 ? "Bathroom" : "Bathrooms"}</p>
-                  </div>
-                )}
-                {property.area > 0 && (
-                  <div className="flex flex-col items-center gap-2 bg-luxury-900 border border-luxury-700 rounded-xl py-4 flex-1 min-w-20">
-                    <Maximize2 className="w-5 h-5 text-gold-500" />
-                    <p className="text-luxury-50 text-sm font-bold">
-                      {Number.isInteger(property.area) ? property.area : property.area.toFixed(2)}
-                    </p>
-                    <p className="text-luxury-400 text-xs">Floor Area</p>
-                  </div>
-                )}
-                {(property.lot_area ?? 0) > 0 && (
-                  <div className="flex flex-col items-center gap-2 bg-luxury-900 border border-luxury-700 rounded-xl py-4 flex-1 min-w-20">
-                    <Maximize2 className="w-5 h-5 text-gold-500" />
-                    <p className="text-luxury-50 text-sm font-bold">
-                      {Number.isInteger(property.lot_area!) ? property.lot_area : property.lot_area!.toFixed(2)}
-                    </p>
-                    <p className="text-luxury-400 text-xs">Lot Area</p>
-                  </div>
-                )}
-                {(property.garage ?? 0) > 0 && (
-                  <div className="flex flex-col items-center gap-2 bg-luxury-900 border border-luxury-700 rounded-xl py-4 flex-1 min-w-20">
-                    <Car className="w-5 h-5 text-gold-500" />
-                    <p className="text-luxury-50 text-sm font-bold">
-                      {property.garage}
-                    </p>
-                    <p className="text-luxury-400 text-xs">Garage</p>
-                  </div>
-                )}
-              </div>
+              {/* Specs — 2 per row on phones (an odd last item spans the row so
+                  nothing is left orphaned), one row from sm up. */}
+              {specs.length > 0 && (
+                <ul className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 mb-8">
+                  {specs.map(({ icon: Icon, value, label }) => (
+                    <li
+                      key={label}
+                      className="last:odd:col-span-2 sm:flex-1 sm:min-w-28 flex items-center gap-3 bg-luxury-900 border border-luxury-700 rounded-xl px-4 py-3.5">
+                      <Icon className="w-5 h-5 text-gold-500 shrink-0" aria-hidden="true" />
+                      <div className="min-w-0">
+                        <p className="text-luxury-50 text-sm font-bold whitespace-nowrap">{value}</p>
+                        <p className="text-luxury-400 text-xs">{label}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
 
               {/* Description */}
               <div className="border-t border-luxury-700 pt-8">
@@ -414,6 +372,29 @@ export default function PropertyDetailClient({
                 </p>
               </div>
             </div>
+
+            {/* Video Tour — after the details: on a phone, buyers should see the
+                price and specs before scrolling past a whole video. */}
+            {property.video_url && (() => {
+              const url = property.video_url;
+              const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+              if (!ytMatch) return null;
+              const embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}`;
+              return (
+                <div className="bg-luxury-800 border border-luxury-700 rounded-2xl overflow-hidden">
+                  <div className="relative aspect-video">
+                    <iframe
+                      src={embedUrl}
+                      title="Property Video Tour"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full"
+                    />
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Google Maps */}
             <div className="bg-luxury-800 border border-luxury-700 rounded-2xl overflow-hidden">
@@ -430,6 +411,7 @@ export default function PropertyDetailClient({
               </div>
               <iframe
                 src={property.map_url || `https://maps.google.com/maps?q=${encodeURIComponent([property.subdivision, property.location].filter(Boolean).join(", "))}&output=embed`}
+                title={`Map of ${property.subdivision || property.location}`}
                 width="100%"
                 height="420"
                 style={{ border: 0 }}
@@ -443,8 +425,9 @@ export default function PropertyDetailClient({
 
           {/* RIGHT: Sticky inquiry form */}
           <div className="lg:sticky lg:top-[97px] lg:max-h-[calc(100vh-97px)] lg:overflow-y-auto h-fit flex flex-col gap-6 scrollbar-hide">
-            {/* Quick contact buttons */}
-            <div className="flex gap-3">
+            {/* Quick contact buttons — desktop only; phones have the fixed
+                MobileContactBar, so showing these too was a duplicate. */}
+            <div className="hidden lg:flex gap-3">
               <a
                 href={`tel:${SITE_CONFIG.phone}`}
                 className="flex-1 flex items-center justify-center gap-2 bg-gold-500 hover:bg-gold-600 text-luxury-900 font-bold py-3.5 rounded-xl transition-colors text-sm">
@@ -552,7 +535,7 @@ export default function PropertyDetailClient({
                       onChange={(e) => setConsent(e.target.checked)}
                       className="mt-0.5 w-4 h-4 accent-gold-500 shrink-0"
                     />
-                    <span className="text-luxury-500 text-xs leading-relaxed">
+                    <span className="text-luxury-400 text-xs leading-relaxed">
                       I agree to be contacted regarding this inquiry. See the{" "}
                       <Link href="/privacy" className="text-gold-500 hover:text-gold-400 underline underline-offset-2">
                         Privacy Policy

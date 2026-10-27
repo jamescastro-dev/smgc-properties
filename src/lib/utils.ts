@@ -43,6 +43,23 @@ export function formatPrice(price: number, type: "sale" | "rent"): string {
   return type === "rent" ? `${formatted}/mo` : formatted;
 }
 
+/**
+ * Full peso amount for a listing's own page — "₱8,999,999", or
+ * "₱2,529,424.01" when a developer price really has centavos. Cards keep the
+ * compact "₱9M" form.
+ */
+export function formatPriceExact(price: number, type: "sale" | "rent"): string {
+  const cents = Math.round(price * 100) % 100 !== 0;
+  const formatted = new Intl.NumberFormat("en-PH", {
+    style: "currency",
+    currency: "PHP",
+    minimumFractionDigits: cents ? 2 : 0,
+    maximumFractionDigits: cents ? 2 : 0,
+  }).format(price);
+
+  return type === "rent" ? `${formatted}/mo` : formatted;
+}
+
 export function formatPriceCompact(price: number, type: "sale" | "rent"): string {
   let formatted: string;
 

@@ -31,8 +31,8 @@ export default function HeroSection() {
 
       {/* Main content */}
       <div className="relative flex-1 flex items-start z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-10 lg:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] gap-10 xl:gap-20 items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-8 sm:py-10 lg:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] gap-8 sm:gap-10 xl:gap-20 items-center">
 
             {/* Left: Copy — centered on mobile, left on desktop */}
             <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
@@ -91,8 +91,36 @@ export default function HeroSection() {
               </div>
             </div>
 
-            {/* Right: Photo */}
-            <div className="flex flex-col items-center gap-4 lg:items-end">
+            {/* Phones: compact agent card. The full portrait below took ~450px
+                and pushed the first listing to the third screen. */}
+            <div className="sm:hidden w-full flex items-center gap-4 bg-luxury-800 border border-luxury-700 rounded-2xl p-3 pr-4">
+              <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-luxury-700 shrink-0">
+                <Image
+                  src="/shella.jpg"
+                  alt="Broker Shella Castro - Licensed Real Estate Broker"
+                  fill
+                  sizes="64px"
+                  className="object-cover object-[center_top]"
+                />
+              </div>
+              <div className="min-w-0 text-left">
+                <p className="text-luxury-50 text-base font-bold leading-tight">Broker Shella</p>
+                <p className="text-gold-500 text-[11px] tracking-[0.15em] uppercase font-semibold">
+                  SMGC Properties
+                </p>
+                <ul className="flex flex-wrap gap-x-3 gap-y-1 mt-1.5">
+                  {AWARDS.map((award) => (
+                    <li key={award.label} className="flex items-center gap-1 text-luxury-300 text-[11px] font-medium">
+                      <award.icon className="w-3 h-3 text-gold-500 shrink-0" />
+                      {award.label}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Right: Photo — tablet and up */}
+            <div className="hidden sm:flex flex-col items-center gap-4 lg:items-end">
 
               {/* Photo card — clean centered on mobile, floating badges only on lg+ */}
               <div className="relative w-full max-w-72 sm:max-w-sm lg:max-w-110">

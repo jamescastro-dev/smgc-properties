@@ -35,8 +35,8 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-luxury-400 text-sm leading-relaxed mb-6">
-              Your trusted licensed real estate broker in Bulacan and Metro
-              Manila. Helping families find their dream home since 2004.
+              Your trusted licensed real estate broker in Bulacan and
+              Luzon. Helping families find their dream home since 2004.
             </p>
 
             {/* Social links */}
@@ -62,9 +62,9 @@ export default function Footer() {
 
           {/* Quick links */}
           <div>
-            <h3 className="text-luxury-50 text-sm font-bold tracking-widest uppercase mb-6">
+            <h2 className="text-luxury-50 text-sm font-bold tracking-widest uppercase mb-6">
               Quick Links
-            </h3>
+            </h2>
             <ul className="flex flex-col gap-3">
               {QUICK_LINKS.map((link) => (
                 <li key={link.href}>
@@ -80,9 +80,9 @@ export default function Footer() {
 
           {/* Property types */}
           <div>
-            <h3 className="text-luxury-50 text-sm font-bold tracking-widest uppercase mb-6">
+            <h2 className="text-luxury-50 text-sm font-bold tracking-widest uppercase mb-6">
               Property Types
-            </h3>
+            </h2>
             <ul className="flex flex-col gap-3">
               {PROPERTY_TYPES.map((type) => (
                 <li key={type.href}>
@@ -98,9 +98,9 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="text-luxury-50 text-sm font-bold tracking-widest uppercase mb-6">
+            <h2 className="text-luxury-50 text-sm font-bold tracking-widest uppercase mb-6">
               Contact Us
-            </h3>
+            </h2>
             <ul className="flex flex-col gap-4">
               <li>
                 <a

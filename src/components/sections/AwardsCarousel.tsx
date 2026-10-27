@@ -157,7 +157,7 @@ export default function AwardsCarousel({
               key={i}
               onClick={() => setCurrent(i)}
               aria-label={`Go to award ${i + 1}`}
-              className="group/dot flex items-center justify-center p-2.5"
+              className="group/dot flex items-center justify-center h-9 min-w-9 px-1.5"
             >
               <span
                 className={`h-1.5 rounded-full transition-all duration-200 ${

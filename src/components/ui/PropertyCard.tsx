@@ -88,35 +88,36 @@ export default function PropertyCard({ property, aboveFold = false }: PropertyCa
 
         {(property.bedrooms > 0 || property.bathrooms > 0 || property.area > 0 || (property.garage ?? 0) > 0) && (
           <div className="border-t border-luxury-700 mt-auto pt-4">
-            <div className="flex items-center gap-4">
+            {/* Wraps instead of squeezing: each spec stays on one line. */}
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               {property.bedrooms > 0 && (
-                <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
+                <div className="flex items-center gap-1.5 text-luxury-300 text-xs whitespace-nowrap">
                   <Bed className="w-3.5 h-3.5 text-gold-500" />
                   <span>{property.bedrooms} {property.bedrooms === 1 ? "Bed" : "Beds"}</span>
                 </div>
               )}
               {property.bathrooms > 0 && (
-                <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
+                <div className="flex items-center gap-1.5 text-luxury-300 text-xs whitespace-nowrap">
                   <Bath className="w-3.5 h-3.5 text-gold-500" />
                   <span>{property.bathrooms} {property.bathrooms === 1 ? "Bath" : "Baths"}</span>
                 </div>
               )}
               {property.area > 0 && (
-                <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
+                <div className="flex items-center gap-1.5 text-luxury-300 text-xs whitespace-nowrap">
                   <Maximize2 className="w-3.5 h-3.5 text-gold-500" />
                   <span>{Number.isInteger(property.area) ? property.area : property.area.toFixed(2)} sqm floor</span>
                 </div>
               )}
               {(property.lot_area ?? 0) > 0 && (
-                <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
+                <div className="flex items-center gap-1.5 text-luxury-300 text-xs whitespace-nowrap">
                   <Maximize2 className="w-3.5 h-3.5 text-gold-500" />
                   <span>{Number.isInteger(property.lot_area!) ? property.lot_area : property.lot_area!.toFixed(2)} sqm lot</span>
                 </div>
               )}
               {(property.garage ?? 0) > 0 && (
-                <div className="flex items-center gap-1.5 text-luxury-300 text-xs">
+                <div className="flex items-center gap-1.5 text-luxury-300 text-xs whitespace-nowrap">
                   <Car className="w-3.5 h-3.5 text-gold-500" />
-                  <span>{property.garage}</span>
+                  <span>{property.garage} {property.garage === 1 ? "car" : "cars"}</span>
                 </div>
               )}
             </div>

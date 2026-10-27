@@ -7,9 +7,9 @@ export default function NotFound() {
       <div className="text-center max-w-lg">
 
         {/* 404 number */}
-        <p className="text-[120px] font-black text-luxury-800 leading-none select-none mb-4">
-          404
-        </p>
+        {/* Decorative backdrop numeral, drawn via CSS so it is not page text
+            (the h1 below carries the message). */}
+        <p aria-hidden="true" className="text-[120px] font-black text-luxury-800 leading-none select-none mb-4 before:content-['404']" />
 
         {/* Gold divider */}
         <div className="flex items-center justify-center gap-3 mb-8">

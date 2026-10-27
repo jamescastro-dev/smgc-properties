@@ -92,10 +92,13 @@ export default function Navbar() {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-3">
+            {/* 44px tap area around the 24px icon; -mr-2.5 keeps the icon
+                aligned with the page gutter. */}
             <button
-              className="text-luxury-50 hover:text-gold-500 transition-colors"
+              className="w-11 h-11 -mr-2.5 flex items-center justify-center text-luxury-50 hover:text-gold-500 transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label="Toggle menu">
+              aria-label="Toggle menu"
+              aria-expanded={isMenuOpen}>
               {isMenuOpen ? (
                 <X className="w-6 h-6" />
               ) : (

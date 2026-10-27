@@ -52,6 +52,8 @@ export default async function PropertiesPage({ searchParams }: Props) {
         to={start + paginated.length}>
         {paginated.length > 0 && (
           <>
+            {/* Cards title themselves with h3; this keeps the outline h1 → h2 → h3. */}
+            <h2 className="sr-only">Listings</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {paginated.map((property, i) => (
                 // First row on desktop (3 across); on mobile only the first is
