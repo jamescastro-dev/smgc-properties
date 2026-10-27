@@ -11,6 +11,9 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://images.unsplash.com https://*.supabase.co",
   "font-src 'self' data:",
+  // PWA: service worker + web app manifest (both same-origin).
+  "worker-src 'self'",
+  "manifest-src 'self'",
   // Supabase REST/Auth over https, Realtime over wss
   "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
   // YouTube video tours + Google Maps embeds

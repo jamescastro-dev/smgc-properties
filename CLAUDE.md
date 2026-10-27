@@ -37,6 +37,7 @@ src/
 - **Admin** (auth-gated): `/admin`, `/admin/login`, `/admin/properties` (list / `new` / `[id]` edit), `/admin/leads`, `/admin/calculator`
 - **API:** `POST /api/leads` (public — contact/inquiry form), `POST /api/revalidate` (auth-gated — busts the `properties` cache)
 - **SEO:** `sitemap.ts`, `robot.ts`, `not-found.tsx`
+- **PWA:** the admin is an installable home-screen app — `public/admin.webmanifest` (scope `/admin`, `display: standalone`, `start_url: /admin`), a minimal `public/sw.js` (offline fallback only — deliberately caches no Supabase data) registered with scope `/admin` by `src/components/pwa/RegisterSW.tsx`. All PWA head tags (manifest link, `appleWebApp`, `viewportFit: cover`) live in the server `admin/layout.tsx` (which wraps the client `AdminLayoutClient.tsx`) — **never the root layout**, or public visitors get offered "Shella Admin" as an install. Don't use `app/manifest.ts`: Next links it on every page. Icons `public/icon-{192,512}.png` / `icon-512-maskable.png` / `apple-touch-icon.png` (no link tag — iOS fetches it by convention) are rasterized from `src/app/icon.svg` via sharp.
 
 ## Data layer
 

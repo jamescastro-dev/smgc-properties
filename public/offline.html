@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Offline — Broker Shella Admin</title>
+    <style>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        padding: 2rem env(safe-area-inset-right) 2rem env(safe-area-inset-left);
+        background: #0a0a0a;
+        color: #f9f9f9;
+        font-family: Georgia, "Times New Roman", serif;
+        text-align: center;
+      }
+      .mark {
+        width: 64px; height: 64px; border-radius: 16px;
+        background: #171717; border: 1.5px solid rgba(201,168,76,0.4);
+        display: flex; align-items: center; justify-content: center;
+        color: #c9a84c; font-size: 38px; font-weight: 700;
+      }
+      h1 { font-size: 1.25rem; margin: 0.5rem 0 0; font-weight: 700; }
+      p { margin: 0; color: #a8a8a8; font-family: system-ui, sans-serif; font-size: 0.9rem; max-width: 22rem; }
+      button {
+        margin-top: 0.5rem; padding: 0.75rem 1.5rem;
+        background: #c9a84c; color: #0a0a0a; border: none; border-radius: 12px;
+        font-family: system-ui, sans-serif; font-weight: 700; font-size: 0.95rem;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mark">S</div>
+    <h1>You're offline</h1>
+    <p>Reconnect to the internet to view your leads and listings.</p>
+    <button onclick="location.reload()">Try again</button>
+  </body>
+</html>

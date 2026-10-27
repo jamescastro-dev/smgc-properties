@@ -13,6 +13,38 @@ interface Props {
 }
 import { LOCATIONS, PROPERTY_TYPES } from "@/lib/constants";
 
+// Resize/re-encode a photo before upload. Phone cameras produce 3–8MB images;
+// this caps the longest edge at ~1600px and re-encodes as JPEG to save Supabase
+// storage (1GB free tier) and speed up uploads on mobile data. Falls back to the
+// original file on any failure (e.g. a format the browser can't decode).
+async function compressImage(file: File): Promise<Blob> {
+  try {
+    const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+    const MAX = 1600;
+    const scale = Math.min(1, MAX / Math.max(bitmap.width, bitmap.height));
+    const w = Math.round(bitmap.width * scale);
+    const h = Math.round(bitmap.height * scale);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    // JPEG has no alpha: without a backdrop, transparent PNG flyers turn black.
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(bitmap, 0, 0, w, h);
+    bitmap.close?.();
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob((b) => resolve(b), "image/jpeg", 0.8),
+    );
+    return blob ?? file;
+  } catch {
+    return file;
+  }
+}
+
 export default function PropertyForm({ property }: Props) {
   const router = useRouter();
   const isEditing = !!property?.id;
@@ -61,27 +93,39 @@ export default function PropertyForm({ property }: Props) {
     if (!files || files.length === 0) return;
 
     setUploading(true);
+    setError("");
     const supabase = createClient();
     const uploadedUrls: string[] = [];
+    let failed = 0;
 
     for (const file of Array.from(files)) {
-      const ext = file.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`;
+      const blob = await compressImage(file);
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.jpg`;
 
       const { error: uploadError } = await supabase.storage
         .from("properties")
-        .upload(fileName, file);
+        .upload(fileName, blob, { contentType: "image/jpeg" });
 
       if (!uploadError) {
         const { data } = supabase.storage
           .from("properties")
           .getPublicUrl(fileName);
         uploadedUrls.push(data.publicUrl);
+      } else {
+        failed++;
+        console.error("[property] image upload failed:", uploadError.message);
       }
     }
 
-    setImages((prev) => [...prev, ...uploadedUrls]);
+    if (uploadedUrls.length) setImages((prev) => [...prev, ...uploadedUrls]);
+    if (failed > 0) {
+      setError(
+        `${failed} photo${failed > 1 ? "s" : ""} failed to upload. Please try again.`,
+      );
+    }
     setUploading(false);
+    // Reset the input so the same file can be re-picked after a failure.
+    e.target.value = "";
   };
 
   const removeImage = async (url: string) => {
@@ -439,7 +483,7 @@ export default function PropertyForm({ property }: Props) {
                       type="button"
                       onClick={() => removeImage(url)}
                       disabled={removingUrl === url}
-                      className="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-500 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity disabled:opacity-60">
+                      className="absolute top-2 right-2 w-9 h-9 rounded-full bg-red-500 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity disabled:opacity-60">
                       {removingUrl === url ? (
                         <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       ) : (

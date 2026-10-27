@@ -12,6 +12,16 @@ html {
   }
 }
 
+/* Stop iOS Safari from auto-zooming when a form control is focused. Any control
+   with font-size < 16px triggers the zoom, so raise the floor on small screens. */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 @theme {
   --color-luxury-50: #f9f9f9;
   --color-luxury-100: #f0f0f0;
