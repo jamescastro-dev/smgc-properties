@@ -13,6 +13,7 @@ import {
   hasFilters,
   parsePropertyQuery,
   propertiesHref,
+  propertyFacets,
 } from "@/lib/propertyQuery";
 
 interface Props {
@@ -35,7 +36,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
 export default async function PropertiesPage({ searchParams }: Props) {
   const q = parsePropertyQuery(await searchParams);
-  const filtered = filterProperties(await getAllProperties(), q);
+  const all = await getAllProperties();
+  const filtered = filterProperties(all, q);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
   if (q.page > totalPages) notFound();
@@ -47,6 +49,7 @@ export default async function PropertiesPage({ searchParams }: Props) {
     <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[89px]">
       <PropertiesClient
         query={q}
+        facets={propertyFacets(all)}
         total={filtered.length}
         from={Math.min(start + 1, filtered.length)}
         to={start + paginated.length}>
@@ -82,7 +85,7 @@ function pageNumbers(current: number, total: number): (number | "...")[] {
 }
 
 // Real <a href> links — the old client-side buttons left pages 2+ invisible to
-// crawlers, so only the first 6 listings were discoverable from this page.
+// crawlers, so only the first page of listings was discoverable from here.
 function Pagination({ query, totalPages }: { query: PropertyQuery; totalPages: number }) {
   const hrefFor = (page: number) => propertiesHref({ ...query, page });
   const arrow =

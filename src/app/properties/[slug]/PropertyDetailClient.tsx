@@ -11,7 +11,6 @@ import {
   Car,
   Star,
   Share2,
-  ArrowLeft,
   Phone,
   Send,
   CheckCircle,
@@ -21,7 +20,7 @@ import {
   ZoomIn,
 } from "lucide-react";
 import { Property } from "@/types";
-import { formatPriceExact, unavailableLabel } from "@/lib/utils";
+import { formatPriceExact, subdivisionName, unavailableLabel } from "@/lib/utils";
 import { getLeadSource } from "@/lib/leadSource";
 import PhoneInput from "@/components/ui/PhoneInput";
 import PropertyCard from "@/components/ui/PropertyCard";
@@ -43,6 +42,11 @@ export default function PropertyDetailClient({
   townSlug,
 }: Props) {
   const offMarket = unavailableLabel(property);
+  // Facebook-style titles end in "| Development, Town"; the header shows those
+  // as links underneath, so the heading is just the model. <title>/OG keep the
+  // full title.
+  const shortTitle = property.title.split(" | ")[0];
+  const development = property.subdivision ? subdivisionName(property.subdivision) : "";
 
   const sqm = (n: number) => `${Number.isInteger(n) ? n : n.toFixed(2)} sqm`;
   const specs = [
@@ -53,6 +57,10 @@ export default function PropertyDetailClient({
     (property.garage ?? 0) > 0 && { icon: Car, value: `${property.garage} ${property.garage === 1 ? "car" : "cars"}`, label: "Garage" },
   ].filter((x): x is { icon: typeof Bed; value: string; label: string } => Boolean(x));
   const [activeImage, setActiveImage] = useState(0);
+  // Per photo: does its shape fill the 4:3 frame without losing content?
+  const [fitsFrame, setFitsFrame] = useState<Record<string, boolean>>({});
+  const activeSrc = property.images[activeImage];
+  const fillsFrame = fitsFrame[activeSrc] ?? true;
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -165,9 +173,9 @@ export default function PropertyDetailClient({
 
   return (
     <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[89px]">
-      {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex items-center gap-2 text-xs text-luxury-400">
+      {/* Breadcrumb + Share */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-2 text-xs text-luxury-400 min-w-0">
           <Link href="/" className="hover:text-gold-500 transition-colors">
             Home
           </Link>
@@ -178,141 +186,152 @@ export default function PropertyDetailClient({
             Properties
           </Link>
           <span>/</span>
-          <span className="text-luxury-50 truncate max-w-[200px]">
-            {property.title}
+          <span className="text-luxury-50 truncate max-w-[200px] sm:max-w-md">
+            {shortTitle}
           </span>
         </div>
+        <button
+          onClick={handleShare}
+          className="shrink-0 flex items-center gap-2 text-luxury-400 hover:text-gold-500 text-sm font-medium transition-colors border border-luxury-700 hover:border-gold-500/50 rounded-lg px-4 h-10">
+          <Share2 className="w-4 h-4" />
+          {copied ? "Link Copied!" : "Share"}
+        </button>
       </div>
 
       {/* Main content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        {/* Back button + Share */}
-        <div className="flex items-center justify-between mb-6">
-          <Link
-            href="/properties"
-            className="flex items-center gap-2 text-luxury-400 hover:text-gold-500 text-sm font-medium transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Properties
-          </Link>
-          <button
-            onClick={handleShare}
-            className="flex items-center gap-2 text-luxury-400 hover:text-gold-500 text-sm font-medium transition-colors border border-luxury-700 hover:border-gold-500/50 rounded-lg px-4 py-2">
-            <Share2 className="w-4 h-4" />
-            {copied ? "Link Copied!" : "Share"}
-          </button>
-        </div>
-
         {/* Split layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10">
           {/* LEFT: Images + Details */}
           <div className="flex flex-col gap-8">
-            {/* Image gallery */}
-            <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-luxury-800 border border-luxury-700">
-              <button
-                onClick={openLightbox}
-                className="absolute inset-0 z-10 cursor-zoom-in group/zoom"
-                aria-label="View full size image"
-              >
-                <Image
-                  src={property.images[activeImage]}
-                  alt={property.title}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 60vw"
-                  className="object-cover"
-                  priority
-                />
-                {/* Zoom hint — always visible on mobile, hover-only on desktop */}
-                <span className="absolute bottom-4 left-4 flex items-center gap-1.5 bg-luxury-900/80 backdrop-blur-sm text-luxury-300 text-xs px-3 py-1.5 rounded-lg border border-luxury-700 opacity-100 lg:opacity-0 lg:group-hover/zoom:opacity-100 transition-opacity pointer-events-none">
-                  <ZoomIn className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Click</span>
-                  <span className="sm:hidden">Tap</span>
-                  &nbsp;to expand
-                </span>
-              </button>
-
-              {/* Badges */}
-              <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
-                {offMarket ? (
-                  <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg bg-luxury-50 text-luxury-900">
-                    {offMarket}
-                  </span>
-                ) : (
-                  <span
-                    className={`text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg ${
-                      property.type === "sale"
-                        ? "bg-gold-500 text-luxury-900"
-                        : "bg-luxury-900 text-gold-500 border border-gold-500/50"
-                    }`}>
-                    For {property.type === "sale" ? "Sale" : "Rent"}
-                  </span>
-                )}
-                {property.featured && (
-                  <span className="flex items-center gap-1.5 bg-luxury-900/90 backdrop-blur-sm text-gold-500 text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg border border-gold-500/30">
-                    <Star className="w-3 h-3 fill-gold-500" />
-                    Featured
-                  </span>
-                )}
-              </div>
-
-              {/* Navigation arrows — only show if multiple images */}
-              {property.images.length > 1 && (
-                <>
-                  <button
-                    onClick={prevImage}
-                    aria-label="Previous photo"
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-luxury-900/80 backdrop-blur-sm border border-luxury-700 flex items-center justify-center text-luxury-50 hover:border-gold-500/50 hover:text-gold-500 transition-all z-10">
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    aria-label="Next photo"
-                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-luxury-900/80 backdrop-blur-sm border border-luxury-700 flex items-center justify-center text-luxury-50 hover:border-gold-500/50 hover:text-gold-500 transition-all z-10">
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </>
-              )}
-
-              {/* Image counter */}
-              <div className="absolute bottom-4 right-4 bg-luxury-900/80 backdrop-blur-sm text-luxury-50 text-xs font-medium px-3 py-1.5 rounded-lg border border-luxury-700">
-                {activeImage + 1} / {property.images.length}
-              </div>
-            </div>
-
-            {/* Thumbnail strip */}
-            {property.images.length > 1 && (
-              <div className="flex gap-3 overflow-x-auto pb-1">
-                {property.images.map((img, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActiveImage(i)}
-                    className={`relative shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                      activeImage === i
-                        ? "border-gold-500"
-                        : "border-luxury-700 hover:border-gold-500/50"
-                    }`}>
+            <div className="flex flex-col gap-4">
+              {/* Image gallery — the same 4:3 frame on every listing. */}
+              <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-luxury-800 border border-luxury-700">
+                <button
+                  onClick={openLightbox}
+                  className="absolute inset-0 z-10 cursor-zoom-in group/zoom"
+                  aria-label="View full size image"
+                >
+                  {/* Photos 4:3 or wider fill the frame. A square or portrait
+                      flyer would lose its top and bottom (often the price) to
+                      cropping, so those show whole over a blurred fill
+                      instead. Same URL, so no extra download. */}
+                  {!fillsFrame && (
                     <Image
-                      src={img}
-                      alt={`Photo ${i + 1}`}
+                      src={activeSrc}
+                      alt=""
+                      aria-hidden="true"
                       fill
-                      sizes="80px"
-                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 60vw"
+                      className="object-cover scale-110 blur-2xl opacity-40"
                     />
-                  </button>
-                ))}
+                  )}
+                  <Image
+                    src={activeSrc}
+                    alt={property.title}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 60vw"
+                    className={fillsFrame ? "object-cover" : "object-contain"}
+                    onLoad={(e) => {
+                      const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
+                      // Wide photos only lose a little off the sides; square
+                      // and tall flyers would lose their top and bottom.
+                      const fits = w / h >= (4 / 3) * 0.85;
+                      setFitsFrame((prev) => (prev[activeSrc] === fits ? prev : { ...prev, [activeSrc]: fits }));
+                    }}
+                    priority
+                  />
+                  {/* Zoom hint — always visible on mobile, hover-only on desktop */}
+                  <span className="absolute bottom-4 left-4 flex items-center gap-1.5 bg-luxury-900/80 backdrop-blur-sm text-luxury-300 text-xs px-3 py-1.5 rounded-lg border border-luxury-700 opacity-100 lg:opacity-0 lg:group-hover/zoom:opacity-100 transition-opacity pointer-events-none">
+                    <ZoomIn className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Click</span>
+                    <span className="sm:hidden">Tap</span>
+                    &nbsp;to expand
+                  </span>
+                </button>
+
+                {/* Badges */}
+                <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                  {(offMarket || property.type === "rent") && (
+                    <span
+                      className={`text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg ${
+                        offMarket
+                          ? "bg-luxury-50 text-luxury-900"
+                          : "bg-luxury-900/90 text-gold-500 border border-gold-500/50"
+                      }`}>
+                      {offMarket ?? "For Rent"}
+                    </span>
+                  )}
+                  {property.featured && (
+                    <span className="flex items-center gap-1.5 bg-luxury-900/90 backdrop-blur-sm text-gold-500 text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg border border-gold-500/30">
+                      <Star className="w-3 h-3 fill-gold-500" />
+                      Featured
+                    </span>
+                  )}
+                </div>
+
+                {/* Navigation arrows — only show if multiple images */}
+                {property.images.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevImage}
+                      aria-label="Previous photo"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-luxury-900/80 backdrop-blur-sm border border-luxury-700 flex items-center justify-center text-luxury-50 hover:border-gold-500/50 hover:text-gold-500 transition-all z-10">
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={nextImage}
+                      aria-label="Next photo"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-luxury-900/80 backdrop-blur-sm border border-luxury-700 flex items-center justify-center text-luxury-50 hover:border-gold-500/50 hover:text-gold-500 transition-all z-10">
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </>
+                )}
+
+                {/* Image counter */}
+                {property.images.length > 1 && (
+                  <div className="absolute bottom-4 right-4 z-10 pointer-events-none bg-luxury-900/80 backdrop-blur-sm text-luxury-50 text-xs font-medium px-3 py-1.5 rounded-lg border border-luxury-700">
+                    {activeImage + 1} / {property.images.length}
+                  </div>
+                )}
               </div>
-            )}
+
+              {/* Thumbnail strip */}
+              {property.images.length > 1 && (
+                <div className="flex gap-3 overflow-x-auto pb-1">
+                  {property.images.map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveImage(i)}
+                      className={`relative shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                        activeImage === i
+                          ? "border-gold-500"
+                          : "border-luxury-700 hover:border-gold-500/50"
+                      }`}>
+                      <Image
+                        src={img}
+                        alt={`Photo ${i + 1}`}
+                        fill
+                        sizes="80px"
+                        className="object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Property details */}
             <div className="bg-luxury-800 border border-luxury-700 rounded-2xl p-5 sm:p-8">
-              {/* Title + Price */}
-              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
-                <div>
-                  <h1 className="text-2xl font-display font-semibold text-luxury-50 leading-tight mb-2">
-                    {property.title}
+              {/* Title, location and exact price — directly under the photos. */}
+              <header className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 sm:gap-6 mb-6">
+                <div className="min-w-0">
+                  <h1 className="text-2xl font-display font-semibold text-luxury-50 leading-tight">
+                    {shortTitle}
                   </h1>
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-1.5 text-luxury-400 text-sm">
-                      <MapPin className="w-4 h-4 text-gold-500 shrink-0" />
+                  <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+                    <span className="flex items-center gap-1.5 text-luxury-400">
+                      <MapPin className="w-4 h-4 text-gold-500 shrink-0" aria-hidden="true" />
                       {townSlug ? (
                         <Link
                           href={`/locations/${townSlug}`}
@@ -322,28 +341,23 @@ export default function PropertyDetailClient({
                       ) : (
                         property.location
                       )}
-                    </div>
-                    {property.subdivision &&
+                    </span>
+                    {development &&
                       (subdivisionSlug ? (
                         <Link
                           href={`/subdivisions/${subdivisionSlug}`}
-                          className="text-gold-500 text-xs pl-6 hover:underline underline-offset-2">
-                          View all units in {property.subdivision}
+                          className="text-gold-500 hover:text-gold-400 underline-offset-2 hover:underline">
+                          {development} — see all units
                         </Link>
                       ) : (
-                        <p className="text-luxury-500 text-xs pl-6">
-                          {property.subdivision}
-                        </p>
+                        <span className="text-luxury-400">{development}</span>
                       ))}
                   </div>
                 </div>
-                <div className="shrink-0">
-                  <p className="text-3xl font-black text-gold-500 leading-none tabular-nums">
-                    {formatPriceExact(property.price, property.type)}
-                  </p>
-                </div>
-              </div>
-
+                <p className="shrink-0 text-3xl font-black text-gold-500 leading-none tabular-nums">
+                  {formatPriceExact(property.price, property.type)}
+                </p>
+              </header>
               {/* Specs — 2 per row on phones (an odd last item spans the row so
                   nothing is left orphaned), one row from sm up. */}
               {specs.length > 0 && (
@@ -382,6 +396,9 @@ export default function PropertyDetailClient({
               const embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}`;
               return (
                 <div className="bg-luxury-800 border border-luxury-700 rounded-2xl overflow-hidden">
+                  <h2 className="px-6 py-4 border-b border-luxury-700 text-luxury-50 font-display text-xl font-semibold">
+                    Video tour
+                  </h2>
                   <div className="relative aspect-video">
                     <iframe
                       src={embedUrl}
@@ -571,8 +588,15 @@ export default function PropertyDetailClient({
             {/* Broker card */}
             <div className="bg-luxury-800 border border-luxury-700 rounded-2xl p-6">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-full bg-gold-500/10 border border-gold-500/30 flex items-center justify-center shrink-0">
-                  <span className="text-gold-500 font-bold text-lg">S</span>
+                {/* Her photo, not a letter avatar — buyers inquire with a person. */}
+                <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-gold-500/30 shrink-0">
+                  <Image
+                    src="/shella.jpg"
+                    alt="Broker Shella Castro"
+                    fill
+                    sizes="56px"
+                    className="object-cover object-top"
+                  />
                 </div>
                 <div>
                   <p className="text-luxury-50 font-bold text-sm">
@@ -581,6 +605,7 @@ export default function PropertyDetailClient({
                   <p className="text-gold-500 text-xs tracking-widest uppercase">
                     Licensed Broker
                   </p>
+                  <p className="text-luxury-400 text-xs mt-0.5">{SITE_CONFIG.prcLicense}</p>
                 </div>
               </div>
               <p className="text-luxury-400 text-xs leading-relaxed">
