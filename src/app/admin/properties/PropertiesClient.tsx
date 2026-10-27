@@ -2,13 +2,27 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Plus, Pencil, Eye, Building2, Search, X } from "lucide-react";
+import Image from "next/image";
+import { Plus, Pencil, Eye, Building2, Search, X, ImageOff } from "lucide-react";
 import { formatPrice, propertySlug } from "@/lib/utils";
 import DeletePropertyButton from "./DeletePropertyButton";
 import Pagination from "@/components/ui/Pagination";
 import { Property } from "@/types";
 
 const ITEMS_PER_PAGE = 10;
+
+/** Listing cover photo — the quickest way to tell similar titles apart. */
+function Thumb({ property, className }: { property: Property; className: string }) {
+  return (
+    <div className={`relative shrink-0 rounded-xl overflow-hidden bg-luxury-700 border border-luxury-700 ${className}`}>
+      {property.images?.[0] ? (
+        <Image src={property.images[0]} alt="" fill sizes="96px" className="object-cover" />
+      ) : (
+        <ImageOff className="absolute inset-0 m-auto w-5 h-5 text-luxury-500" />
+      )}
+    </div>
+  );
+}
 
 const STATUS_OPTIONS = [
   { value: "all", label: "All" },
@@ -86,14 +100,14 @@ export default function PropertiesClient({
       <div className="bg-luxury-800 border border-luxury-700 rounded-2xl px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap sm:px-5 sm:py-4">
         {/* Status + Type tabs */}
         <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
             {STATUS_OPTIONS.map((s) => {
               const count = statusCounts[s.value as keyof typeof statusCounts];
               return (
                 <button
                   key={s.value}
                   onClick={() => { setStatus(s.value); resetPage(); }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold tracking-widest uppercase border transition-all flex items-center gap-1.5 ${
+                  className={`h-10 sm:h-9 px-3.5 rounded-lg text-xs font-bold tracking-widest uppercase border transition-all flex items-center gap-1.5 ${
                     status === s.value
                       ? "bg-gold-500 text-luxury-900 border-gold-500"
                       : "text-luxury-400 border-luxury-700 hover:border-gold-500/50 hover:text-luxury-50"
@@ -112,7 +126,7 @@ export default function PropertiesClient({
               <button
                 key={t.value}
                 onClick={() => { setType(t.value); resetPage(); }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold tracking-widest uppercase border transition-all ${
+                className={`h-10 sm:h-9 px-3.5 rounded-lg text-xs font-bold tracking-widest uppercase border transition-all ${
                   type === t.value
                     ? "bg-gold-500 text-luxury-900 border-gold-500"
                     : "text-luxury-400 border-luxury-700 hover:border-gold-500/50 hover:text-luxury-50"
@@ -131,12 +145,13 @@ export default function PropertiesClient({
             placeholder="Search properties…"
             value={search}
             onChange={(e) => { setSearch(e.target.value); resetPage(); }}
-            className="w-full sm:w-56 bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg pl-9 pr-9 py-2 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
+            className="w-full sm:w-56 bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg pl-9 pr-10 h-10 sm:h-9 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
           />
           {search && (
             <button
               onClick={() => { setSearch(""); resetPage(); }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-luxury-500 hover:text-luxury-300 transition-colors">
+              aria-label="Clear search"
+              className="absolute right-0 top-0 h-full w-10 flex items-center justify-center text-luxury-500 hover:text-luxury-300 transition-colors">
               <X className="w-3.5 h-3.5" />
             </button>
           )}
@@ -169,56 +184,55 @@ export default function PropertiesClient({
           </div>
         ) : (
           <>
-            {/* ── Mobile / tablet card list ── */}
+            {/* ── Mobile / tablet card list ──
+                Tapping the card opens the editor (the common action); view and
+                delete are separate 40px buttons so they can't be hit by accident. */}
             <div className="lg:hidden divide-y divide-luxury-700/50">
               {paginated.map((property) => (
-                <div key={property.id} className="p-4 hover:bg-luxury-700/20 transition-colors">
-                  <div className="flex items-start justify-between gap-3">
+                <div key={property.id} className="flex items-start gap-2 p-3 sm:p-4">
+                  <Link
+                    href={`/admin/properties/${property.id}`}
+                    className="flex items-start gap-3 min-w-0 flex-1 group">
+                    <Thumb property={property} className="w-20 h-20 sm:w-24 sm:h-24" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-luxury-50 text-sm font-semibold truncate">
+                      <p className="text-luxury-50 text-sm font-semibold leading-snug line-clamp-2 group-hover:text-gold-400 transition-colors">
                         {property.title}
                       </p>
-                      <p className="text-luxury-500 text-xs mt-0.5 truncate">
+                      <p className="text-luxury-500 text-xs mt-1 truncate">
                         {property.location}
                         {property.subdivision && (
                           <span className="text-luxury-600"> · {property.subdivision}</span>
                         )}
                       </p>
+                      <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                        <span className="text-gold-500 text-sm font-bold tabular-nums mr-1">
+                          {formatPrice(property.price, property.type)}
+                        </span>
+                        <span className={`text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full ${statusBadge(property.status)}`}>
+                          {property.status}
+                        </span>
+                        {property.type === "rent" && (
+                          <span className={`text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full ${typeBadge(property.type)}`}>
+                            Rent
+                          </span>
+                        )}
+                        {property.featured && (
+                          <span className="text-gold-500 text-[11px] font-bold">★ Featured</span>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <Link
-                        href={`/properties/${propertySlug(property)}`}
-                        target="_blank"
-                        title="View on site"
-                        className="text-luxury-400 hover:text-gold-500 transition-colors">
-                        <Eye className="w-4 h-4" />
-                      </Link>
-                      <Link
-                        href={`/admin/properties/${property.id}`}
-                        title="Edit"
-                        className="text-luxury-400 hover:text-gold-500 transition-colors">
-                        <Pencil className="w-4 h-4" />
-                      </Link>
-                      <DeletePropertyButton id={property.id} />
-                    </div>
+                  </Link>
+                  <div className="flex flex-col shrink-0 -mr-1 -mt-1">
+                    <Link
+                      href={`/properties/${propertySlug(property)}`}
+                      target="_blank"
+                      title="View on site"
+                      aria-label="View on site"
+                      className="w-10 h-10 rounded-lg flex items-center justify-center text-luxury-400 hover:text-gold-500 hover:bg-luxury-700/60 transition-colors">
+                      <Eye className="w-4 h-4" />
+                    </Link>
+                    <DeletePropertyButton id={property.id} />
                   </div>
-                  <div className="flex items-center gap-2 mt-2.5 flex-wrap">
-                    <span className="text-gold-500 text-sm font-bold">
-                      {formatPrice(property.price, property.type)}
-                    </span>
-                    <span className={`text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full ${typeBadge(property.type)}`}>
-                      {property.type === "sale" ? "Sale" : "Rent"}
-                    </span>
-                    <span className={`text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full ${statusBadge(property.status)}`}>
-                      {property.status}
-                    </span>
-                    {property.featured && (
-                      <span className="text-gold-500 text-xs font-bold">★ Featured</span>
-                    )}
-                  </div>
-                  <p className="text-luxury-600 text-xs mt-1.5">
-                    {new Date(property.created_at ?? "").toLocaleDateString("en-PH")}
-                  </p>
                 </div>
               ))}
             </div>
@@ -238,16 +252,21 @@ export default function PropertiesClient({
                 <tbody className="divide-y divide-luxury-700/60">
                   {paginated.map((property) => (
                     <tr key={property.id} className="hover:bg-luxury-700/20 transition-colors group">
-                      <td className="px-6 py-4">
-                        <p className="text-luxury-50 text-sm font-semibold max-w-55 truncate group-hover:text-gold-400 transition-colors">
-                          {property.title}
-                        </p>
-                        <p className="text-luxury-500 text-xs mt-0.5 truncate max-w-55">
-                          {property.location}
-                          {property.subdivision && (
-                            <span className="text-luxury-600"> · {property.subdivision}</span>
-                          )}
-                        </p>
+                      <td className="px-6 py-3">
+                        <Link href={`/admin/properties/${property.id}`} className="flex items-center gap-3">
+                          <Thumb property={property} className="w-12 h-12" />
+                          <div className="min-w-0">
+                            <p className="text-luxury-50 text-sm font-semibold max-w-64 truncate group-hover:text-gold-400 transition-colors">
+                              {property.title}
+                            </p>
+                            <p className="text-luxury-500 text-xs mt-0.5 truncate max-w-64">
+                              {property.location}
+                              {property.subdivision && (
+                                <span className="text-luxury-600"> · {property.subdivision}</span>
+                              )}
+                            </p>
+                          </div>
+                        </Link>
                       </td>
                       <td className="px-6 py-4">
                         <p className="text-gold-500 text-sm font-bold tabular-nums whitespace-nowrap">
@@ -276,12 +295,12 @@ export default function PropertiesClient({
                           {new Date(property.created_at ?? "").toLocaleDateString("en-PH")}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3 opacity-60 group-hover:opacity-100 transition-opacity">
-                          <Link href={`/properties/${propertySlug(property)}`} target="_blank" className="text-luxury-400 hover:text-gold-500 transition-colors" title="View on site">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-0.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                          <Link href={`/properties/${propertySlug(property)}`} target="_blank" className="w-10 h-10 rounded-lg flex items-center justify-center text-luxury-400 hover:text-gold-500 hover:bg-luxury-700/60 transition-colors" title="View on site" aria-label="View on site">
                             <Eye className="w-4 h-4" />
                           </Link>
-                          <Link href={`/admin/properties/${property.id}`} className="text-luxury-400 hover:text-gold-500 transition-colors" title="Edit">
+                          <Link href={`/admin/properties/${property.id}`} className="w-10 h-10 rounded-lg flex items-center justify-center text-luxury-400 hover:text-gold-500 hover:bg-luxury-700/60 transition-colors" title="Edit" aria-label="Edit listing">
                             <Pencil className="w-4 h-4" />
                           </Link>
                           <DeletePropertyButton id={property.id} />

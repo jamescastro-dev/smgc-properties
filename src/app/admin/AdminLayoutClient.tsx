@@ -72,6 +72,10 @@ export default function AdminLayoutClient({
 
   const avatarLetter = userEmail ? userEmail.charAt(0).toUpperCase() : "A";
 
+  // The listing form pins its own Save bar to the bottom on phones, so the tab
+  // bar steps aside there rather than stacking two bars over the form.
+  const isForm = /^\/admin\/properties\/[^/]+$/.test(pathname);
+
   return (
     <div data-theme="admin" className="min-h-screen bg-luxury-900 flex">
       <RegisterSW />
@@ -162,8 +166,10 @@ export default function AdminLayoutClient({
         />
       )}
 
-      {/* ── Main ── */}
-      <div className="flex-1 lg:ml-64 flex flex-col min-h-screen">
+      {/* ── Main ──
+          min-w-0: without it this flex item grows to fit its widest child (a
+          table, a long title), pushing the whole admin wider than the phone. */}
+      <div className="flex-1 min-w-0 lg:ml-64 flex flex-col min-h-screen">
 
         {/* Top bar — all screen sizes */}
         <header className="sticky top-0 z-30 bg-luxury-900/95 backdrop-blur-md border-b border-luxury-700/80 px-5 lg:px-8 min-h-14 pt-[env(safe-area-inset-top)] flex items-center justify-between gap-4 shrink-0">
@@ -206,14 +212,14 @@ export default function AdminLayoutClient({
 
         {/* Page content — centered on large screens.
             Extra bottom padding on mobile clears the fixed bottom tab bar. */}
-        <main className="flex-1 p-5 lg:p-7 xl:p-8 pb-24 lg:pb-8">
+        <main className={`flex-1 p-4 sm:p-5 lg:p-7 xl:p-8 lg:pb-8 ${isForm ? "pb-28" : "pb-24"}`}>
           {children}
         </main>
 
       </div>
 
       {/* ── Mobile bottom tab bar — thumb-reachable primary nav ── */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-luxury-900/95 backdrop-blur-md border-t border-luxury-700/80 pb-[env(safe-area-inset-bottom)]">
+      <nav className={`${isForm ? "hidden" : "lg:hidden"} fixed bottom-0 inset-x-0 z-30 bg-luxury-900/95 backdrop-blur-md border-t border-luxury-700/80 pb-[env(safe-area-inset-bottom)]`}>
         <div className="grid grid-cols-4">
           {BOTTOM_NAV.map((item) => {
             const isActive =

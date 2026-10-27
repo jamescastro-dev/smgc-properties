@@ -45,7 +45,7 @@ export default function Pagination({
         <button
           onClick={() => onPageChange(page - 1)}
           disabled={page === 1}
-          className="w-8 h-8 flex items-center justify-center rounded-lg border border-luxury-700 text-luxury-400 hover:border-gold-500/50 hover:text-gold-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+          className="w-10 h-10 sm:w-9 sm:h-9 flex items-center justify-center rounded-lg border border-luxury-700 text-luxury-400 hover:border-gold-500/50 hover:text-gold-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
           <ChevronLeft className="w-4 h-4" />
         </button>
 
@@ -53,14 +53,14 @@ export default function Pagination({
           p === "..." ? (
             <span
               key={`ellipsis-${i}`}
-              className="w-8 h-8 flex items-center justify-center text-luxury-500 text-xs">
+              className="w-10 h-10 sm:w-9 sm:h-9 flex items-center justify-center text-luxury-500 text-xs">
               …
             </span>
           ) : (
             <button
               key={p}
               onClick={() => onPageChange(p as number)}
-              className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-bold transition-all ${
+              className={`w-10 h-10 sm:w-9 sm:h-9 flex items-center justify-center rounded-lg text-xs font-bold transition-all ${
                 page === p
                   ? "bg-gold-500 text-luxury-900 border border-gold-500"
                   : "border border-luxury-700 text-luxury-400 hover:border-gold-500/50 hover:text-gold-500"
@@ -73,7 +73,7 @@ export default function Pagination({
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={page === totalPages}
-          className="w-8 h-8 flex items-center justify-center rounded-lg border border-luxury-700 text-luxury-400 hover:border-gold-500/50 hover:text-gold-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+          className="w-10 h-10 sm:w-9 sm:h-9 flex items-center justify-center rounded-lg border border-luxury-700 text-luxury-400 hover:border-gold-500/50 hover:text-gold-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>

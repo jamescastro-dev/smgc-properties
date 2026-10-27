@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import ContactButtons from "./leads/ContactButtons";
 import {
   Users,
   TrendingUp,
@@ -9,6 +10,13 @@ import {
   CheckCircle,
   Phone,
 } from "lucide-react";
+
+const inquiryBadge = (t: string) =>
+  t === "buy"
+    ? "bg-gold-500/10 text-gold-500 border border-gold-500/20"
+    : t === "sell"
+      ? "bg-blue-400/10 text-blue-400 border border-blue-400/20"
+      : "bg-purple-400/10 text-purple-400 border border-purple-400/20";
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient();
@@ -64,7 +72,7 @@ export default async function AdminDashboardPage() {
     <div className="flex flex-col gap-6 w-full">
 
       {/* ── Header ── */}
-      <div className="flex items-start justify-between gap-4">
+      <div className="order-1 lg:order-none flex items-start justify-between gap-4">
         <div>
           <p className="text-gold-500/80 text-xs font-semibold tracking-widest uppercase mb-1">
             {dateStr}
@@ -79,7 +87,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* ── KPI Cards ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="order-3 lg:order-none grid grid-cols-2 lg:grid-cols-4 gap-4">
 
         {/* Total Leads */}
         <Link
@@ -171,10 +179,10 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* ── Pipeline + Inventory ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="order-4 lg:order-none grid grid-cols-1 lg:grid-cols-2 gap-5">
 
         {/* Lead Pipeline */}
-        <div className="bg-luxury-800 border border-luxury-700 rounded-2xl p-6">
+        <div className="bg-luxury-800 border border-luxury-700 rounded-2xl p-5 sm:p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-luxury-50 font-bold text-sm">Lead Pipeline</h2>
@@ -182,7 +190,7 @@ export default async function AdminDashboardPage() {
             </div>
             <Link
               href="/admin/leads"
-              className="text-gold-500 text-xs font-semibold hover:text-gold-400 transition-colors flex items-center gap-1"
+              className="text-gold-500 text-xs font-semibold hover:text-gold-400 transition-colors flex items-center gap-1 py-2.5 -my-2.5 px-2 -mx-2"
             >
               View all <ArrowRight className="w-3 h-3" />
             </Link>
@@ -243,7 +251,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Property Inventory */}
-        <div className="bg-luxury-800 border border-luxury-700 rounded-2xl p-6">
+        <div className="bg-luxury-800 border border-luxury-700 rounded-2xl p-5 sm:p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-luxury-50 font-bold text-sm">Inventory</h2>
@@ -251,7 +259,7 @@ export default async function AdminDashboardPage() {
             </div>
             <Link
               href="/admin/properties"
-              className="text-gold-500 text-xs font-semibold hover:text-gold-400 transition-colors flex items-center gap-1"
+              className="text-gold-500 text-xs font-semibold hover:text-gold-400 transition-colors flex items-center gap-1 py-2.5 -my-2.5 px-2 -mx-2"
             >
               View all <ArrowRight className="w-3 h-3" />
             </Link>
@@ -295,9 +303,10 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* ── Needs Follow-up ── */}
-      <div className="bg-luxury-800 border border-luxury-700 rounded-2xl">
-        <div className="px-6 py-4 border-b border-luxury-700 flex items-center justify-between">
+      {/* ── Needs Follow-up ── first on phones (who to call is why she opens
+          the app); back below the charts on desktop. */}
+      <div className="order-2 lg:order-none bg-luxury-800 border border-luxury-700 rounded-2xl">
+        <div className="px-4 sm:px-6 py-4 border-b border-luxury-700 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <h2 className="text-luxury-50 font-bold text-sm">Needs Follow-up</h2>
             {newCount > 0 && (
@@ -308,7 +317,7 @@ export default async function AdminDashboardPage() {
           </div>
           <Link
             href="/admin/leads"
-            className="text-gold-500 text-xs font-semibold hover:text-gold-400 transition-colors flex items-center gap-1"
+            className="text-gold-500 text-xs font-semibold hover:text-gold-400 transition-colors flex items-center gap-1 py-2.5 -my-2.5 px-2 -mx-2"
           >
             All leads <ArrowRight className="w-3 h-3" />
           </Link>
@@ -325,7 +334,35 @@ export default async function AdminDashboardPage() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+          {/* Phones/tablets: one card per lead with Call/Text — a 5-column
+              table doesn't fit and buries the phone number. */}
+          <div className="lg:hidden divide-y divide-luxury-700/50">
+            {followUpLeads.map((lead) => (
+              <div key={lead.id} className="p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-luxury-50 text-base font-semibold truncate">{lead.name}</p>
+                    <p className="text-luxury-400 text-sm tabular-nums mt-0.5">{lead.phone}</p>
+                  </div>
+                  <span className="text-luxury-500 text-xs whitespace-nowrap mt-1">
+                    {new Date(lead.created_at).toLocaleDateString("en-PH")}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 mt-2 flex-wrap">
+                  <span className={`text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full ${inquiryBadge(lead.type)}`}>
+                    {lead.type}
+                  </span>
+                  {[lead.location, lead.budget].filter(Boolean).map((v) => (
+                    <span key={v} className="text-luxury-400 text-xs">{v}</span>
+                  ))}
+                </div>
+                <ContactButtons phone={lead.phone} className="mt-3" />
+              </div>
+            ))}
+          </div>
+
+          <div className="hidden lg:block overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-luxury-700/60 bg-luxury-900/30">
@@ -366,13 +403,7 @@ export default async function AdminDashboardPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full ${
-                          lead.type === "buy"
-                            ? "bg-gold-500/10 text-gold-500 border border-gold-500/20"
-                            : lead.type === "sell"
-                              ? "bg-blue-400/10 text-blue-400 border border-blue-400/20"
-                              : "bg-purple-400/10 text-purple-400 border border-purple-400/20"
-                        }`}
+                        className={`text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full ${inquiryBadge(lead.type)}`}
                       >
                         {lead.type}
                       </span>
@@ -392,6 +423,7 @@ export default async function AdminDashboardPage() {
               </tbody>
             </table>
           </div>
+          </>
         )}
       </div>
 

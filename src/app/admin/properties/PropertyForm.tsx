@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { X, Save, ArrowLeft, ImagePlus } from "lucide-react";
@@ -74,6 +74,13 @@ export default function PropertyForm({ property }: Props) {
   const [removingUrl, setRemovingUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const errorRef = useRef<HTMLDivElement>(null);
+
+  // Save sits in a bottom bar on phones, far from the error banner at the top
+  // of the form — bring the message into view so a failed save isn't silent.
+  useEffect(() => {
+    if (error) errorRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [error]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -194,7 +201,7 @@ export default function PropertyForm({ property }: Props) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       {error && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
+        <div ref={errorRef} className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
           <p className="text-red-400 text-sm">{error}</p>
         </div>
       )}
@@ -577,12 +584,13 @@ export default function PropertyForm({ property }: Props) {
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex flex-col gap-3">
+          {/* Actions — pinned to the bottom on phones/tablets so Save is always
+              in reach on a long form; back in the right column on desktop. */}
+          <div className="fixed lg:static inset-x-0 bottom-0 z-30 flex flex-row-reverse lg:flex-col gap-3 bg-luxury-900/95 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none border-t border-luxury-700/80 lg:border-0 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] lg:p-0">
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center justify-center gap-2 bg-gold-500 hover:bg-gold-600 disabled:opacity-70 disabled:cursor-not-allowed text-luxury-900 text-sm font-bold px-6 py-4 rounded-xl tracking-wide transition-colors">
+              className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-gold-500 hover:bg-gold-600 disabled:opacity-70 disabled:cursor-not-allowed text-luxury-900 text-sm font-bold px-6 py-3.5 lg:py-4 rounded-xl tracking-wide transition-colors">
               {loading ? (
                 <>
                   <span className="w-4 h-4 border-2 border-luxury-900/30 border-t-luxury-900 rounded-full animate-spin" />
@@ -597,7 +605,7 @@ export default function PropertyForm({ property }: Props) {
             </button>
             <Link
               href="/admin/properties"
-              className="flex items-center justify-center gap-2 border border-luxury-700 hover:border-gold-500/50 text-luxury-400 hover:text-luxury-50 text-sm font-medium px-6 py-3 rounded-xl transition-all">
+              className="flex items-center justify-center gap-2 border border-luxury-700 hover:border-gold-500/50 text-luxury-400 hover:text-luxury-50 text-sm font-medium px-5 lg:px-6 py-3 rounded-xl transition-all">
               <ArrowLeft className="w-4 h-4" />
               Cancel
             </Link>

@@ -4,9 +4,14 @@ import { useState, useMemo } from "react";
 
 interface Props {
   defaultPrice?: number;
+  /** Hide the built-in title when the host page already has one. */
+  hideHeading?: boolean;
 }
 
-export default function MortgageCalculator({ defaultPrice }: Props) {
+const PRICE_MIN = 500000;
+const PRICE_MAX = 20000000;
+
+export default function MortgageCalculator({ defaultPrice, hideHeading = false }: Props) {
   const [price, setPrice] = useState(defaultPrice || 3500000);
   const [downPaymentPct, setDownPaymentPct] = useState(20);
   const [years, setYears] = useState(20);
@@ -45,33 +50,50 @@ export default function MortgageCalculator({ defaultPrice }: Props) {
 
   return (
     <div className="bg-luxury-800 border border-luxury-700 rounded-2xl p-6 flex flex-col gap-6">
-      <div>
-        <h3 className="text-luxury-50 text-lg font-bold mb-1">
-          Mortgage Calculator
-        </h3>
-        <p className="text-luxury-400 text-xs">
-          Estimate your monthly payment
-        </p>
-      </div>
+      {!hideHeading && (
+        <div>
+          <h3 className="text-luxury-50 text-lg font-bold mb-1">
+            Mortgage Calculator
+          </h3>
+          <p className="text-luxury-400 text-xs">
+            Estimate your monthly payment
+          </p>
+        </div>
+      )}
 
       <div className="flex flex-col gap-5">
 
-        {/* Property Price */}
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center justify-between">
-            <label className="text-luxury-300 text-xs font-semibold tracking-widest uppercase">
-              Property Price
-            </label>
-            <span className="text-gold-500 text-xs font-bold">
-              {formatPHP(price)}
+        {/* Property Price — typed for exact figures (promo prices like
+            ₱2,999,999 can't be hit on a ₱100K-step slider); slider for quick
+            what-ifs. */}
+        <div className="flex flex-col gap-2">
+          <label
+            htmlFor="calc-price"
+            className="text-luxury-300 text-xs font-semibold tracking-widest uppercase">
+            Property Price
+          </label>
+          <div className="relative">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-500 font-bold pointer-events-none">
+              ₱
             </span>
+            <input
+              id="calc-price"
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              value={price ? price.toLocaleString("en-PH") : ""}
+              onChange={(e) => setPrice(Number(e.target.value.replace(/\D/g, "").slice(0, 10)))}
+              placeholder="0"
+              className="w-full h-11 bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-xl pl-9 pr-4 text-luxury-50 text-base font-bold tabular-nums outline-none transition-colors"
+            />
           </div>
           <input
             type="range"
-            min={500000}
-            max={20000000}
+            aria-label="Property price slider"
+            min={PRICE_MIN}
+            max={Math.max(PRICE_MAX, price)}
             step={100000}
-            value={price}
+            value={Math.max(PRICE_MIN, price)}
             onChange={(e) => setPrice(Number(e.target.value))}
             className="w-full accent-gold-500"
           />

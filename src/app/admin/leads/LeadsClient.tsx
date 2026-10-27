@@ -4,6 +4,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Users, Phone, Search, X } from "lucide-react";
 import UpdateLeadStatus from "./UpdateLeadStatus";
+import ContactButtons from "./ContactButtons";
 import Pagination from "@/components/ui/Pagination";
 import { describeLeadSource, type LeadSource } from "@/lib/leadSource";
 
@@ -140,7 +141,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
             <button
               key={s}
               onClick={() => { setFilter(s); resetPage(); }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold tracking-widest uppercase border transition-all flex items-center gap-1.5 ${
+              className={`h-10 sm:h-9 px-3.5 rounded-lg text-xs font-bold tracking-widest uppercase border transition-all flex items-center gap-1.5 ${
                 filter === s
                   ? "bg-gold-500 text-luxury-900 border-gold-500"
                   : "text-luxury-400 border-luxury-700 hover:border-gold-500/50 hover:text-luxury-50"
@@ -160,12 +161,13 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
             placeholder="Search name, phone…"
             value={search}
             onChange={(e) => { setSearch(e.target.value); resetPage(); }}
-            className="w-full sm:w-64 bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg pl-9 pr-9 py-2 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
+            className="w-full sm:w-64 bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg pl-9 pr-10 h-10 sm:h-9 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
           />
           {search && (
             <button
               onClick={() => { setSearch(""); resetPage(); }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-luxury-500 hover:text-luxury-300 transition-colors">
+              aria-label="Clear search"
+              className="absolute right-0 top-0 h-full w-10 flex items-center justify-center text-luxury-500 hover:text-luxury-300 transition-colors">
               <X className="w-3.5 h-3.5" />
             </button>
           )}
@@ -201,14 +203,9 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                 return (
                   <div key={lead.id} className="p-4 hover:bg-luxury-700/20 transition-colors">
                     <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="text-luxury-50 text-sm font-semibold">{lead.name}</p>
-                        <a
-                          href={`tel:${lead.phone}`}
-                          className="flex items-center gap-1.5 text-luxury-400 text-xs hover:text-gold-500 transition-colors mt-0.5">
-                          <Phone className="w-3 h-3 text-gold-500" />
-                          {lead.phone}
-                        </a>
+                      <div className="min-w-0">
+                        <p className="text-luxury-50 text-base font-semibold truncate">{lead.name}</p>
+                        <p className="text-luxury-400 text-sm tabular-nums mt-0.5">{lead.phone}</p>
                       </div>
                       <UpdateLeadStatus
                         id={lead.id}
@@ -246,6 +243,10 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                       {new Date(lead.created_at).toLocaleDateString("en-PH")}
                       {describeLeadSource(lead.source) && ` · via ${describeLeadSource(lead.source)}`}
                     </p>
+
+                    {/* Reaching the lead is the whole point of this screen on a
+                        phone — make it a thumb-sized button, not 12px text. */}
+                    <ContactButtons phone={lead.phone} className="mt-3" />
                   </div>
                 );
               })}
@@ -256,8 +257,10 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-luxury-700 bg-luxury-900/40">
-                    {["Client", "Contact", "Location", "Inquiry", "Budget", "Property", "Message", "Date", "Status"].map((h) => (
-                      <th key={h} className="text-left text-luxury-400 text-[11px] font-semibold tracking-widest uppercase px-6 py-3.5">
+                    {/* Nine columns didn't fit beside the sidebar — related
+                        fields are paired so the table fits a laptop screen. */}
+                    {["Client", "Looking for", "Property", "Message", "Received", "Status"].map((h) => (
+                      <th key={h} className="text-left text-luxury-400 text-[11px] font-semibold tracking-widest uppercase px-5 py-3.5">
                         {h}
                       </th>
                     ))}
@@ -266,27 +269,22 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                 <tbody className="divide-y divide-luxury-700/60">
                   {paginated.map((lead) => (
                     <tr key={lead.id} className="hover:bg-luxury-700/20 transition-colors group">
-                      <td className="px-6 py-4">
-                        <p className="text-luxury-50 text-sm font-semibold whitespace-nowrap">{lead.name}</p>
-                      </td>
-                      <td className="px-6 py-4">
-                        <a href={`tel:${lead.phone}`} className="flex items-center gap-1.5 text-luxury-300 text-xs hover:text-gold-500 transition-colors whitespace-nowrap">
+                      <td className="px-5 py-4">
+                        <p className="text-luxury-50 text-sm font-semibold max-w-40 truncate">{lead.name}</p>
+                        <a href={`tel:${lead.phone}`} className="inline-flex items-center gap-1.5 text-luxury-300 text-xs hover:text-gold-500 transition-colors whitespace-nowrap mt-1">
                           <Phone className="w-3 h-3 text-gold-500" />
                           {lead.phone}
                         </a>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="text-luxury-300 text-xs whitespace-nowrap">{lead.location || "—"}</span>
-                      </td>
-                      <td className="px-6 py-4">
+                      <td className="px-5 py-4">
                         <span className={`text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full whitespace-nowrap ${inquiryBadge(lead.type)}`}>
                           {lead.type}
                         </span>
+                        <p className="text-luxury-400 text-xs mt-1.5 max-w-40 truncate">
+                          {[lead.location, lead.budget].filter(Boolean).join(" · ") || "—"}
+                        </p>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="text-luxury-300 text-sm whitespace-nowrap">{lead.budget || "—"}</span>
-                      </td>
-                      <td className="px-6 py-4 max-w-36">
+                      <td className="px-5 py-4 max-w-36">
                         {(() => {
                           const title =
                             lead.properties?.title ??
@@ -306,7 +304,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                           );
                         })()}
                       </td>
-                      <td className="px-6 py-4 max-w-44">
+                      <td className="px-5 py-4 max-w-44">
                         {(() => {
                           const msg = lead.message?.replace(/^\[PROPERTY:[^\]]+\]\n?/, "") || null;
                           return msg ? (
@@ -322,7 +320,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                           );
                         })()}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-5 py-4">
                         <span className="text-luxury-500 text-xs whitespace-nowrap">
                           {new Date(lead.created_at).toLocaleDateString("en-PH")}
                         </span>
@@ -334,7 +332,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-5 py-4">
                         <UpdateLeadStatus
                           id={lead.id}
                           currentStatus={lead.status as "new" | "contacted" | "closed"}

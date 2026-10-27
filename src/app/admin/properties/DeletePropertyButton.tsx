@@ -39,8 +39,9 @@ export default function DeletePropertyButton({ id }: { id: string }) {
     <button
       onClick={handleDelete}
       disabled={loading}
-      className="text-luxury-400 hover:text-red-400 transition-colors disabled:opacity-50"
-      title="Delete">
+      className="w-10 h-10 rounded-lg flex items-center justify-center text-luxury-400 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+      title="Delete"
+      aria-label="Delete listing">
       {loading ? (
         <span className="w-4 h-4 border-2 border-luxury-400/30 border-t-luxury-400 rounded-full animate-spin inline-block" />
       ) : (
