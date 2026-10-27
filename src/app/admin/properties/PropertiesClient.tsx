@@ -7,6 +7,7 @@ import { Plus, Pencil, Eye, Building2, Search, X, ImageOff } from "lucide-react"
 import { formatPrice, propertySlug } from "@/lib/utils";
 import DeletePropertyButton from "./DeletePropertyButton";
 import Pagination from "@/components/ui/Pagination";
+import Segmented from "@/components/ui/Segmented";
 import { Property } from "@/types";
 
 const ITEMS_PER_PAGE = 10;
@@ -96,56 +97,38 @@ export default function PropertiesClient({
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Filter bar */}
-      <div className="bg-luxury-800 border border-luxury-700 rounded-2xl px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap sm:px-5 sm:py-4">
-        {/* Status + Type tabs */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {STATUS_OPTIONS.map((s) => {
-              const count = statusCounts[s.value as keyof typeof statusCounts];
-              return (
-                <button
-                  key={s.value}
-                  onClick={() => { setStatus(s.value); resetPage(); }}
-                  className={`h-10 sm:h-9 px-3.5 rounded-lg text-xs font-bold tracking-widest uppercase border transition-all flex items-center gap-1.5 ${
-                    status === s.value
-                      ? "bg-gold-500 text-luxury-900 border-gold-500"
-                      : "text-luxury-400 border-luxury-700 hover:border-gold-500/50 hover:text-luxury-50"
-                  }`}>
-                  {s.label}
-                  <span className={`text-[10px] font-bold tabular-nums ${status === s.value ? "text-luxury-900/70" : "text-luxury-600"}`}>
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-          <div className="w-px h-4 bg-luxury-700 hidden sm:block" />
-          <div className="flex items-center gap-1.5">
-            {TYPE_OPTIONS.map((t) => (
-              <button
-                key={t.value}
-                onClick={() => { setType(t.value); resetPage(); }}
-                className={`h-10 sm:h-9 px-3.5 rounded-lg text-xs font-bold tracking-widest uppercase border transition-all ${
-                  type === t.value
-                    ? "bg-gold-500 text-luxury-900 border-gold-500"
-                    : "text-luxury-400 border-luxury-700 hover:border-gold-500/50 hover:text-luxury-50"
-                }`}>
-                {t.label}
-              </button>
-            ))}
-          </div>
+      {/* Filter bar — search, then one segmented control per filter. Each
+          control is a single non-wrapping row at every width. */}
+      <div className="bg-luxury-800 border border-luxury-700 rounded-2xl p-3 sm:p-4 flex flex-col gap-3 lg:flex-row lg:items-center">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Segmented
+            label="Status"
+            value={status}
+            onChange={(v) => { setStatus(v); resetPage(); }}
+            options={STATUS_OPTIONS.map((s) => ({
+              ...s,
+              count: statusCounts[s.value as keyof typeof statusCounts],
+            }))}
+            className="sm:flex-1 lg:flex-none"
+          />
+          <Segmented
+            label="Listing type"
+            value={type}
+            onChange={(v) => { setType(v); resetPage(); }}
+            options={TYPE_OPTIONS}
+            className="sm:w-52"
+          />
         </div>
 
         {/* Search */}
-        <div className="relative sm:ml-auto w-full sm:w-auto">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-luxury-500 pointer-events-none" />
+        <div className="relative order-first lg:order-last lg:ml-auto">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-luxury-500 pointer-events-none" />
           <input
             type="text"
             placeholder="Search properties…"
             value={search}
             onChange={(e) => { setSearch(e.target.value); resetPage(); }}
-            className="w-full sm:w-56 bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg pl-9 pr-10 h-10 sm:h-9 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
+            className="w-full lg:w-60 bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-xl pl-10 pr-10 h-11 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
           />
           {search && (
             <button
