@@ -53,8 +53,10 @@ export default async function PropertiesPage({ searchParams }: Props) {
         {paginated.length > 0 && (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {paginated.map((property) => (
-                <PropertyCard key={property.id} property={property} />
+              {paginated.map((property, i) => (
+                // First row on desktop (3 across); on mobile only the first is
+                // on screen, but eager-loading two extra photos is cheap.
+                <PropertyCard key={property.id} property={property} aboveFold={i < 3} />
               ))}
             </div>
             {totalPages > 1 && <Pagination query={q} totalPages={totalPages} />}

@@ -6,9 +6,14 @@ import { formatPriceCompact, propertySlug, unavailableLabel } from "@/lib/utils"
 
 interface PropertyCardProps {
   property: Property;
+  /**
+   * First-row cards on a listing grid. Their photo is the page's LCP element,
+   * so load it eagerly at high priority instead of lazily after layout.
+   */
+  aboveFold?: boolean;
 }
 
-export default function PropertyCard({ property }: PropertyCardProps) {
+export default function PropertyCard({ property, aboveFold = false }: PropertyCardProps) {
   const offMarket = unavailableLabel(property);
 
   return (
@@ -23,6 +28,8 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             alt={property.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            loading={aboveFold ? "eager" : undefined}
+            fetchPriority={aboveFold ? "high" : undefined}
             className={`object-cover group-hover:scale-105 transition-transform duration-500 ${
               offMarket ? "grayscale opacity-60" : ""
             }`}

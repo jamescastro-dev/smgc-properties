@@ -15,7 +15,7 @@ const SUBDIVISIONS = [
   "Robinsons Homes",
   "Serene Townhomes",
   "Phirst Park Homes",
-  "Cross Roads","SMDC",
+  "Cross Roads",
   "Polaris",
   "Camella",
   "Asian Land",
