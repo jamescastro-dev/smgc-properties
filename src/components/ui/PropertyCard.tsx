@@ -2,13 +2,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Bed, Bath, Maximize2, Star, Car } from "lucide-react";
 import { Property } from "@/types";
-import { formatPriceCompact, propertySlug } from "@/lib/utils";
+import { formatPriceCompact, propertySlug, unavailableLabel } from "@/lib/utils";
 
 interface PropertyCardProps {
   property: Property;
 }
 
 export default function PropertyCard({ property }: PropertyCardProps) {
+  const offMarket = unavailableLabel(property);
+
   return (
     <Link
       href={`/properties/${propertySlug(property)}`}
@@ -21,20 +23,28 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             alt={property.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className={`object-cover group-hover:scale-105 transition-transform duration-500 ${
+              offMarket ? "grayscale opacity-60" : ""
+            }`}
           />
         )}
 
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
-          <span
-            className={`text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-md ${
-              property.type === "sale"
-                ? "bg-gold-500 text-luxury-900"
-                : "bg-luxury-900 text-gold-500 border border-gold-500/50"
-            }`}>
-            For {property.type === "sale" ? "Sale" : "Rent"}
-          </span>
+          {offMarket ? (
+            <span className="text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-md bg-luxury-50 text-luxury-900">
+              {offMarket}
+            </span>
+          ) : (
+            <span
+              className={`text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-md ${
+                property.type === "sale"
+                  ? "bg-gold-500 text-luxury-900"
+                  : "bg-luxury-900 text-gold-500 border border-gold-500/50"
+              }`}>
+              For {property.type === "sale" ? "Sale" : "Rent"}
+            </span>
+          )}
           {property.featured && (
             <span className="flex items-center gap-1 bg-luxury-900/90 backdrop-blur-sm text-gold-500 text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-md border border-gold-500/30">
               <Star className="w-2.5 h-2.5 fill-gold-500" />

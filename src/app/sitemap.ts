@@ -7,7 +7,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const properties = await getAllProperties();
 
-  const propertyUrls = properties.map((p) => ({
+  // Sold/rented listings stay reachable for old links but aren't promoted.
+  const propertyUrls = properties.filter((p) => p.status === "available").map((p) => ({
     url: `${baseUrl}/properties/${propertySlug(p)}`,
     lastModified: new Date(p.created_at || new Date()),
     changeFrequency: "weekly" as const,

@@ -21,7 +21,7 @@ import {
   ZoomIn,
 } from "lucide-react";
 import { Property } from "@/types";
-import { formatPriceCompact } from "@/lib/utils";
+import { formatPriceCompact, unavailableLabel } from "@/lib/utils";
 import { getLeadSource } from "@/lib/leadSource";
 import PhoneInput from "@/components/ui/PhoneInput";
 import PropertyCard from "@/components/ui/PropertyCard";
@@ -39,6 +39,7 @@ export default function PropertyDetailClient({
   similar,
   subdivisionSlug,
 }: Props) {
+  const offMarket = unavailableLabel(property);
   const [activeImage, setActiveImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -216,14 +217,20 @@ export default function PropertyDetailClient({
 
               {/* Badges */}
               <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
-                <span
-                  className={`text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg ${
-                    property.type === "sale"
-                      ? "bg-gold-500 text-luxury-900"
-                      : "bg-luxury-900 text-gold-500 border border-gold-500/50"
-                  }`}>
-                  For {property.type === "sale" ? "Sale" : "Rent"}
-                </span>
+                {offMarket ? (
+                  <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg bg-luxury-50 text-luxury-900">
+                    {offMarket}
+                  </span>
+                ) : (
+                  <span
+                    className={`text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg ${
+                      property.type === "sale"
+                        ? "bg-gold-500 text-luxury-900"
+                        : "bg-luxury-900 text-gold-500 border border-gold-500/50"
+                    }`}>
+                    For {property.type === "sale" ? "Sale" : "Rent"}
+                  </span>
+                )}
                 {property.featured && (
                   <span className="flex items-center gap-1.5 bg-luxury-900/90 backdrop-blur-sm text-gold-500 text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg border border-gold-500/30">
                     <Star className="w-3 h-3 fill-gold-500" />
@@ -439,7 +446,32 @@ export default function PropertyDetailClient({
               </a>
             </div>
 
-            {/* Inquiry form */}
+            {/* Off-market listings get no inquiry form — a lead asking about a
+                unit that's gone just wastes a follow-up. Point them at what's
+                still available instead; Call/Viber above stay for alternatives. */}
+            {offMarket ? (
+              <div className="bg-luxury-800 border border-luxury-700 rounded-2xl p-6">
+                <h3 className="text-luxury-50 text-lg font-bold mb-1">
+                  This property has been {offMarket.toLowerCase()}
+                </h3>
+                <p className="text-luxury-400 text-xs mb-6">
+                  Broker Shella may have similar units available — including
+                  some not yet posted on the site.
+                </p>
+                <div className="flex flex-col gap-3">
+                  <Link
+                    href="/properties"
+                    className="flex items-center justify-center bg-gold-500 hover:bg-gold-600 text-luxury-900 text-sm font-bold px-6 py-3.5 rounded-lg tracking-wide transition-colors">
+                    Browse available properties
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="flex items-center justify-center border border-luxury-600 hover:border-gold-500/50 text-luxury-300 hover:text-gold-500 text-sm font-medium px-6 py-3.5 rounded-lg transition-all">
+                    Ask about similar units
+                  </Link>
+                </div>
+              </div>
+            ) : (
             <div className="bg-luxury-800 border border-luxury-700 rounded-2xl p-6">
               <h3 className="text-luxury-50 text-lg font-bold mb-1">
                 Inquire About This Property
@@ -537,6 +569,7 @@ export default function PropertyDetailClient({
                 </form>
               )}
             </div>
+            )}
 
             {/* Broker card */}
             <div className="bg-luxury-800 border border-luxury-700 rounded-2xl p-6">

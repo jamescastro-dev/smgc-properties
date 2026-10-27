@@ -25,6 +25,13 @@ export function subdivisionName(subdivision: string): string {
   return subdivision.split(",")[0].trim();
 }
 
+/** Badge text for a listing that's off the market, or null while available. */
+export function unavailableLabel(property: { status: string }): "Sold" | "Rented" | null {
+  if (property.status === "sold") return "Sold";
+  if (property.status === "rented") return "Rented";
+  return null;
+}
+
 export function formatPrice(price: number, type: "sale" | "rent"): string {
   const formatted = new Intl.NumberFormat("en-PH", {
     style: "currency",

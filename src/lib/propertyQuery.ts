@@ -86,17 +86,21 @@ export function filterProperties(properties: Property[], q: PropertyQuery): Prop
         !!p.subdivision?.toLowerCase().includes(keyword))
   );
 
-  switch (q.sort) {
-    case "price_asc":
-      return results.sort((a, b) => a.price - b.price);
-    case "price_desc":
-      return results.sort((a, b) => b.price - a.price);
-    case "featured":
-      return results.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
-    default:
-      return results.sort(
-        (a, b) =>
-          new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
-      );
-  }
+  const bySort = (a: Property, b: Property): number => {
+    switch (q.sort) {
+      case "price_asc":
+        return a.price - b.price;
+      case "price_desc":
+        return b.price - a.price;
+      case "featured":
+        return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+      default:
+        return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+    }
+  };
+
+  // Sold/rented listings stay browsable but always sort after available ones,
+  // so a just-closed sale doesn't take a page-1 slot.
+  const offMarket = (p: Property) => (p.status === "available" ? 0 : 1);
+  return results.sort((a, b) => offMarket(a) - offMarket(b) || bySort(a, b));
 }
