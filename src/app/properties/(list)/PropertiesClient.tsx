@@ -1,156 +1,76 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect, useOptimistic, useTransition } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { SlidersHorizontal, X, ChevronDown, MessageCircle } from "lucide-react";
+import { LOCATIONS, PROPERTY_TYPES } from "@/lib/constants";
 import {
-  SlidersHorizontal,
-  X,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  MessageCircle,
-} from "lucide-react";
-import PropertyCard from "@/components/ui/PropertyCard";
-import { Property } from "@/types";
-import { LOCATIONS as BASE_LOCATIONS, PROPERTY_TYPES as BASE_PROPERTY_TYPES } from "@/lib/constants";
-
-const PROPERTY_TYPES = ["All Types", ...BASE_PROPERTY_TYPES] as const;
-const LOCATIONS = ["All Locations", ...BASE_LOCATIONS] as const;
-
-const SORT_OPTIONS = [
-  { label: "Newest First", value: "newest" },
-  { label: "Price: Low to High", value: "price_asc" },
-  { label: "Price: High to Low", value: "price_desc" },
-  { label: "Featured First", value: "featured" },
-] as const;
-
-type SortValue = (typeof SORT_OPTIONS)[number]["value"];
-
-const ITEMS_PER_PAGE = 6;
+  PropertyQuery,
+  SORT_OPTIONS,
+  SortValue,
+  hasFilters,
+  propertiesHref,
+} from "@/lib/propertyQuery";
 
 interface Props {
-  initialProperties: Property[];
+  query: PropertyQuery;
+  total: number;
+  from: number;
+  to: number;
+  /** Server-rendered result grid + pagination. */
+  children: React.ReactNode;
 }
 
-export default function PropertiesClient({ initialProperties }: Props) {
+/**
+ * Filter controls for /properties. Results are rendered on the server from the
+ * URL; every control here just navigates to a new URL. useOptimistic keeps the
+ * controls showing the new value while the server renders it.
+ */
+export default function PropertiesClient({ query, total, from, to, children }: Props) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const [listing, setListing] = useState<"all" | "sale" | "rent">(
-    searchParams.get("listing") === "For Sale"
-      ? "sale"
-      : searchParams.get("listing") === "For Rent"
-      ? "rent"
-      : "all"
-  );
-  const [type, setType] = useState(searchParams.get("type") || "All Types");
-  const [location, setLocation] = useState(
-    searchParams.get("location") || "All Locations"
-  );
-  const [keyword, setKeyword] = useState(searchParams.get("keyword") || "");
-  const [sort, setSort] = useState<SortValue>("newest");
+  const [isPending, startTransition] = useTransition();
+  const [current, setCurrent] = useOptimistic(query);
   const [showFilters, setShowFilters] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
 
-  const filtered = useMemo(() => {
-    let results: Property[] = [...initialProperties];
+  const update = (changes: Partial<PropertyQuery>) => {
+    // Any filter change starts over at page 1.
+    const next = { ...current, ...changes, page: 1 };
+    startTransition(() => {
+      setCurrent(next);
+      router.replace(propertiesHref(next), { scroll: false });
+    });
+  };
 
-    if (listing !== "all") {
-      results = results.filter((p) => p.type === listing);
+  // Keyword typing is debounced. `sent` is the last value we navigated with, so
+  // a slow response for "mal" can't clobber "malo" typed meanwhile; any other
+  // URL change (footer link, hero search) resets the box to the URL's value.
+  const [keyword, setKeyword] = useState(query.keyword);
+  const [sent, setSent] = useState(query.keyword);
+  const [urlKeyword, setUrlKeyword] = useState(query.keyword);
+  if (query.keyword !== urlKeyword) {
+    setUrlKeyword(query.keyword);
+    if (query.keyword !== sent) {
+      setKeyword(query.keyword);
+      setSent(query.keyword);
     }
-    if (type !== "All Types") {
-      results = results.filter((p) => p.property_type === type);
-    }
-    if (location !== "All Locations") {
-      results = results.filter((p) =>
-        p.location.toLowerCase().includes(location.toLowerCase())
-      );
-    }
-    if (keyword) {
-      results = results.filter(
-        (p) =>
-          p.title.toLowerCase().includes(keyword.toLowerCase()) ||
-          p.location.toLowerCase().includes(keyword.toLowerCase()) ||
-          p.subdivision?.toLowerCase().includes(keyword.toLowerCase())
-      );
-    }
-
-    switch (sort) {
-      case "price_asc":
-        results.sort((a, b) => a.price - b.price);
-        break;
-      case "price_desc":
-        results.sort((a, b) => b.price - a.price);
-        break;
-      case "featured":
-        results.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
-        break;
-      default:
-        results.sort((a, b) => {
-          const dateA = new Date(a.created_at || 0).getTime();
-          const dateB = new Date(b.created_at || 0).getTime();
-          return dateB - dateA;
-        });
-    }
-
-    return results;
-  }, [initialProperties, listing, type, location, keyword, sort]);
-
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-  const paginated = filtered.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  }
 
   useEffect(() => {
-    const param = listing === "sale" ? "For Sale" : listing === "rent" ? "For Rent" : null;
-    const url = param ? `/properties?listing=${encodeURIComponent(param)}` : "/properties";
-    router.replace(url, { scroll: false });
-  }, [listing, router]);
+    if (keyword === sent) return;
+    const timer = setTimeout(() => {
+      setSent(keyword);
+      update({ keyword: keyword.trim() });
+    }, 350);
+    return () => clearTimeout(timer);
+  });
 
-  const handleFilterChange = (fn: () => void) => {
-    fn();
-    setCurrentPage(1);
-  };
-
-  const hasActiveFilters =
-    listing !== "all" ||
-    type !== "All Types" ||
-    location !== "All Locations" ||
-    keyword !== "";
+  const filtersActive = hasFilters({ ...current, sort: "newest" });
 
   const clearFilters = () => {
-    setListing("all");
-    setType("All Types");
-    setLocation("All Locations");
     setKeyword("");
-    setCurrentPage(1);
-  };
-
-  const goToPage = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const getPageNumbers = () => {
-    const pages: (number | "...")[] = [];
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      if (currentPage > 3) pages.push("...");
-      for (
-        let i = Math.max(2, currentPage - 1);
-        i <= Math.min(totalPages - 1, currentPage + 1);
-        i++
-      ) {
-        pages.push(i);
-      }
-      if (currentPage < totalPages - 2) pages.push("...");
-      pages.push(totalPages);
-    }
-    return pages;
+    setSent("");
+    update({ listing: "all", type: "", location: "", keyword: "" });
   };
 
   return (
@@ -172,14 +92,11 @@ export default function PropertiesClient({ initialProperties }: Props) {
             <p className="text-luxury-400 text-sm mt-2">
               Showing{" "}
               <span className="text-luxury-50 font-semibold">
-                {Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, filtered.length)}–
-                {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)}
+                {from}–{to}
               </span>{" "}
               of{" "}
-              <span className="text-luxury-50 font-semibold">
-                {filtered.length}
-              </span>{" "}
-              propert{filtered.length === 1 ? "y" : "ies"}
+              <span className="text-luxury-50 font-semibold">{total}</span>{" "}
+              propert{total === 1 ? "y" : "ies"}
             </p>
           </div>
 
@@ -187,10 +104,8 @@ export default function PropertiesClient({ initialProperties }: Props) {
           <div className="relative w-full sm:w-auto">
             <select
               aria-label="Sort properties"
-              value={sort}
-              onChange={(e) =>
-                handleFilterChange(() => setSort(e.target.value as SortValue))
-              }
+              value={current.sort}
+              onChange={(e) => update({ sort: e.target.value as SortValue })}
               className="w-full bg-luxury-800 border border-luxury-700 hover:border-gold-500/50 rounded-lg px-4 py-2.5 text-luxury-50 text-sm outline-none appearance-none cursor-pointer pr-8 transition-colors">
               {SORT_OPTIONS.map((opt) => (
                 <option
@@ -211,9 +126,9 @@ export default function PropertiesClient({ initialProperties }: Props) {
         {(["all", "sale", "rent"] as const).map((t) => (
           <button
             key={t}
-            onClick={() => handleFilterChange(() => setListing(t))}
+            onClick={() => update({ listing: t })}
             className={`px-5 py-2 rounded-lg text-sm font-bold tracking-wide transition-all duration-200 capitalize ${
-              listing === t
+              current.listing === t
                 ? "bg-gold-500 text-luxury-900 border border-gold-500"
                 : "bg-luxury-800 text-luxury-400 border border-luxury-700 hover:border-gold-500/50 hover:text-gold-500"
             }`}>
@@ -224,13 +139,13 @@ export default function PropertiesClient({ initialProperties }: Props) {
         <button
           onClick={() => setShowFilters(!showFilters)}
           className={`sm:ml-auto flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-200 ${
-            showFilters || hasActiveFilters
+            showFilters || filtersActive
               ? "bg-gold-500 border-gold-500 text-luxury-900"
               : "bg-luxury-800 border-luxury-700 text-luxury-400 hover:border-gold-500/50 hover:text-gold-500"
           }`}>
           <SlidersHorizontal className="w-4 h-4" />
           Filters
-          {hasActiveFilters && (
+          {filtersActive && (
             <span className="w-2 h-2 rounded-full bg-luxury-900" />
           )}
         </button>
@@ -248,9 +163,7 @@ export default function PropertiesClient({ initialProperties }: Props) {
               <input
                 type="text"
                 value={keyword}
-                onChange={(e) =>
-                  handleFilterChange(() => setKeyword(e.target.value))
-                }
+                onChange={(e) => setKeyword(e.target.value)}
                 placeholder="Search…"
                 className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg px-4 py-2.5 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors"
               />
@@ -262,11 +175,12 @@ export default function PropertiesClient({ initialProperties }: Props) {
               </label>
               <div className="relative">
                 <select
-                  value={location}
-                  onChange={(e) =>
-                    handleFilterChange(() => setLocation(e.target.value))
-                  }
+                  value={current.location}
+                  onChange={(e) => update({ location: e.target.value })}
                   className="w-full bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg px-4 py-2.5 text-luxury-50 text-sm outline-none appearance-none transition-colors pr-8">
+                  <option value="" className="bg-luxury-800 text-luxury-50">
+                    All Locations
+                  </option>
                   {LOCATIONS.map((loc) => (
                     <option
                       key={loc}
@@ -286,11 +200,12 @@ export default function PropertiesClient({ initialProperties }: Props) {
               </label>
               <div className="relative">
                 <select
-                  value={type}
-                  onChange={(e) =>
-                    handleFilterChange(() => setType(e.target.value))
-                  }
+                  value={current.type}
+                  onChange={(e) => update({ type: e.target.value })}
                   className="w-full bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-lg px-4 py-2.5 text-luxury-50 text-sm outline-none appearance-none transition-colors pr-8">
+                  <option value="" className="bg-luxury-800 text-luxury-50">
+                    All Types
+                  </option>
                   {PROPERTY_TYPES.map((t) => (
                     <option
                       key={t}
@@ -305,7 +220,7 @@ export default function PropertiesClient({ initialProperties }: Props) {
             </div>
 
             <div className="flex flex-col justify-end">
-              {hasActiveFilters && (
+              {filtersActive && (
                 <button
                   onClick={clearFilters}
                   className="flex items-center justify-center gap-2 border border-luxury-600 hover:border-gold-500/50 text-luxury-400 hover:text-gold-500 rounded-lg px-4 py-2.5 text-sm font-medium transition-all">
@@ -320,109 +235,47 @@ export default function PropertiesClient({ initialProperties }: Props) {
       )}
 
       {/* Results */}
-      {paginated.length > 0 ? (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {paginated.map((property) => (
-              <PropertyCard key={property.id} property={property} />
-            ))}
-          </div>
-
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2">
-              <button
-                onClick={() => goToPage(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="w-10 h-10 rounded-lg flex items-center justify-center border border-luxury-700 text-luxury-400 hover:border-gold-500/50 hover:text-gold-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-
-              {getPageNumbers().map((page, i) =>
-                page === "..." ? (
-                  <span
-                    key={`ellipsis-${i}`}
-                    className="w-10 h-10 flex items-center justify-center text-luxury-500 text-sm">
-                    …
-                  </span>
-                ) : (
-                  <button
-                    key={page}
-                    onClick={() => goToPage(page)}
-                    className={`w-10 h-10 rounded-lg text-sm font-bold transition-all duration-200 ${
-                      currentPage === page
-                        ? "bg-gold-500 text-luxury-900 border border-gold-500"
-                        : "border border-luxury-700 text-luxury-400 hover:border-gold-500/50 hover:text-gold-500"
-                    }`}>
-                    {page}
-                  </button>
-                )
+      <div
+        aria-busy={isPending}
+        className={`transition-opacity duration-200 ${isPending ? "opacity-50" : ""}`}>
+        {total > 0 ? (
+          children
+        ) : (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="w-16 h-16 rounded-full bg-luxury-800 border border-luxury-700 flex items-center justify-center mb-6">
+              <MessageCircle className="w-6 h-6 text-gold-500" />
+            </div>
+            <h3 className="text-luxury-50 text-xl font-bold mb-2">
+              Not yet updated
+            </h3>
+            <p className="text-luxury-400 text-sm mb-2 max-w-sm">
+              {query.keyword ? (
+                <>
+                  No listings for{" "}
+                  <span className="text-luxury-50 font-semibold">{query.keyword}</span> yet.
+                </>
+              ) : (
+                "No listings match your search yet."
               )}
-
+            </p>
+            <p className="text-luxury-500 text-sm mb-8 max-w-sm">
+              Contact Broker Shella directly — she may have available units not yet posted.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link
+                href="/contact"
+                className="bg-gold-500 hover:bg-gold-600 text-luxury-900 text-sm font-bold px-6 py-3 rounded-lg tracking-wide transition-colors">
+                Contact Broker Shella
+              </Link>
               <button
-                onClick={() => goToPage(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="w-10 h-10 rounded-lg flex items-center justify-center border border-luxury-700 text-luxury-400 hover:border-gold-500/50 hover:text-gold-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
-                <ChevronRight className="w-4 h-4" />
+                onClick={clearFilters}
+                className="border border-luxury-600 hover:border-gold-500/50 text-luxury-400 hover:text-gold-500 text-sm font-medium px-6 py-3 rounded-lg transition-all">
+                Browse All Properties
               </button>
             </div>
-          )}
-        </>
-      ) : keyword ? (
-        <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-16 h-16 rounded-full bg-luxury-800 border border-luxury-700 flex items-center justify-center mb-6">
-            <MessageCircle className="w-6 h-6 text-gold-500" />
           </div>
-          <h3 className="text-luxury-50 text-xl font-bold mb-2">
-            Not yet updated
-          </h3>
-          <p className="text-luxury-400 text-sm mb-2 max-w-sm">
-            No listings for{" "}
-            <span className="text-luxury-50 font-semibold">{keyword}</span> yet.
-          </p>
-          <p className="text-luxury-500 text-sm mb-8 max-w-sm">
-            Contact Broker Shella directly — she may have available units not yet posted.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link
-              href="/contact"
-              className="bg-gold-500 hover:bg-gold-600 text-luxury-900 text-sm font-bold px-6 py-3 rounded-lg tracking-wide transition-colors">
-              Contact Broker Shella
-            </Link>
-            <button
-              onClick={clearFilters}
-              className="border border-luxury-600 hover:border-gold-500/50 text-luxury-400 hover:text-gold-500 text-sm font-medium px-6 py-3 rounded-lg transition-all">
-              Browse All Properties
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-16 h-16 rounded-full bg-luxury-800 border border-luxury-700 flex items-center justify-center mb-6">
-            <MessageCircle className="w-6 h-6 text-gold-500" />
-          </div>
-          <h3 className="text-luxury-50 text-xl font-bold mb-2">
-            Not yet updated
-          </h3>
-          <p className="text-luxury-400 text-sm mb-2 max-w-sm">
-            No listings match your search yet.
-          </p>
-          <p className="text-luxury-500 text-sm mb-8 max-w-sm">
-            Contact Broker Shella directly — she may have available units not yet posted.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link
-              href="/contact"
-              className="bg-gold-500 hover:bg-gold-600 text-luxury-900 text-sm font-bold px-6 py-3 rounded-lg tracking-wide transition-colors">
-              Contact Broker Shella
-            </Link>
-            <button
-              onClick={clearFilters}
-              className="border border-luxury-600 hover:border-gold-500/50 text-luxury-400 hover:text-gold-500 text-sm font-medium px-6 py-3 rounded-lg transition-all">
-              Browse All Properties
-            </button>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
 
     </div>
   );
