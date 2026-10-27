@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Property, Subdivision } from "@/types";
 import { unstable_cache } from "next/cache";
-import { slugify, subdivisionName } from "@/lib/utils";
+import { propertySlug, slugify, subdivisionName } from "@/lib/utils";
 
 const fetchFeaturedProperties = unstable_cache(
   async (supabaseUrl: string, supabaseKey: string): Promise<Property[]> => {
@@ -125,9 +125,20 @@ export async function getPropertyById(id: string): Promise<Property | null> {
   return fetchPropertyById(url, key, id);
 }
 
+/**
+ * Resolve a URL slug to a listing. Matches the current slug first, then any
+ * slug the listing used to have, then its title-derived slug (links shared
+ * before slugs were stored). Callers compare against propertySlug() and
+ * redirect when the match wasn't the current one.
+ */
 export async function getPropertyBySlug(slug: string): Promise<Property | null> {
   const properties = await getAllProperties();
-  return properties.find((p) => slugify(p.title) === slug) ?? null;
+  return (
+    properties.find((p) => propertySlug(p) === slug) ??
+    properties.find((p) => p.previous_slugs?.includes(slug)) ??
+    properties.find((p) => slugify(p.title) === slug) ??
+    null
+  );
 }
 
 export async function getSimilarProperties(

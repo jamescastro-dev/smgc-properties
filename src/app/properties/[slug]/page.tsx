@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import {
   getPropertyBySlug,
   getPropertyById,
@@ -6,7 +6,7 @@ import {
   getAllProperties,
   getSubdivisionBySlug,
 } from "@/lib/supabase/properties";
-import { slugify, subdivisionName } from "@/lib/utils";
+import { propertySlug, slugify, subdivisionName } from "@/lib/utils";
 import PropertyDetailClient from "./PropertyDetailClient";
 import MobileContactBar from "@/components/layout/MobileContactBar";
 import type { Metadata } from "next";
@@ -17,14 +17,19 @@ interface Props {
 
 export async function generateStaticParams() {
   const properties = await getAllProperties();
-  return properties.map((p) => ({ slug: slugify(p.title) }));
+  return properties.map((p) => ({ slug: propertySlug(p) }));
 }
 
 export const revalidate = 60;
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 async function resolveProperty(slug: string) {
   // Try slug first, fall back to UUID for backward compatibility
-  return (await getPropertyBySlug(slug)) ?? (await getPropertyById(slug));
+  return (
+    (await getPropertyBySlug(slug)) ??
+    (UUID.test(slug) ? await getPropertyById(slug) : null)
+  );
 }
 
 // Listing descriptions are authored for humans — emoji, line breaks and
@@ -55,7 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: property.title,
     description,
     alternates: {
-      canonical: `/properties/${slugify(property.title)}`,
+      canonical: `/properties/${propertySlug(property)}`,
     },
     openGraph: {
       title: property.title,
@@ -70,6 +75,12 @@ export default async function PropertyDetailPage({ params }: Props) {
   const property = await resolveProperty(slug);
   if (!property) notFound();
 
+  // Old slugs, title-derived slugs and UUID links all land here — send them to
+  // the one canonical URL so shared links keep working and rankings consolidate.
+  if (slug !== propertySlug(property)) {
+    permanentRedirect(`/properties/${propertySlug(property)}`);
+  }
+
   const similar = await getSimilarProperties(property.id, property.type);
 
   // Only link the development when it actually has a hub page (>1 listing).
@@ -78,7 +89,7 @@ export default async function PropertyDetailPage({ params }: Props) {
         ?.slug ?? null
     : null;
 
-  const url = `https://www.smgcproperties.com/properties/${slugify(property.title)}`;
+  const url = `https://www.smgcproperties.com/properties/${propertySlug(property)}`;
   const jsonLd = [
     {
       "@context": "https://schema.org",

@@ -1,6 +1,10 @@
 export interface Property {
   id: string;
   title: string;
+  /** Stable URL slug, set once at creation (see supabase/migrations). */
+  slug?: string;
+  /** Slugs this listing used to have — kept so old links can redirect. */
+  previous_slugs?: string[];
   description: string;
   price: number;
   type: "sale" | "rent";

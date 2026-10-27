@@ -6,7 +6,7 @@ import {
   getSubdivisions,
   getSubdivisionBySlug,
 } from "@/lib/supabase/properties";
-import { formatPriceCompact, slugify } from "@/lib/utils";
+import { formatPriceCompact, propertySlug } from "@/lib/utils";
 import PropertyCard from "@/components/ui/PropertyCard";
 import MobileContactBar from "@/components/layout/MobileContactBar";
 import type { Subdivision } from "@/types";
@@ -143,7 +143,7 @@ export default async function SubdivisionPage({ params }: Props) {
         "@type": "ListItem",
         position: i + 1,
         name: p.title,
-        url: `${BASE_URL}/properties/${slugify(p.title)}`,
+        url: `${BASE_URL}/properties/${propertySlug(p)}`,
       })),
     },
   ];

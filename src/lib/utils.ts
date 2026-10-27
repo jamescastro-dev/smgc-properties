@@ -8,6 +8,14 @@ export function slugify(str: string): string {
 }
 
 /**
+ * A listing's URL slug. Stored in the DB so renaming a listing doesn't break
+ * links already shared; falls back to the title for rows predating the column.
+ */
+export function propertySlug(property: { slug?: string | null; title: string }): string {
+  return property.slug || slugify(property.title);
+}
+
+/**
  * Canonical subdivision name for grouping. Listings are authored inconsistently
  * — "St. Agatha Homes" and "St. Agatha Homes, Tikay, Malolos, Bulacan" are the
  * same development — so keep only the segment before the first comma, which is
