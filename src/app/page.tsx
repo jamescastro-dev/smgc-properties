@@ -5,6 +5,7 @@ import AwardsCarousel from "@/components/sections/AwardsCarousel";
 import AccreditedDevelopers from "@/components/sections/AccreditedDevelopers";
 import ContactSection from "@/components/sections/ContactSection";
 import { SITE_CONFIG } from "@/lib/constants";
+import { getSubdivisions } from "@/lib/supabase/properties";
 import type { Metadata } from "next";
 
 const BASE_URL = "https://www.smgcproperties.com";
@@ -41,7 +42,9 @@ const brokerJsonLd = {
   ],
 };
 
-export default function Home() {
+export default async function Home() {
+  const hubs = (await getSubdivisions()).map(({ name, slug }) => ({ name, slug }));
+
   return (
     <main className="pt-16 sm:pt-[89px]">
       <script
@@ -49,7 +52,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(brokerJsonLd) }}
       />
       <HeroSection />
-      <AccreditedDevelopers />
+      <AccreditedDevelopers hubs={hubs} />
       <FeaturedProperties />
       <WhyChooseUs />
       <AwardsCarousel />

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useEffect, useCallback } from "react";
+import { slugify } from "@/lib/utils";
 
 const SUBDIVISIONS = [
   "St. Agatha Homes",
@@ -28,7 +29,23 @@ const SUBDIVISIONS = [
   "Manhattan Residences",
 ];
 
-export default function AccreditedDevelopers() {
+/**
+ * Developments with a hub page link straight to it — the home page is the
+ * site's strongest page, so these links are what get the hubs crawled and
+ * ranked. Ticker names are short ("Santa Clara", "SMDC"), so match on prefix.
+ */
+function hrefFor(name: string, hubs: { name: string; slug: string }[]): string {
+  const hub = hubs.find((h) => h.slug.startsWith(slugify(name)));
+  return hub
+    ? `/subdivisions/${hub.slug}`
+    : `/properties?keyword=${encodeURIComponent(name)}`;
+}
+
+export default function AccreditedDevelopers({
+  hubs = [],
+}: {
+  hubs?: { name: string; slug: string }[];
+}) {
   const trackRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<number>(0);
   const xRef = useRef(0);
@@ -115,7 +132,7 @@ export default function AccreditedDevelopers() {
           {[...SUBDIVISIONS, ...SUBDIVISIONS].map((name, i) => (
             <Link
               key={i}
-              href={`/properties?keyword=${encodeURIComponent(name)}`}
+              href={hrefFor(name, hubs)}
               onClick={(e) => { if (didDragRef.current) e.preventDefault(); }}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-luxury-700 bg-luxury-900 text-luxury-300 text-sm font-medium tracking-wide shrink-0 hover:border-gold-500/50 hover:text-gold-500 transition-colors"
             >

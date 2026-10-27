@@ -36,6 +36,47 @@ function locationLabel(locations: string[]): string {
   return province ? `${joined}, ${province}` : joined;
 }
 
+/**
+ * How to describe what a development sells. Most hubs are house-and-lot, but
+ * the SMDC hub is condos — calling it "House and Lot" misdescribes it to both
+ * buyers and Google. Mixed or unrecognised types fall back to house and lot.
+ */
+function offering(s: Subdivision) {
+  const types = new Set(s.properties.map((p) => p.property_type));
+  const only = types.size === 1 ? [...types][0] : null;
+  if (only === "Condominium") {
+    return {
+      title: "Condo Units",
+      sentence: "Condo units",
+      unit: "condo unit",
+      units: "condo units",
+      kind: "condominium development",
+      models: "unit types",
+      specs: "floor area",
+    };
+  }
+  if (only === "Townhouse") {
+    return {
+      title: "Townhouses",
+      sentence: "Townhouses",
+      unit: "townhouse",
+      units: "townhouses",
+      kind: "residential development",
+      models: "townhouse models",
+      specs: "floor area, lot area",
+    };
+  }
+  return {
+    title: "House and Lot",
+    sentence: "House and lot",
+    unit: "house and lot",
+    units: "house and lot units",
+    kind: "residential development",
+    models: "house models",
+    specs: "floor area, lot area",
+  };
+}
+
 function priceRange(s: Subdivision): string {
   const min = formatPriceCompact(s.minPrice, "sale");
   const max = formatPriceCompact(s.maxPrice, "sale");
@@ -49,10 +90,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const where = locationLabel(subdivision.locations);
   const count = subdivision.properties.length;
+  const offer = offering(subdivision);
 
   return pageMetadata({
-    title: `${subdivision.name} — House and Lot for Sale in ${where}`,
-    description: `${subdivision.name} in ${where}: ${count} house and lot units for sale from ${priceRange(
+    title: `${subdivision.name} — ${offer.title} for Sale in ${where}`,
+    description: `${subdivision.name} in ${where}: ${count} ${offer.units} for sale from ${priceRange(
       subdivision
     )}. Official pricing, floor plans and site viewing with Broker Shella, PRC-licensed real estate broker.`,
     path: `/subdivisions/${subdivision.slug}`,
@@ -69,6 +111,7 @@ export default async function SubdivisionPage({ params }: Props) {
   const count = subdivision.properties.length;
   const range = priceRange(subdivision);
   const url = `${BASE_URL}/subdivisions/${subdivision.slug}`;
+  const offer = offering(subdivision);
 
   const bedroomCounts = [
     ...new Set(
@@ -80,7 +123,7 @@ export default async function SubdivisionPage({ params }: Props) {
   // Rendered as visible copy *and* FAQPage JSON-LD so it can win a rich result.
   const faqs = [
     {
-      q: `How much is a house and lot in ${subdivision.name}?`,
+      q: `How much is a ${offer.unit} in ${subdivision.name}?`,
       a: `Units at ${subdivision.name} in ${where} currently range from ${range}. Pricing depends on the model, lot area and whether the unit is pre-selling or ready for occupancy. Contact Broker Shella for the latest official price list and available payment terms.`,
     },
     {
@@ -88,14 +131,14 @@ export default async function SubdivisionPage({ params }: Props) {
       a: `${subdivision.name} is located in ${where}. Message Broker Shella to schedule a site viewing or request a location map and directions.`,
     },
     {
-      q: `What house models are available at ${subdivision.name}?`,
+      q: `What ${offer.models} are available at ${subdivision.name}?`,
       a: `There ${count === 1 ? "is" : "are"} currently ${count} available ${
         count === 1 ? "unit" : "units"
       } at ${subdivision.name}${
         bedroomCounts.length
           ? `, with ${bedroomCounts.join(" and ")} bedroom layouts`
           : ""
-      }. Each model is listed below with its floor area, lot area and complete price details.`,
+      }. Each is listed below with its ${offer.specs} and complete price details.`,
     },
     {
       q: `Is bank or Pag-IBIG financing available at ${subdivision.name}?`,
@@ -176,10 +219,12 @@ export default async function SubdivisionPage({ params }: Props) {
           </h1>
           <p className="flex items-center gap-2 mt-3 text-luxury-300">
             <MapPin className="w-4 h-4 text-gold-500 shrink-0" />
-            <span>House and lot for sale in {where}</span>
+            <span>
+              {offer.sentence} for sale in {where}
+            </span>
           </p>
           <p className="mt-5 text-luxury-300 leading-relaxed">
-            {subdivision.name} is a residential development in {where} with{" "}
+            {subdivision.name} is a {offer.kind} in {where} with{" "}
             {count} {count === 1 ? "unit" : "units"} currently available through
             Broker Shella Castro, a PRC-licensed real estate broker. Prices
             range from {range}. Browse every available model below, or get in
