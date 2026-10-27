@@ -17,6 +17,12 @@ interface Factor {
   status: string;
 }
 
+/** Verified + pending TOTP factors for the signed-in admin; null on error. */
+async function fetchFactors(): Promise<Factor[] | null> {
+  const { data, error } = await createClient().auth.mfa.listFactors();
+  return error ? null : ((data?.totp ?? []) as Factor[]);
+}
+
 export default function MfaSettingsClient() {
   const [factors, setFactors] = useState<Factor[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,15 +40,24 @@ export default function MfaSettingsClient() {
   const [removingId, setRemovingId] = useState<string | null>(null);
 
   const loadFactors = useCallback(async () => {
-    const supabase = createClient();
-    const { data, error: listError } = await supabase.auth.mfa.listFactors();
-    if (!listError) setFactors((data?.totp ?? []) as Factor[]);
+    const factors = await fetchFactors();
+    if (factors) setFactors(factors);
     setLoading(false);
   }, []);
 
+  // Initial load: state is set in the promise callback, not synchronously in
+  // the effect body (avoids a cascading render on mount).
   useEffect(() => {
-    loadFactors();
-  }, [loadFactors]);
+    let cancelled = false;
+    fetchFactors().then((factors) => {
+      if (cancelled) return;
+      if (factors) setFactors(factors);
+      setLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const startEnroll = async () => {
     setError("");

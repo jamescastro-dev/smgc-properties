@@ -1,4 +1,3 @@
-import { createClient } from "@/lib/supabase/server";
 import { Property, Subdivision } from "@/types";
 import { unstable_cache } from "next/cache";
 import { propertySlug, slugify, subdivisionName } from "@/lib/utils";

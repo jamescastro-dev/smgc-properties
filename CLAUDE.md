@@ -29,7 +29,7 @@ src/
   components/   layout/  providers/  sections/  ui/
   lib/          constants.ts, data.ts, utils.ts, supabase/{client,server,properties}.ts
   types/        index.ts  (Property, Lead, Testimonial)
-  middleware.ts auth guard for /admin
+  proxy.ts      auth guard for /admin (Next 16 name for middleware)
 ```
 
 ### Routes
@@ -49,7 +49,7 @@ src/
 
 ## Auth
 
-`src/middleware.ts` (matcher `/admin/:path*`) checks the Supabase session via `getUser()`: unauthenticated `/admin/*` → redirect to `/admin/login`; authenticated user on `/admin/login` → redirect to `/admin`. Three Supabase clients, pick by context:
+`src/proxy.ts` (matcher `/admin/:path*`; Next 16 renamed middleware → proxy, Node runtime only) checks the Supabase session via `getUser()`: unauthenticated `/admin/*` → redirect to `/admin/login`; authenticated user on `/admin/login` → redirect to `/admin`. Three Supabase clients, pick by context:
 - `lib/supabase/client.ts` — browser (client components)
 - `lib/supabase/server.ts` — server components / route handlers (cookie-based)
 - `lib/supabase/properties.ts` — plain client inside `unstable_cache` (no cookies)
@@ -65,4 +65,3 @@ src/
 ## Gotchas
 
 - **Turbopack `.next` cache corruption** surfaces as a panic loop "Next.js package not found" even though `next` is installed. Fix: stop the dev server, delete `.next`, restart `npm run dev`.
-- Next.js 16 warns that the `middleware` file convention is deprecated in favor of `proxy` — `src/middleware.ts` still uses the old name (rename pending).

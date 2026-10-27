@@ -4,7 +4,6 @@ import { Suspense, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { SITE_CONFIG } from "@/lib/constants";
 import { captureLeadSource } from "@/lib/leadSource";
 
 export default function ConditionalLayout({

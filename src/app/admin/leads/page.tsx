@@ -15,7 +15,7 @@ export default async function AdminLeadsPage() {
     ...new Set(leads?.map((l) => l.property_id).filter(Boolean)),
   ];
 
-  let propertiesMap: Record<string, { title: string }> = {};
+  const propertiesMap: Record<string, { title: string }> = {};
   if (propertyIds.length > 0) {
     const { data: props } = await supabase
       .from("properties")

@@ -118,7 +118,7 @@ export default function ContactSection({
             Get Free Property Recommendations
           </Heading>
           <p className="text-luxury-400 text-base leading-relaxed max-w-2xl">
-            Tell Broker Shella what you're looking for and she will find the
+            Tell Broker Shella what you&apos;re looking for and she will find the
             best options for you in Bulacan and Luzon.
           </p>
         </div>
@@ -229,7 +229,7 @@ export default function ContactSection({
                   <CheckCircle className="w-8 h-8 text-gold-500" />
                 </div>
                 <h3 className="text-luxury-50 text-2xl font-bold mb-3">
-                  You're All Set!
+                  You&apos;re All Set!
                 </h3>
                 <p className="text-luxury-400 text-sm max-w-sm leading-relaxed mb-8">
                   Thank you for reaching out. Broker Shella will contact you

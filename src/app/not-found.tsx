@@ -21,11 +21,11 @@ export default function NotFound() {
         </div>
 
         <h1 className="text-3xl font-display font-semibold text-luxury-50 tracking-tight mb-4">
-          Oops! This page doesn't exist
+          Oops! This page doesn&apos;t exist
         </h1>
         <p className="text-luxury-400 text-base leading-relaxed mb-10">
-          The page you're looking for may have been moved, deleted, or never
-          existed. Let's get you back on track.
+          The page you&apos;re looking for may have been moved, deleted, or never
+          existed. Let&apos;s get you back on track.
         </p>
 
         <div className="flex flex-wrap justify-center gap-4">

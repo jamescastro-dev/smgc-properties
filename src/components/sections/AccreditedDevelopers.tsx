@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect } from "react";
 import { slugify } from "@/lib/utils";
 
 const SUBDIVISIONS = [
@@ -54,28 +54,29 @@ export default function AccreditedDevelopers({
   const pausedRef = useRef(false);
   const didDragRef = useRef(false);
 
-  const tick = useCallback(() => {
-    const el = trackRef.current;
-    if (el) {
-      if (halfWidthRef.current === 0) {
-        halfWidthRef.current = el.scrollWidth / 2;
-      }
-      if (!pausedRef.current && halfWidthRef.current > 0) {
-        const speed = window.innerWidth < 640 ? 0.55 : 0.4;
-        xRef.current += speed;
-        if (xRef.current >= halfWidthRef.current) {
-          xRef.current = 0;
-        }
-        el.style.transform = `translateX(-${xRef.current}px)`;
-      }
-    }
-    animRef.current = requestAnimationFrame(tick);
-  }, []);
-
+  // The animation loop lives inside the effect so the frame callback can
+  // re-schedule itself without referencing a hook value before it exists.
   useEffect(() => {
+    const tick = () => {
+      const el = trackRef.current;
+      if (el) {
+        if (halfWidthRef.current === 0) {
+          halfWidthRef.current = el.scrollWidth / 2;
+        }
+        if (!pausedRef.current && halfWidthRef.current > 0) {
+          const speed = window.innerWidth < 640 ? 0.55 : 0.4;
+          xRef.current += speed;
+          if (xRef.current >= halfWidthRef.current) {
+            xRef.current = 0;
+          }
+          el.style.transform = `translateX(-${xRef.current}px)`;
+        }
+      }
+      animRef.current = requestAnimationFrame(tick);
+    };
     animRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animRef.current);
-  }, [tick]);
+  }, []);
 
   const onDragStart = (clientX: number) => {
     pausedRef.current = true;
