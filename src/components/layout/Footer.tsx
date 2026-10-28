@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { Phone, Mail, MapPin, Facebook, Instagram } from "lucide-react";
 import { SITE_CONFIG, PROPERTY_TYPES as BASE_PROPERTY_TYPES } from "@/lib/constants";

@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -9,16 +7,21 @@ import {
   ArrowRight,
 } from "lucide-react";
 import SearchBar from "@/components/layout/SearchBar";
+import { SITE_CONFIG } from "@/lib/constants";
+import { BUDGETS } from "@/lib/propertyQuery";
 
 const STATS = [
   { value: "20+", label: "Years Experience" },
   { value: "1000+", label: "Properties Sold" },
 ];
 
+// Specific, checkable credentials (see the Awards section) rather than
+// generic "Top Seller" labels — a license number is what scam-wary buyers
+// look for.
 const AWARDS = [
-  { icon: BadgeCheck, label: "PRC Licensed" },
-  { icon: Trophy, label: "Top Seller" },
-  { icon: Award, label: "Company Awardee" },
+  { icon: BadgeCheck, label: SITE_CONFIG.prcLicense },
+  { icon: Trophy, label: "Top Broker 2024 & 2025" },
+  { icon: Award, label: "VP, PAREB Bulacan 2026" },
 ];
 
 export default function HeroSection() {
@@ -40,7 +43,8 @@ export default function HeroSection() {
               <div className="inline-flex items-center gap-2.5 bg-gold-500/10 border border-gold-500/30 rounded-full px-4 py-1.5 mb-6">
                 <span className="w-1.5 h-1.5 rounded-full bg-gold-500" />
                 <span className="text-gold-500 text-[11px] tracking-[0.15em] uppercase font-semibold">
-                  Licensed Real Estate Broker · Philippines
+                  Licensed Real Estate Broker
+                  <span className="hidden sm:inline"> · Philippines</span>
                 </span>
               </div>
 
@@ -62,7 +66,7 @@ export default function HeroSection() {
               </p>
 
               {/* CTAs */}
-              <div className="flex gap-2 sm:gap-3 mb-10 w-full sm:w-auto">
+              <div className="flex gap-2 sm:gap-3 mb-6 w-full sm:w-auto">
                 <Link
                   href="/properties"
                   className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gold-500 hover:bg-gold-600 text-luxury-900 text-xs sm:text-sm font-bold px-4 sm:px-7 py-3.5 rounded-lg tracking-wide transition-colors">
@@ -76,8 +80,28 @@ export default function HeroSection() {
                 </Link>
               </div>
 
-              {/* Stats */}
-              <div className="flex justify-center lg:justify-start gap-10">
+              {/* Budget shortcuts — one tap from the hero to homes a visitor
+                  can afford, via the /properties budget filter. */}
+              <nav aria-label="Shop by budget" className="w-full mb-10 sm:mb-0">
+                <p className="text-luxury-400 text-[11px] tracking-[0.15em] uppercase font-semibold mb-2.5">
+                  Shop by budget
+                </p>
+                <ul className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center lg:justify-start gap-2">
+                  {BUDGETS.map((b) => (
+                    <li key={b.value}>
+                      <Link
+                        href={`/properties?budget=${b.value}`}
+                        className="flex items-center justify-center h-10 px-4 rounded-lg border border-luxury-700 bg-luxury-800/60 hover:border-gold-500 hover:text-gold-500 text-luxury-50 text-sm font-semibold tabular-nums whitespace-nowrap transition-colors">
+                        {b.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+
+              {/* Stats — phones only; tablet/desktop show them in the photo's
+                  name card, which keeps this column short enough for laptops. */}
+              <div className="sm:hidden flex justify-center gap-10">
                 {STATS.map((stat) => (
                   <div key={stat.label} className="flex flex-col items-center lg:items-start">
                     <p className="text-[2rem] font-black text-luxury-50 leading-none mb-1 tabular-nums">
@@ -133,31 +157,48 @@ export default function HeroSection() {
                 {/* Photo */}
                 <div className="relative w-full rounded-3xl overflow-hidden border border-luxury-700 z-10">
                   <div className="relative w-full aspect-3/4">
+                    {/* Hidden below sm (phones get the compact card above), but
+                        a priority image downloads even when hidden — the 16px
+                        size makes that a ~1KB thumbnail instead of 1080px. */}
                     <Image
                       src="/shella.jpg"
                       alt="Broker Shella Castro - Licensed Real Estate Broker"
                       fill
-                      sizes="(max-width: 768px) 90vw, 440px"
+                      sizes="(max-width: 639px) 16px, (max-width: 1023px) 384px, 440px"
                       className="object-cover object-[center_top]"
                       priority
                     />
                     <div className="absolute bottom-0 left-0 right-0 h-2/5 pointer-events-none bg-linear-to-t from-luxury-900 to-transparent" />
                   </div>
 
-                  {/* Name card */}
+                  {/* Name card + track record */}
                   <div className="absolute bottom-0 left-0 right-0 px-5 pb-5">
-                    <div className="bg-luxury-800/90 backdrop-blur-md border border-luxury-700 rounded-2xl px-5 py-4 flex items-center justify-between">
-                      <div>
-                        <p className="text-luxury-50 text-xl font-bold tracking-tight leading-none mb-1">
-                          Broker Shella
-                        </p>
-                        <p className="text-gold-500 text-[11px] tracking-[0.15em] uppercase font-semibold">
-                          SMGC Properties
-                        </p>
+                    <div className="bg-luxury-800/90 backdrop-blur-md border border-luxury-700 rounded-2xl px-5 py-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-luxury-50 text-xl font-bold tracking-tight leading-none mb-1">
+                            Broker Shella
+                          </p>
+                          <p className="text-gold-500 text-[11px] tracking-[0.15em] uppercase font-semibold">
+                            SMGC Properties
+                          </p>
+                        </div>
+                        <div className="w-9 h-9 rounded-full bg-gold-500/10 border border-gold-500/30 flex items-center justify-center shrink-0">
+                          <BadgeCheck className="w-4 h-4 text-gold-500" />
+                        </div>
                       </div>
-                      <div className="w-9 h-9 rounded-full bg-gold-500/10 border border-gold-500/30 flex items-center justify-center shrink-0">
-                        <BadgeCheck className="w-4 h-4 text-gold-500" />
-                      </div>
+                      <dl className="grid grid-cols-2 gap-4 mt-3.5 pt-3.5 border-t border-luxury-700">
+                        {STATS.map((stat) => (
+                          <div key={stat.label} className="flex flex-col-reverse">
+                            <dt className="text-gold-500 text-[10px] tracking-[0.12em] uppercase font-medium mt-1">
+                              {stat.label}
+                            </dt>
+                            <dd className="text-2xl font-black text-luxury-50 leading-none tabular-nums">
+                              {stat.value}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
                     </div>
                   </div>
                 </div>
@@ -176,18 +217,6 @@ export default function HeroSection() {
                   ))}
                 </div>
 
-                {/* Availability chip — desktop only */}
-                <div className="hidden lg:block absolute -left-3 top-1/2 -translate-y-1/2 bg-luxury-800 border border-luxury-700 rounded-2xl px-4 py-3 z-20">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="w-2 h-2 rounded-full bg-gold-500" />
-                    <span className="text-gold-500 text-[10px] font-bold tracking-widest uppercase">
-                      Available Now
-                    </span>
-                  </div>
-                  <p className="text-luxury-400 text-[10px] leading-snug max-w-22.5">
-                    Ready to help you find your home
-                  </p>
-                </div>
               </div>
 
               {/* Award badges row — mobile only, below photo */}

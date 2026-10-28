@@ -5,9 +5,14 @@ import type { NextConfig } from "next";
 // hence 'unsafe-inline' for Next's inline bootstrap scripts and inline styles.
 // The high-value wins still hold: locked-down connect/img/frame sources,
 // frame-ancestors 'none', object-src 'none', base-uri/form-action 'self'.
+// React's dev build uses eval() for its debugging tools (rebuilding call
+// stacks); without it every dev page logs a CSP console error. Production
+// never uses eval, so the deployed policy stays strict.
+const isDev = process.env.NODE_ENV === "development";
+
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://images.unsplash.com https://*.supabase.co",
   "font-src 'self' data:",
@@ -44,6 +49,16 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   images: {
+    // AVIF first: ~20–40% smaller than WebP for the same quality, which
+    // matters most for the listing photos (the LCP on /properties).
+    formats: ["image/avif", "image/webp"],
+    // Optimized images stay cached for a month. Listing photo URLs never
+    // change (a new upload gets a new URL), so long caching is safe and saves
+    // re-encoding on Vercel's image quota.
+    minimumCacheTTL: 60 * 60 * 24 * 31,
+    // 60 for listing-card thumbnails (see PropertyCard), 75 (default) for
+    // everything else. Next 16 only serves qualities listed here.
+    qualities: [60, 75],
     remotePatterns: [
       {
         protocol: "https",

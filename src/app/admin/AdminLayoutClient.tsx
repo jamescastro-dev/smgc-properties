@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import {
   LayoutDashboard,
@@ -53,6 +53,25 @@ export default function AdminLayoutClient({
     };
     getUser();
   }, []);
+
+  // Every admin page starts at the top. Next skips its own scroll-to-top when
+  // a loading skeleton is already in view, and Chrome then re-applies the old
+  // offset once the real page is long enough — opening a listing from a
+  // scrolled list landed mid-form. Back/forward is left alone so returning to
+  // the list keeps your place.
+  const poppedRef = useRef(false);
+  useEffect(() => {
+    const onPop = () => (poppedRef.current = true);
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+  useEffect(() => {
+    if (poppedRef.current) {
+      poppedRef.current = false;
+      return;
+    }
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   const handleLogout = async () => {
     const supabase = createClient();

@@ -1,21 +1,23 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 
+// Newest first — the grid's first row is what most visitors see. Years are
+// as printed on each certificate.
 const AWARDS = [
   {
-    title: "Top Sales Performer",
-    organization: "Archer Realty & Development Corporation",
-    year: "2020 – 2021",
-    src: "/Top-Sales-Performer-2020-2021.jpg",
+    title: "Vice President",
+    organization: "PAREB – Bulacan Real Estate Board, Inc.",
+    year: "2026",
+    src: "/BRB-VicePresident-2026.jpg",
   },
   {
-    title: "Top Real Estate Broker",
-    organization: "Archer Realty & Development Corporation",
-    year: "2024",
-    src: "/Top-RealEstate-Broker-2024.jpg",
+    title: "BPI Prime Partner",
+    organization: "Bank of the Philippine Islands",
+    year: "2026",
+    src: "/BPI-Prime-Partner.jpg",
   },
   {
     title: "Top Real Estate Broker",
@@ -30,51 +32,58 @@ const AWARDS = [
     src: "/Top-Broker-Evara-2025.jpg",
   },
   {
-    title: "Top Loan Referrer",
-    organization: "Bank of the Philippine Islands",
-    year: "2025",
-    src: "/Top-Loan-Referrer.jpg",
-  },
-  {
-    title: "BPI Prime Partner",
-    organization: "Bank of the Philippine Islands",
-    year: "2025",
-    src: "/BPI-Prime-Partner.jpg",
-  },
-  {
     title: "Secretary Recognition",
-    organization: "BRB (Bulacan Realt Estate Boards)",
+    organization: "PAREB – Bulacan Real Estate Board, Inc.",
     year: "2023 – 2025",
     src: "/BRB-Secretary-Recognition-2023-2025.jpg",
   },
   {
-    title: "Vice President",
-    organization: "BRB (Bulacan Realt Estate Boards)",
-    year: "2026",
-    src: "/BRB-VicePresident-2026.jpg",
+    title: "Top Real Estate Broker",
+    organization: "Archer Realty & Development Corporation",
+    year: "2024",
+    src: "/Top-RealEstate-Broker-2024.jpg",
+  },
+  {
+    title: "Top Loan Referrer",
+    organization: "Bank of the Philippine Islands",
+    year: "2022",
+    src: "/Top-Loan-Referrer.jpg",
+  },
+  {
+    title: "Top Sales Performer",
+    organization: "Archer Realty & Development Corporation",
+    year: "2020 – 2021",
+    src: "/Top-Sales-Performer-2020-2021.jpg",
   },
 ];
 
+/**
+ * All awards at once — the old one-at-a-time carousel hid seven of eight
+ * behind arrow clicks most visitors never make. Grid on tablet/desktop, a
+ * swipeable row on phones (a 2-column grid of 8 was a full screen of
+ * scrolling); any award opens full size in a lightbox.
+ */
 export default function AwardsCarousel({
   sectionClassName = "bg-luxury-900",
 }: {
   sectionClassName?: string;
 }) {
-  const [current, setCurrent] = useState(0);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [open, setOpen] = useState(0);
   const n = AWARDS.length;
+  const award = AWARDS[open];
 
-  const prev = useCallback(() => setCurrent((i) => (i === 0 ? n - 1 : i - 1)), [n]);
-  const next = useCallback(() => setCurrent((i) => (i === n - 1 ? 0 : i + 1)), [n]);
-
-  const award = AWARDS[current];
-  const prevIdx = (current - 1 + n) % n;
-  const nextIdx = (current + 1) % n;
+  const show = (i: number) => {
+    setOpen(i);
+    dialog.current?.showModal();
+  };
+  const step = (d: number) => setOpen((i) => (i + d + n) % n);
 
   return (
-    <section className={`${sectionClassName} py-12`}>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className={`${sectionClassName} py-16`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* ── Section header ── */}
-        <div className="text-center mb-7">
+        <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 mb-3">
             <span className="w-8 h-px bg-gold-500" />
             <span className="text-gold-500 text-xs tracking-widest uppercase font-semibold">
@@ -86,90 +95,105 @@ export default function AwardsCarousel({
             Awards &amp; Recognition
           </h2>
           <p className="text-luxury-400 text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
-            A decade of excellence, recognized by industry leaders and clients
-            alike.
+            Recognized by developers, banks and the Bulacan real estate board
+            across 20+ years in the industry.
           </p>
         </div>
 
-        {/* ── Coverflow (wide frame, height-capped, caption on image) ── */}
-        <div className="relative">
-          {/* Stage */}
-          <div className="relative flex items-center justify-center overflow-hidden">
-            {/* Prev peek */}
-            <div className="hidden sm:block absolute left-0 top-1/2 -translate-y-1/2 -translate-x-[40%] w-[58%] h-[260px] sm:h-[380px] rounded-xl overflow-hidden opacity-25 pointer-events-none">
-              <Image src={AWARDS[prevIdx].src} alt="" fill sizes="40vw" className="object-cover" />
-              <div className="absolute inset-0 bg-luxury-900/50" />
-            </div>
-
-            {/* Next peek */}
-            <div className="hidden sm:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-[40%] w-[58%] h-[260px] sm:h-[380px] rounded-xl overflow-hidden opacity-25 pointer-events-none">
-              <Image src={AWARDS[nextIdx].src} alt="" fill sizes="40vw" className="object-cover" />
-              <div className="absolute inset-0 bg-luxury-900/50" />
-            </div>
-
-            {/* Center slide + caption overlay */}
-            <div
-              key={current}
-              className="relative w-full sm:w-[66%] aspect-3/2 sm:aspect-auto sm:h-[440px] rounded-2xl overflow-hidden bg-luxury-800 border border-luxury-700 shadow-2xl shadow-black/50 z-10 animate-fade-in"
-            >
-              <Image
-                src={award.src}
-                alt={award.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 720px"
-                className="object-contain"
-                priority
-              />
-              {/* Caption on image */}
-              <div className="absolute inset-x-0 bottom-0 px-5 py-4 sm:px-7 sm:py-5 bg-linear-to-t from-luxury-900 via-luxury-900/85 to-transparent">
-                <span className="inline-block text-[10px] sm:text-[11px] font-bold tracking-[0.12em] uppercase text-luxury-900 bg-gold-500 rounded-full px-3 py-1 mb-2.5 shadow-md">
-                  {award.year}
+        {/* ── Awards ── */}
+        <ul className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 overflow-x-auto sm:overflow-visible snap-x snap-mandatory scroll-px-4 -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0">
+          {AWARDS.map((a, i) => (
+            <li key={a.src} className="shrink-0 w-[78%] sm:w-auto snap-start">
+              <button
+                type="button"
+                onClick={() => show(i)}
+                className="group w-full h-full flex flex-col text-left bg-luxury-800 border border-luxury-700 hover:border-gold-500/50 rounded-2xl overflow-hidden transition-colors cursor-zoom-in">
+                <span className="relative block w-full aspect-3/2 bg-luxury-900 overflow-hidden">
+                  <Image
+                    src={a.src}
+                    alt={`${a.title} — ${a.organization}, ${a.year}`}
+                    fill
+                    sizes="(max-width: 640px) 78vw, (max-width: 1024px) 50vw, 300px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <span className="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-luxury-900/80 backdrop-blur-sm border border-luxury-700 flex items-center justify-center text-luxury-50 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ZoomIn className="w-4 h-4" aria-hidden="true" />
+                  </span>
                 </span>
-                <h3 className="font-display text-lg sm:text-2xl font-semibold text-luxury-50 leading-tight">
-                  {award.title}
-                </h3>
-                <p className="text-luxury-300 text-xs sm:text-sm mt-0.5">
-                  {award.organization}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Arrows */}
-          <button
-            onClick={prev}
-            aria-label="Previous award"
-            className="absolute left-1 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-luxury-50 text-luxury-900 hover:bg-gold-500 flex items-center justify-center shadow-lg transition-colors">
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <button
-            onClick={next}
-            aria-label="Next award"
-            className="absolute right-1 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-luxury-50 text-luxury-900 hover:bg-gold-500 flex items-center justify-center shadow-lg transition-colors">
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* ── Dots ── */}
-        <div className="flex items-center justify-center gap-1 mt-5">
-          {AWARDS.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrent(i)}
-              aria-label={`Go to award ${i + 1}`}
-              className="group/dot flex items-center justify-center h-9 min-w-9 px-1.5"
-            >
-              <span
-                className={`h-1.5 rounded-full transition-all duration-200 ${
-                  i === current
-                    ? "w-6 bg-gold-500"
-                    : "w-1.5 bg-luxury-600 group-hover/dot:bg-luxury-500"
-                }`}
-              />
-            </button>
+                <span className="flex flex-col flex-1 p-4">
+                  <span className="self-start text-[10px] font-bold tracking-[0.12em] uppercase text-luxury-900 bg-gold-500 rounded-full px-2.5 py-0.5 mb-2.5 tabular-nums">
+                    {a.year}
+                  </span>
+                  <span className="font-display text-base font-semibold text-luxury-50 leading-snug">
+                    {a.title}
+                  </span>
+                  <span className="text-luxury-400 text-xs mt-1 leading-snug">{a.organization}</span>
+                </span>
+              </button>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
+
+      {/* ── Lightbox ── native <dialog>: focus trap, Esc and backdrop for free. */}
+      <dialog
+        ref={dialog}
+        aria-label={`${award.title}, ${award.year}`}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) dialog.current?.close();
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowLeft") step(-1);
+          if (e.key === "ArrowRight") step(1);
+        }}
+        className="m-auto p-0 bg-luxury-900/95 backdrop-blur-sm max-w-none max-h-none w-full h-full backdrop:bg-transparent">
+        <div className="relative w-full h-full flex flex-col items-center justify-center gap-4 px-4 py-16 pointer-events-none">
+          <div className="relative w-full max-w-5xl h-[min(70vh,720px)] pointer-events-auto">
+            <Image
+              key={award.src}
+              src={award.src}
+              alt={`${award.title} — ${award.organization}, ${award.year}`}
+              fill
+              sizes="(max-width: 1100px) 92vw, 1024px"
+              className="object-contain animate-fade-in"
+            />
+          </div>
+          <div className="text-center pointer-events-auto">
+            <span className="inline-block text-[11px] font-bold tracking-[0.12em] uppercase text-luxury-900 bg-gold-500 rounded-full px-3 py-1 mb-2 tabular-nums">
+              {award.year}
+            </span>
+            <p className="font-display text-xl sm:text-2xl font-semibold text-luxury-50 leading-tight">
+              {award.title}
+            </p>
+            <p className="text-luxury-300 text-sm mt-1">{award.organization}</p>
+            <p className="text-luxury-500 text-xs mt-2 tabular-nums">
+              {open + 1} / {n}
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => dialog.current?.close()}
+          aria-label="Close"
+          className="absolute top-4 right-4 w-11 h-11 rounded-full bg-luxury-800 border border-luxury-700 text-luxury-50 hover:text-gold-500 flex items-center justify-center transition-colors">
+          <X className="w-5 h-5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => step(-1)}
+          aria-label="Previous award"
+          className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-luxury-50 text-luxury-900 hover:bg-gold-500 flex items-center justify-center shadow-lg transition-colors">
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => step(1)}
+          aria-label="Next award"
+          className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-luxury-50 text-luxury-900 hover:bg-gold-500 flex items-center justify-center shadow-lg transition-colors">
+          <ChevronRight className="w-5 h-5" />
+        </button>
+      </dialog>
     </section>
   );
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Fraunces } from "next/font/google";
 import "./globals.css";
 import ConditionalLayout from "@/components/layout/ConditionalLayout";
+import Footer from "@/components/layout/Footer";
 import ThemeProvider from "@/components/providers/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -83,7 +84,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <ThemeProvider>
-          <ConditionalLayout>{children}</ConditionalLayout>
+          <ConditionalLayout footer={<Footer />}>{children}</ConditionalLayout>
         </ThemeProvider>
         <Analytics />
       </body>

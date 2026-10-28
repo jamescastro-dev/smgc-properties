@@ -9,7 +9,7 @@ export default async function FeaturedProperties() {
   if (properties.length === 0) return null;
 
   return (
-    <section className="bg-luxury-900 py-24">
+    <section className="bg-luxury-800 py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section header */}
@@ -17,7 +17,7 @@ export default async function FeaturedProperties() {
           <div>
             <div className="inline-flex items-center gap-2 mb-4">
               <span className="w-8 h-px bg-gold-500" />
-              <span className="text-gold-500 text-xs tracking-widests uppercase font-semibold">
+              <span className="text-gold-500 text-xs tracking-widest uppercase font-semibold">
                 Hand-picked listings
               </span>
             </div>

@@ -168,7 +168,7 @@ export default function SearchBar() {
               value={listing}
               options={LISTINGS}
               onChange={(v) => setListing(v as typeof listing)}
-              width="w-[135px]"
+              width="w-[165px]"
             />
           </div>
 

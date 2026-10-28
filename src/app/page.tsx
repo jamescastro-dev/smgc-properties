@@ -52,8 +52,8 @@ export default async function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(brokerJsonLd) }}
       />
       <HeroSection />
-      <AccreditedDevelopers hubs={hubs} />
       <FeaturedProperties />
+      <AccreditedDevelopers hubs={hubs} />
       <WhyChooseUs />
       <AwardsCarousel />
       <ContactSection />

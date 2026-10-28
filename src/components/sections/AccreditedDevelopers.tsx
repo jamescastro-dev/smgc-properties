@@ -101,7 +101,7 @@ export default function AccreditedDevelopers({
   };
 
   return (
-    <section className="bg-luxury-800 border-y border-luxury-700 py-12">
+    <section className="bg-luxury-900 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-8">
         <div className="inline-flex items-center gap-2">
           <span className="w-8 h-px bg-gold-500" />

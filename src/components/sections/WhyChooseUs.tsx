@@ -20,7 +20,7 @@ const REASONS = [
     icon: Award,
     title: "Top Awarded Agent",
     description:
-      "Consistent top seller and company awardee with over a decade of proven excellence in real estate.",
+      "Consistent top seller and company awardee with 20+ years of proven excellence in real estate.",
   },
   {
     icon: MapPin,

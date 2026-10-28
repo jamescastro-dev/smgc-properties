@@ -12,10 +12,12 @@ import {
 interface PropertyCardProps {
   property: Property;
   /**
-   * First-row cards on a listing grid. Their photo is the page's LCP element,
-   * so load it eagerly at high priority instead of lazily after layout.
+   * First-row cards on a listing grid load their photo eagerly instead of
+   * lazily after layout. "lcp" marks the one card (the first) whose photo is
+   * the page's LCP element and also gets high fetch priority — giving three
+   * photos high priority made them compete for a phone's bandwidth.
    */
-  aboveFold?: boolean;
+  aboveFold?: boolean | "lcp";
 }
 
 const sqm = (n: number) => `${Number.isInteger(n) ? n : n.toFixed(1)} sqm`;
@@ -62,9 +64,14 @@ export default function PropertyCard({ property, aboveFold = false }: PropertyCa
             src={property.images[0]}
             alt={property.title}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            // Thumbnails: quality 60, and on phones a ~66vw slot so a 3x screen
+            // gets a ~2x image (828px, not 1200px) — the extra pixels aren't
+            // visible at card size but cost ~half the bytes on mobile data.
+            // Full-quality photos are on the listing page.
+            quality={60}
+            sizes="(max-width: 640px) 66vw, (max-width: 1024px) 50vw, 400px"
             loading={aboveFold ? "eager" : undefined}
-            fetchPriority={aboveFold ? "high" : undefined}
+            fetchPriority={aboveFold === "lcp" ? "high" : undefined}
             className={`object-cover group-hover:scale-105 transition-transform duration-500 ${
               offMarket ? "grayscale opacity-60" : ""
             }`}

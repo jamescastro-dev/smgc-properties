@@ -3,13 +3,16 @@
 import { Suspense, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import { captureLeadSource } from "@/lib/leadSource";
 
 export default function ConditionalLayout({
   children,
+  footer,
 }: {
   children: React.ReactNode;
+  /** Rendered by the (server) root layout and passed in, so the footer stays
+   * a server component and ships no JavaScript. */
+  footer: React.ReactNode;
 }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
@@ -23,7 +26,7 @@ export default function ConditionalLayout({
     <>
       {!isAdmin && <Suspense><Navbar /></Suspense>}
       {children}
-      {!isAdmin && <Footer />}
+      {!isAdmin && footer}
     </>
   );
 }
