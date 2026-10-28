@@ -79,6 +79,15 @@ export default function AwardsCarousel({
   };
   const step = (d: number) => setOpen((i) => (i + d + n) % n);
 
+  // Phone swipe row: which award is in view, so the counter shows there are 8.
+  const [slide, setSlide] = useState(0);
+  const onRowScroll = (e: React.UIEvent<HTMLUListElement>) => {
+    const row = e.currentTarget;
+    const card = row.firstElementChild as HTMLElement;
+    const atEnd = row.scrollLeft + row.clientWidth >= row.scrollWidth - 4;
+    setSlide(atEnd ? n - 1 : Math.round(row.scrollLeft / (card.offsetWidth + 16)));
+  };
+
   return (
     <section className={`${sectionClassName} py-16`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -101,7 +110,9 @@ export default function AwardsCarousel({
         </div>
 
         {/* ── Awards ── */}
-        <ul className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 overflow-x-auto sm:overflow-visible snap-x snap-mandatory scroll-px-4 -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0">
+        <ul
+          onScroll={onRowScroll}
+          className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 overflow-x-auto sm:overflow-visible snap-x snap-mandatory scroll-px-4 -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0">
           {AWARDS.map((a, i) => (
             <li key={a.src} className="shrink-0 w-[78%] sm:w-auto snap-start">
               <button
@@ -133,6 +144,22 @@ export default function AwardsCarousel({
             </li>
           ))}
         </ul>
+
+        {/* Phones only: dots + "1 / 8" so visitors know to swipe. Visual hint
+            only — screen readers already hear the list's item count. */}
+        <div aria-hidden="true" className="sm:hidden mt-4 flex items-center justify-center gap-3">
+          <span className="flex items-center gap-1.5">
+            {AWARDS.map((a, i) => (
+              <span
+                key={a.src}
+                className={`h-1.5 rounded-full transition-all duration-300 ${i === slide ? "w-5 bg-gold-500" : "w-1.5 bg-luxury-600"}`}
+              />
+            ))}
+          </span>
+          <span className="text-luxury-400 text-xs tabular-nums">
+            {slide + 1} / {n} · swipe
+          </span>
+        </div>
       </div>
 
       {/* ── Lightbox ── native <dialog>: focus trap, Esc and backdrop for free. */}

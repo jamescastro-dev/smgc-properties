@@ -46,7 +46,7 @@ export default async function Home() {
   const hubs = (await getSubdivisions()).map(({ name, slug }) => ({ name, slug }));
 
   return (
-    <main className="pt-16 sm:pt-[89px]">
+    <main className="pt-16 sm:pt-[93px]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(brokerJsonLd) }}

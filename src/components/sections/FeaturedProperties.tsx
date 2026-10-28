@@ -31,18 +31,28 @@ export default async function FeaturedProperties() {
           </div>
           <Link
             href="/properties"
-            className="flex items-center gap-2 text-gold-500 hover:text-gold-400 text-sm font-semibold tracking-wide transition-colors shrink-0 group">
+            className="hidden sm:flex items-center gap-2 text-gold-500 hover:text-gold-400 text-sm font-semibold tracking-wide transition-colors shrink-0 group">
             View all properties
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
-        {/* Property grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Property grid — a swipe row on phones (next card peeks in), so six
+            stacked cards don't push the rest of the page 4 screens down. */}
+        <ul className="flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible snap-x snap-mandatory scroll-px-4 -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0">
           {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
+            <li key={property.id} className="grid shrink-0 w-[85%] sm:w-auto snap-start">
+              <PropertyCard property={property} />
+            </li>
           ))}
-        </div>
+        </ul>
+
+        <Link
+          href="/properties"
+          className="sm:hidden mt-6 flex items-center justify-center gap-2 border border-gold-500 text-gold-500 text-sm font-bold tracking-wide px-5 py-3 rounded-sm">
+          View all properties
+          <ArrowRight className="w-4 h-4" />
+        </Link>
 
       </div>
     </section>

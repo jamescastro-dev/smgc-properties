@@ -34,13 +34,13 @@ export default function HeroSection() {
 
       {/* Main content */}
       <div className="relative flex-1 flex items-start z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-8 sm:py-10 lg:py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-8 sm:py-10 lg:py-12 short:py-6">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] gap-8 sm:gap-10 xl:gap-20 items-center">
 
             {/* Left: Copy — centered on mobile, left on desktop */}
             <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
               {/* Pill badge */}
-              <div className="inline-flex items-center gap-2.5 bg-gold-500/10 border border-gold-500/30 rounded-full px-4 py-1.5 mb-6">
+              <div className="inline-flex items-center gap-2.5 bg-gold-500/10 border border-gold-500/30 rounded-full px-4 py-1.5 mb-6 short:hidden">
                 <span className="w-1.5 h-1.5 rounded-full bg-gold-500" />
                 <span className="text-gold-500 text-[11px] tracking-[0.15em] uppercase font-semibold">
                   Licensed Real Estate Broker
@@ -49,15 +49,17 @@ export default function HeroSection() {
               </div>
 
               {/* Headline */}
-              <h1 className="text-[clamp(2.5rem,5vw,3.75rem)] font-display font-bold text-luxury-50 leading-[1.05] tracking-tight mb-5">
-                Find Your<br className="hidden lg:block" />{" "}
+              {/* Short laptop screens: smaller type sized by screen height, and
+                  "Find Your Dream Home" on one line (2 lines instead of 3). */}
+              <h1 className="text-[clamp(2.5rem,5vw,3.75rem)] short:text-[clamp(2.25rem,8vh,3.25rem)] font-display font-bold text-luxury-50 leading-[1.05] tracking-tight mb-5 short:mb-3">
+                Find Your<br className="hidden lg:block short:hidden" />{" "}
                 <span className="text-gold-500">Dream Home</span>
                 <br />
                 <span className="text-luxury-300">with Broker Shella</span>
               </h1>
 
               {/* Subheadline */}
-              <p className="text-luxury-400 text-base max-w-120 mb-8 leading-relaxed">
+              <p className="text-luxury-400 text-base max-w-120 mb-8 short:mb-5 leading-relaxed">
                 Expert guidance for buying, selling, and renting properties
                 across{" "}
                 <span className="text-luxury-50 font-medium">Bulacan</span> and{" "}
@@ -66,7 +68,7 @@ export default function HeroSection() {
               </p>
 
               {/* CTAs */}
-              <div className="flex gap-2 sm:gap-3 mb-6 w-full sm:w-auto">
+              <div className="flex gap-2 sm:gap-3 mb-6 short:mb-4 w-full sm:w-auto">
                 <Link
                   href="/properties"
                   className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gold-500 hover:bg-gold-600 text-luxury-900 text-xs sm:text-sm font-bold px-4 sm:px-7 py-3.5 rounded-lg tracking-wide transition-colors">
@@ -82,9 +84,9 @@ export default function HeroSection() {
 
               {/* Budget shortcuts — one tap from the hero to homes a visitor
                   can afford, via the /properties budget filter. */}
-              <nav aria-label="Shop by budget" className="w-full mb-10 sm:mb-0">
-                <p className="text-luxury-400 text-[11px] tracking-[0.15em] uppercase font-semibold mb-2.5">
-                  Shop by budget
+              <nav aria-label="Browse homes by budget" className="w-full mb-10 sm:mb-0">
+                <p className="text-luxury-400 text-[11px] tracking-[0.15em] uppercase font-semibold mb-2.5 short:mb-2">
+                  Browse homes by budget
                 </p>
                 <ul className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center lg:justify-start gap-2">
                   {BUDGETS.map((b) => (
@@ -150,13 +152,16 @@ export default function HeroSection() {
               <div className="relative w-full max-w-72 sm:max-w-sm lg:max-w-110">
                 {/* Depth shadow block — desktop only */}
                 <div
-                  className="hidden lg:block absolute -bottom-3 -right-3 w-full rounded-3xl bg-luxury-700 pointer-events-none"
-                  style={{ aspectRatio: "3/4", zIndex: 0 }}
+                  className="hidden lg:block absolute -bottom-3 -right-3 w-full aspect-3/4 short:aspect-auto short:h-[calc(100svh-14rem)] rounded-3xl bg-luxury-700 pointer-events-none"
+                  style={{ zIndex: 0 }}
                 />
 
                 {/* Photo */}
                 <div className="relative w-full rounded-3xl overflow-hidden border border-luxury-700 z-10">
-                  <div className="relative w-full aspect-3/4">
+                  {/* Short laptop screens: same width, height capped to the
+                      space below the header so the name card and stats stay on
+                      screen (crops from the bottom; the face is at the top). */}
+                  <div className="relative w-full aspect-3/4 short:aspect-auto short:h-[calc(100svh-14rem)]">
                     {/* Hidden below sm (phones get the compact card above), but
                         a priority image downloads even when hidden — the 16px
                         size makes that a ~1KB thumbnail instead of 1080px. */}
@@ -173,7 +178,7 @@ export default function HeroSection() {
 
                   {/* Name card + track record */}
                   <div className="absolute bottom-0 left-0 right-0 px-5 pb-5">
-                    <div className="bg-luxury-800/90 backdrop-blur-md border border-luxury-700 rounded-2xl px-5 py-4">
+                    <div className="bg-luxury-800/90 backdrop-blur-md border border-luxury-700 rounded-2xl px-5 py-4 short:py-3">
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="text-luxury-50 text-xl font-bold tracking-tight leading-none mb-1">
@@ -187,7 +192,7 @@ export default function HeroSection() {
                           <BadgeCheck className="w-4 h-4 text-gold-500" />
                         </div>
                       </div>
-                      <dl className="grid grid-cols-2 gap-4 mt-3.5 pt-3.5 border-t border-luxury-700">
+                      <dl className="grid grid-cols-2 gap-4 mt-3.5 pt-3.5 short:mt-2.5 short:pt-2.5 border-t border-luxury-700">
                         {STATS.map((stat) => (
                           <div key={stat.label} className="flex flex-col-reverse">
                             <dt className="text-gold-500 text-[10px] tracking-[0.12em] uppercase font-medium mt-1">

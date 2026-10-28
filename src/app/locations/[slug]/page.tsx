@@ -134,7 +134,7 @@ export default async function TownPage({ params }: Props) {
   ];
 
   return (
-    <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[89px]">
+    <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[93px]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

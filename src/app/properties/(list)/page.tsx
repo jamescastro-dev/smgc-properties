@@ -46,7 +46,7 @@ export default async function PropertiesPage({ searchParams }: Props) {
   const paginated = filtered.slice(start, start + ITEMS_PER_PAGE);
 
   return (
-    <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[89px]">
+    <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[93px]">
       <PropertiesClient
         query={q}
         facets={propertyFacets(all)}

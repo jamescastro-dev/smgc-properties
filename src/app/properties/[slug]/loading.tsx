@@ -4,7 +4,7 @@ import { Bone, LoadingStatus } from "@/components/ui/Skeleton";
 // details card (title, location, price, specs) beside the inquiry column.
 export default function PropertyDetailLoading() {
   return (
-    <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[89px]">
+    <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[93px]">
       <LoadingStatus label="Loading property">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 flex items-center justify-between gap-4">
           <Bone className="h-3 w-64 max-w-[60%]" />

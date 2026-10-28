@@ -11,7 +11,7 @@ export const metadata: Metadata = pageMetadata({
 
 export default function ContactPage() {
   return (
-    <main className="pt-[80px]">
+    <main className="pt-16 sm:pt-[93px]">
       <ContactSection headingLevel="h1" />
     </main>
   );

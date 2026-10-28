@@ -21,9 +21,10 @@ export default function Footer() {
     <footer className="bg-luxury-900 border-t border-luxury-800">
       {/* Main footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+        {/* Phones: Quick Links and Property Types sit side by side. */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand column */}
-          <div className="lg:col-span-1">
+          <div className="col-span-2 sm:col-span-1">
             <Link href="/" className="flex flex-col leading-tight mb-6">
               <span className="text-luxury-50 text-2xl font-bold tracking-wide">
                 {SITE_CONFIG.name}
@@ -95,7 +96,7 @@ export default function Footer() {
           </div>
 
           {/* Contact */}
-          <div>
+          <div className="col-span-2 sm:col-span-1">
             <h2 className="text-luxury-50 text-sm font-bold tracking-widest uppercase mb-6">
               Contact Us
             </h2>

@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Desktop-width but short screens: laptops at 125–150% scaling (e.g. 1280x585
+   visible). Lets above-the-fold sections tighten up without changing how
+   tall screens look. */
+@custom-variant short (@media (min-width: 64rem) and (max-height: 780px));
+
 html {
   scrollbar-gutter: stable;
 }

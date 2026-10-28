@@ -172,7 +172,7 @@ export default function PropertyDetailClient({
   }, [lightboxOpen, prevImage, nextImage]);
 
   return (
-    <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[89px]">
+    <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[93px]">
       {/* Breadcrumb + Share */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 flex items-center justify-between gap-4">
         <div className="flex items-center gap-2 text-xs text-luxury-400 min-w-0">
