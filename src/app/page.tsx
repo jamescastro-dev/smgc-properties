@@ -42,6 +42,17 @@ const brokerJsonLd = {
   ],
 };
 
+// Google's "site name" shown above each search result. Long page titles drop
+// the brand suffix (lib/seo.ts), so this is where the brand comes from.
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${BASE_URL}/#website`,
+  name: "SMGC Properties",
+  alternateName: ["Broker Shella", "Broker Shella — SMGC Properties"],
+  url: BASE_URL,
+};
+
 export default async function Home() {
   const hubs = (await getSubdivisions()).map(({ name, slug }) => ({ name, slug }));
 
@@ -49,7 +60,7 @@ export default async function Home() {
     <main className="pt-16 sm:pt-[93px]">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(brokerJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify([websiteJsonLd, brokerJsonLd]) }}
       />
       <HeroSection />
       <FeaturedProperties />

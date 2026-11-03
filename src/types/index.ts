@@ -23,6 +23,8 @@ export interface Property {
   featured: boolean;
   sort_order?: number;
   created_at?: string;
+  /** Set by a trigger on every change (see supabase/migrations). */
+  updated_at?: string;
 }
 
 /** A development (e.g. St. Agatha Homes) with every listing we carry in it. */

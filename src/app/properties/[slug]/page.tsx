@@ -57,8 +57,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const property = await resolveProperty(slug);
   if (!property) return { title: "Property Not Found" };
   return pageMetadata({
-    // Bare title — the root layout's template appends the brand. Adding it
-    // here too produced "… | Broker Shella | Broker Shella — SMGC Properties".
+    // Bare title — pageMetadata appends the brand only when it fits (listing
+    // titles are long, so usually not). Never add it here: that produced
+    // "… | Broker Shella | Broker Shella — SMGC Properties".
     title: property.title,
     description: metaDescription(property),
     path: `/properties/${propertySlug(property)}`,

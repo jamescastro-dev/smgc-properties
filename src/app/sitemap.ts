@@ -1,16 +1,32 @@
 import { MetadataRoute } from "next";
 import { getAllProperties, getSubdivisions, getTowns } from "@/lib/supabase/properties";
 import { propertySlug } from "@/lib/utils";
+import type { Property } from "@/types";
+
+// lastModified must be a real date or nothing: a sitemap that reports the build
+// time for every URL teaches Google to ignore its dates. Listings use the
+// updated_at trigger column (created_at until that migration has run); pages
+// built from listings take their newest listing's date; static pages omit it.
+const modified = (p: Property) => p.updated_at ?? p.created_at;
+
+function newest(properties: Property[]): Date | undefined {
+  const times = properties
+    .map(modified)
+    .filter((t): t is string => !!t)
+    .map((t) => new Date(t).getTime());
+  return times.length ? new Date(Math.max(...times)) : undefined;
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://www.smgcproperties.com";
 
-  const properties = await getAllProperties();
-
   // Sold/rented listings stay reachable for old links but aren't promoted.
-  const propertyUrls = properties.filter((p) => p.status === "available").map((p) => ({
+  const available = (await getAllProperties()).filter((p) => p.status === "available");
+  const latest = newest(available);
+
+  const propertyUrls = available.map((p) => ({
     url: `${baseUrl}/properties/${propertySlug(p)}`,
-    lastModified: new Date(p.created_at || new Date()),
+    lastModified: modified(p) ? new Date(modified(p)!) : undefined,
     changeFrequency: "weekly" as const,
     priority: 0.8,
   }));
@@ -20,7 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const subdivisions = await getSubdivisions().catch(() => []);
   const subdivisionUrls = subdivisions.map((s) => ({
     url: `${baseUrl}/subdivisions/${s.slug}`,
-    lastModified: new Date(),
+    lastModified: newest(s.properties),
     changeFrequency: "weekly" as const,
     priority: 0.9,
   }));
@@ -29,7 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const towns = await getTowns().catch(() => []);
   const townUrls = towns.map((t) => ({
     url: `${baseUrl}/locations/${t.slug}`,
-    lastModified: new Date(),
+    lastModified: newest(t.properties),
     changeFrequency: "weekly" as const,
     priority: 0.9,
   }));
@@ -37,25 +53,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     {
       url: baseUrl,
-      lastModified: new Date(),
+      lastModified: latest,
       changeFrequency: "daily",
       priority: 1,
     },
     {
       url: `${baseUrl}/properties`,
-      lastModified: new Date(),
+      lastModified: latest,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/about`,
-      lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/contact`,
-      lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
     },
