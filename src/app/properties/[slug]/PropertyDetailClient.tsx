@@ -22,6 +22,7 @@ import {
 import { Property } from "@/types";
 import { formatPriceExact, subdivisionName, unavailableLabel } from "@/lib/utils";
 import { getLeadSource } from "@/lib/leadSource";
+import { parseDescription } from "@/lib/description";
 import PhoneInput from "@/components/ui/PhoneInput";
 import PropertyCard from "@/components/ui/PropertyCard";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -389,9 +390,33 @@ export default function PropertyDetailClient({
                 <h2 className="text-luxury-50 font-display text-2xl font-semibold mb-4">
                   About this property
                 </h2>
-                <p className="text-luxury-300 text-[15px] leading-[1.85] whitespace-pre-wrap max-w-2xl">
-                  {property.description}
-                </p>
+                {/* "## " lines are section headings, "- " lines bullets —
+                    see lib/description.ts. */}
+                <div className="text-luxury-300 text-[15px] leading-[1.85] max-w-2xl">
+                  {parseDescription(property.description).map((block, i) =>
+                    block.kind === "heading" ? (
+                      <h3
+                        key={i}
+                        className="text-luxury-50 text-base font-semibold mt-8 first:mt-0 mb-2">
+                        {block.text}
+                      </h3>
+                    ) : block.kind === "list" ? (
+                      <ul key={i} className="mt-4 first:mt-0 [h3+&]:mt-0 flex flex-col gap-1.5">
+                        {block.items.map((item, j) => (
+                          <li
+                            key={j}
+                            className="relative pl-5 before:absolute before:left-0.5 before:top-[0.72em] before:w-1.5 before:h-1.5 before:rounded-full before:bg-gold-500">
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p key={i} className="mt-4 first:mt-0 [h3+&]:mt-0 whitespace-pre-line">
+                        {block.text}
+                      </p>
+                    ),
+                  )}
+                </div>
               </div>
             </div>
 

@@ -134,7 +134,6 @@ export default function AdminLoginPage() {
                     }
                     required
                     autoFocus
-                    placeholder="123456"
                     className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/40 focus:border-gold-500 rounded-xl px-4 py-3 text-luxury-50 placeholder-luxury-600 text-center text-lg tracking-[0.4em] font-semibold outline-none transition-colors"
                   />
                 </div>
@@ -177,7 +176,6 @@ export default function AdminLoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    placeholder="shella@email.com"
                     className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/40 focus:border-gold-500 rounded-xl px-4 py-3 text-luxury-50 placeholder-luxury-600 text-sm outline-none transition-colors"
                   />
                 </div>
@@ -193,7 +191,6 @@ export default function AdminLoginPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      placeholder="••••••••"
                       className="w-full bg-luxury-900 border border-luxury-700 hover:border-gold-500/40 focus:border-gold-500 rounded-xl px-4 py-3 text-luxury-50 placeholder-luxury-600 text-sm outline-none transition-colors pr-11"
                     />
                     <button

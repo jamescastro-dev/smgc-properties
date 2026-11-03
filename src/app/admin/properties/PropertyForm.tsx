@@ -285,10 +285,15 @@ export default function PropertyForm({ property }: Props) {
                 name="description"
                 value={form.description}
                 onChange={handleChange}
-                rows={4}
+                rows={12}
                 placeholder="Describe the property..."
-                className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-xl px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors resize-none"
+                className="bg-luxury-900 border border-luxury-700 hover:border-gold-500/50 focus:border-gold-500 rounded-xl px-4 py-3 text-luxury-50 placeholder-luxury-500 text-sm outline-none transition-colors resize-y"
               />
+              <p className="text-luxury-500 text-xs leading-relaxed">
+                Start a line with <span className="text-luxury-300">## </span> for a section
+                heading and <span className="text-luxury-300">- </span> for a bullet point.
+                Leave a blank line between paragraphs.
+              </p>
             </div>
 
             {/* Price + Listing Type + Property Type */}

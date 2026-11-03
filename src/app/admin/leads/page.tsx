@@ -3,28 +3,21 @@ import LeadsClient from "./LeadsClient";
 
 export default async function AdminLeadsPage() {
   const supabase = await createClient();
-  const { data: leads, error } = await supabase
-    .from("leads")
-    .select("*")
-    .order("created_at", { ascending: false });
+
+  // Property titles are resolved by hand since the FK may not be defined.
+  // There are only a few dozen listings, so fetch them alongside the leads
+  // rather than waiting for the leads to know which ids to ask for.
+  const [{ data: leads, error }, { data: props }] = await Promise.all([
+    supabase.from("leads").select("*").order("created_at", { ascending: false }),
+    supabase.from("properties").select("id, title, slug"),
+  ]);
 
   if (error) console.error("[admin/leads] query failed:", error.message);
 
-  // Manually resolve property titles since FK may not be defined
-  const propertyIds = [
-    ...new Set(leads?.map((l) => l.property_id).filter(Boolean)),
-  ];
-
-  const propertiesMap: Record<string, { title: string }> = {};
-  if (propertyIds.length > 0) {
-    const { data: props } = await supabase
-      .from("properties")
-      .select("id, title")
-      .in("id", propertyIds);
-    props?.forEach((p) => {
-      propertiesMap[p.id] = { title: p.title };
-    });
-  }
+  const propertiesMap: Record<string, { title: string; slug: string | null }> = {};
+  props?.forEach((p) => {
+    propertiesMap[p.id] = { title: p.title, slug: p.slug };
+  });
 
   const leadsWithProperties = leads?.map((l) => ({
     ...l,

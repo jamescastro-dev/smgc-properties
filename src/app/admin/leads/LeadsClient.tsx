@@ -1,104 +1,44 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
-import Link from "next/link";
+import { useState, useMemo, useCallback } from "react";
 import { Users, Phone, Search, X } from "lucide-react";
 import UpdateLeadStatus from "./UpdateLeadStatus";
 import ContactButtons from "./ContactButtons";
+import LeadDrawer from "./LeadDrawer";
 import Pagination from "@/components/ui/Pagination";
 import Segmented from "@/components/ui/Segmented";
-import { describeLeadSource, type LeadSource } from "@/lib/leadSource";
-
-function TooltipCell({
-  id,
-  text,
-  href,
-  textClassName = "",
-  activeId,
-  setActiveId,
-}: {
-  id: string;
-  text: string;
-  href?: string;
-  textClassName?: string;
-  activeId: string | null;
-  setActiveId: (id: string | null) => void;
-}) {
-  const open = activeId === id;
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const close = (e: MouseEvent | TouchEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setActiveId(null);
-    };
-    document.addEventListener("mousedown", close);
-    document.addEventListener("touchstart", close);
-    return () => {
-      document.removeEventListener("mousedown", close);
-      document.removeEventListener("touchstart", close);
-    };
-  }, [open, setActiveId]);
-
-  return (
-    <div
-      ref={ref}
-      className="relative group"
-      onMouseEnter={() => setActiveId(id)}
-      onMouseLeave={() => setActiveId(null)}>
-      <p
-        onClick={() => setActiveId(open ? null : id)}
-        className={`truncate cursor-pointer select-none ${textClassName}`}>
-        {text}
-      </p>
-      {open && (
-        <div className="absolute left-0 top-full mt-1.5 z-50 w-72 bg-luxury-900 border border-luxury-600 rounded-xl p-3 text-xs text-luxury-50 shadow-2xl break-words whitespace-normal">
-          <p className="leading-relaxed">{text}</p>
-          {href && (
-            <Link
-              href={href}
-              onClick={() => setActiveId(null)}
-              className="flex items-center gap-1 mt-2 pt-2 border-t border-luxury-700 text-gold-500 hover:text-gold-400 text-[10px] font-semibold uppercase tracking-widest">
-              View Property →
-            </Link>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
+import { describeLeadSource } from "@/lib/leadSource";
+import {
+  type Lead,
+  type LeadStatus,
+  inquiryBadge,
+  leadMessage,
+  leadPropertyTitle,
+} from "./lead";
 
 const ITEMS_PER_PAGE = 15;
 const STATUSES = ["all", "new", "contacted", "closed"] as const;
 type StatusFilter = (typeof STATUSES)[number];
 
-interface Lead {
-  id: string;
-  name: string;
-  phone: string;
-  location?: string | null;
-  budget?: string | null;
-  message?: string | null;
-  type: string;
-  status: string;
-  created_at: string;
-  property_id?: string | null;
-  properties?: { title: string } | null;
-  source?: LeadSource | null;
-}
-
-const inquiryBadge = (t: string) =>
-  t === "buy"
-    ? "bg-gold-500/10 text-gold-500 border border-gold-500/20"
-    : t === "sell"
-    ? "bg-blue-400/10 text-blue-400 border border-blue-400/20"
-    : "bg-purple-400/10 text-purple-400 border border-purple-400/20";
+// Clicks on a row's own controls (status, call/text, phone link) shouldn't
+// also open the drawer.
+const stop = (e: React.SyntheticEvent) => e.stopPropagation();
 
 export default function LeadsClient({ leads }: { leads: Lead[] }) {
   const [filter, setFilter] = useState<StatusFilter>("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+
+  // openId drives the drawer; shownId keeps its content while it slides out.
+  // The lead is looked up from props so a status change shows after refresh.
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [shownId, setShownId] = useState<string | null>(null);
+  const openLead = (id: string) => {
+    setOpenId(id);
+    setShownId(id);
+  };
+  const closeLead = useCallback(() => setOpenId(null), []);
+  const shownLead = leads.find((l) => l.id === shownId) ?? null;
 
   const counts = useMemo(
     () => ({
@@ -188,25 +128,34 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
           </div>
         ) : (
           <>
-            {/* ── Mobile / tablet card list ── */}
+            {/* ── Mobile / tablet card list — tap a card for the full lead ── */}
             <div className="lg:hidden divide-y divide-luxury-700/50">
               {paginated.map((lead) => {
-                const title =
-                  lead.properties?.title ??
-                  lead.message?.match(/^\[PROPERTY:(.+?)\]/)?.[1] ??
-                  null;
-                const msg = lead.message?.replace(/^\[PROPERTY:[^\]]+\]\n?/, "") || null;
+                const title = leadPropertyTitle(lead);
+                const msg = leadMessage(lead);
                 return (
-                  <div key={lead.id} className="p-4 hover:bg-luxury-700/20 transition-colors">
+                  <div
+                    key={lead.id}
+                    onClick={() => openLead(lead.id)}
+                    className={`p-4 cursor-pointer transition-colors ${
+                      openId === lead.id ? "bg-luxury-700/30" : "hover:bg-luxury-700/20"
+                    }`}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="text-luxury-50 text-base font-semibold truncate">{lead.name}</p>
+                        <button
+                          onClick={() => openLead(lead.id)}
+                          className="block max-w-full text-left text-luxury-50 text-base font-semibold truncate">
+                          {lead.name}
+                        </button>
                         <p className="text-luxury-400 text-sm tabular-nums mt-0.5">{lead.phone}</p>
                       </div>
-                      <UpdateLeadStatus
-                        id={lead.id}
-                        currentStatus={lead.status as "new" | "contacted" | "closed"}
-                      />
+                      <div onClick={stop}>
+                        <UpdateLeadStatus
+                          key={`${lead.id}-${lead.status}`}
+                          id={lead.id}
+                          currentStatus={lead.status as LeadStatus}
+                        />
+                      </div>
                     </div>
 
                     <div className="flex items-center gap-2 mt-2.5 flex-wrap">
@@ -221,15 +170,7 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                       )}
                     </div>
 
-                    {title && (
-                      <p className="text-gold-500 text-xs mt-2">
-                        {lead.property_id ? (
-                          <Link href={`/admin/properties/${lead.property_id}`} className="hover:text-gold-400">
-                            {title}
-                          </Link>
-                        ) : title}
-                      </p>
-                    )}
+                    {title && <p className="text-gold-500 text-xs mt-2">{title}</p>}
 
                     {msg && (
                       <p className="text-luxury-500 text-xs mt-1.5 line-clamp-2">{msg}</p>
@@ -242,13 +183,15 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
 
                     {/* Reaching the lead is the whole point of this screen on a
                         phone — make it a thumb-sized button, not 12px text. */}
-                    <ContactButtons phone={lead.phone} className="mt-3" />
+                    <div onClick={stop}>
+                      <ContactButtons phone={lead.phone} className="mt-3" />
+                    </div>
                   </div>
                 );
               })}
             </div>
 
-            {/* ── Desktop table ── */}
+            {/* ── Desktop table — click a row for the full lead ── */}
             <div className="hidden lg:block overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -263,79 +206,74 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-luxury-700/60">
-                  {paginated.map((lead) => (
-                    <tr key={lead.id} className="hover:bg-luxury-700/20 transition-colors group">
-                      <td className="px-5 py-4">
-                        <p className="text-luxury-50 text-sm font-semibold max-w-40 truncate">{lead.name}</p>
-                        <a href={`tel:${lead.phone}`} className="inline-flex items-center gap-1.5 text-luxury-300 text-xs hover:text-gold-500 transition-colors whitespace-nowrap mt-1">
-                          <Phone className="w-3 h-3 text-gold-500" />
-                          {lead.phone}
-                        </a>
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className={`text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full whitespace-nowrap ${inquiryBadge(lead.type)}`}>
-                          {lead.type}
-                        </span>
-                        <p className="text-luxury-400 text-xs mt-1.5 max-w-40 truncate">
-                          {[lead.location, lead.budget].filter(Boolean).join(" · ") || "—"}
-                        </p>
-                      </td>
-                      <td className="px-5 py-4 max-w-36">
-                        {(() => {
-                          const title =
-                            lead.properties?.title ??
-                            lead.message?.match(/^\[PROPERTY:(.+?)\]/)?.[1] ??
-                            null;
-                          return title ? (
-                            <TooltipCell
-                              id={`${lead.id}-property`}
-                              text={title}
-                              href={lead.property_id ? `/admin/properties/${lead.property_id}` : undefined}
-                              textClassName="text-gold-500 text-xs"
-                              activeId={activeTooltip}
-                              setActiveId={setActiveTooltip}
-                            />
+                  {paginated.map((lead) => {
+                    const title = leadPropertyTitle(lead);
+                    const msg = leadMessage(lead);
+                    return (
+                      <tr
+                        key={lead.id}
+                        onClick={() => openLead(lead.id)}
+                        className={`cursor-pointer transition-colors group ${
+                          openId === lead.id ? "bg-luxury-700/30" : "hover:bg-luxury-700/20"
+                        }`}>
+                        <td className="px-5 py-4">
+                          <button
+                            onClick={() => openLead(lead.id)}
+                            className="block max-w-40 text-left text-luxury-50 text-sm font-semibold truncate group-hover:text-gold-500 transition-colors">
+                            {lead.name}
+                          </button>
+                          <a
+                            href={`tel:${lead.phone}`}
+                            onClick={stop}
+                            className="inline-flex items-center gap-1.5 text-luxury-300 text-xs hover:text-gold-500 transition-colors whitespace-nowrap mt-1">
+                            <Phone className="w-3 h-3 text-gold-500" />
+                            {lead.phone}
+                          </a>
+                        </td>
+                        <td className="px-5 py-4">
+                          <span className={`text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full whitespace-nowrap ${inquiryBadge(lead.type)}`}>
+                            {lead.type}
+                          </span>
+                          <p className="text-luxury-400 text-xs mt-1.5 max-w-40 truncate">
+                            {[lead.location, lead.budget].filter(Boolean).join(" · ") || "—"}
+                          </p>
+                        </td>
+                        <td className="px-5 py-4 max-w-36">
+                          {title ? (
+                            <p className="text-gold-500 text-xs truncate" title={title}>{title}</p>
                           ) : (
                             <span className="text-luxury-600 text-xs">General</span>
-                          );
-                        })()}
-                      </td>
-                      <td className="px-5 py-4 max-w-44">
-                        {(() => {
-                          const msg = lead.message?.replace(/^\[PROPERTY:[^\]]+\]\n?/, "") || null;
-                          return msg ? (
-                            <TooltipCell
-                              id={`${lead.id}-message`}
-                              text={msg}
-                              textClassName="text-luxury-400 text-xs"
-                              activeId={activeTooltip}
-                              setActiveId={setActiveTooltip}
-                            />
+                          )}
+                        </td>
+                        <td className="px-5 py-4 max-w-44">
+                          {msg ? (
+                            <p className="text-luxury-400 text-xs truncate">{msg}</p>
                           ) : (
                             <span className="text-luxury-600 text-xs">—</span>
-                          );
-                        })()}
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className="text-luxury-500 text-xs whitespace-nowrap">
-                          {new Date(lead.created_at).toLocaleDateString("en-PH")}
-                        </span>
-                        {describeLeadSource(lead.source) && (
-                          <span
-                            className="block text-luxury-600 text-[11px] max-w-40 truncate"
-                            title={describeLeadSource(lead.source) ?? undefined}>
-                            via {describeLeadSource(lead.source)}
+                          )}
+                        </td>
+                        <td className="px-5 py-4">
+                          <span className="text-luxury-500 text-xs whitespace-nowrap">
+                            {new Date(lead.created_at).toLocaleDateString("en-PH")}
                           </span>
-                        )}
-                      </td>
-                      <td className="px-5 py-4">
-                        <UpdateLeadStatus
-                          id={lead.id}
-                          currentStatus={lead.status as "new" | "contacted" | "closed"}
-                        />
-                      </td>
-                    </tr>
-                  ))}
+                          {describeLeadSource(lead.source) && (
+                            <span
+                              className="block text-luxury-600 text-[11px] max-w-40 truncate"
+                              title={describeLeadSource(lead.source) ?? undefined}>
+                              via {describeLeadSource(lead.source)}
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4" onClick={stop}>
+                          <UpdateLeadStatus
+                            key={`${lead.id}-${lead.status}`}
+                            id={lead.id}
+                            currentStatus={lead.status as LeadStatus}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -352,6 +290,8 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
           onPageChange={setPage}
         />
       )}
+
+      <LeadDrawer lead={shownLead} open={openId !== null} onClose={closeLead} />
     </div>
   );
 }

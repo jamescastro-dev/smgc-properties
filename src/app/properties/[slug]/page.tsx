@@ -9,6 +9,7 @@ import {
 } from "@/lib/supabase/properties";
 import { propertySlug, slugify, subdivisionName } from "@/lib/utils";
 import { pageMetadata } from "@/lib/seo";
+import { descriptionSummary, plainDescription } from "@/lib/description";
 import PropertyDetailClient from "./PropertyDetailClient";
 import MobileContactBar from "@/components/layout/MobileContactBar";
 import type { Metadata } from "next";
@@ -34,11 +35,11 @@ async function resolveProperty(slug: string) {
   );
 }
 
-// Listing descriptions are authored for humans — emoji, line breaks and
-// financing tables. Google shows ~155 chars, so flatten and clip on a word
-// boundary rather than letting it truncate mid-table.
+// Listing descriptions are authored for humans — headings, bullets and
+// financing tables. Google shows ~155 chars, so use the opening summary,
+// flatten it and clip on a word boundary rather than mid-sentence.
 function metaDescription(property: { description?: string | null }): string {
-  const flat = (property.description ?? "")
+  const flat = descriptionSummary(property.description)
     .replace(/\s+/g, " ")
     .replace(
       /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{2B00}-\u{2BFF}]/gu,
@@ -104,7 +105,7 @@ export default async function PropertyDetailPage({ params }: Props) {
       "@context": "https://schema.org",
       "@type": "Product",
       name: property.title,
-      description: property.description,
+      description: plainDescription(property.description),
       image: property.images,
       category: property.property_type || "Real Estate",
       offers: {
