@@ -50,7 +50,7 @@ const REASONS = [
 
 export default function WhyChooseUs() {
   return (
-    <section className="bg-luxury-800 py-24">
+    <section className="bg-luxury-800 py-14 sm:py-16 lg:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-12 lg:gap-20 items-start">
           {/* Left — heading (sticky on desktop) */}

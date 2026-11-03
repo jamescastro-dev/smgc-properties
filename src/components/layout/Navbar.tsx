@@ -6,11 +6,17 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Menu, X, Phone, Mail } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
 
+// Buy/Rent link straight to the filtered list. /buy and /rent still exist as
+// redirects for old links, but going through them costs an extra round trip
+// with no loading state.
+const BUY_HREF = "/properties?listing=For+Sale";
+const RENT_HREF = "/properties?listing=For+Rent";
+
 const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Properties", href: "/properties" },
-  { label: "Buy", href: "/buy" },
-  { label: "Rent", href: "/rent" },
+  { label: "Buy", href: BUY_HREF },
+  { label: "Rent", href: RENT_HREF },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ] as const;
@@ -21,8 +27,8 @@ export default function Navbar() {
   const searchParams = useSearchParams();
 
   const isLinkActive = (href: string) => {
-    if (href === "/buy") return pathname === "/properties" && searchParams.get("listing") === "For Sale";
-    if (href === "/rent") return pathname === "/properties" && searchParams.get("listing") === "For Rent";
+    if (href === BUY_HREF) return pathname === "/properties" && searchParams.get("listing") === "For Sale";
+    if (href === RENT_HREF) return pathname === "/properties" && searchParams.get("listing") === "For Rent";
     if (href === "/properties") return pathname === "/properties" && !searchParams.get("listing");
     return pathname === href;
   };
@@ -56,7 +62,19 @@ export default function Navbar() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex flex-col leading-tight group">
+          {/* Always closes the phone menu; already on the homepage, it just
+              scrolls back to the top instead of re-navigating. */}
+          <Link
+            href="/"
+            className="flex flex-col leading-tight group"
+            onClick={(e) => {
+              setIsMenuOpen(false);
+              if (pathname === "/") {
+                e.preventDefault();
+                const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+              }
+            }}>
             <span className="text-luxury-50 text-xl font-bold tracking-wide group-hover:text-gold-500 transition-colors">
               {SITE_CONFIG.name}
             </span>

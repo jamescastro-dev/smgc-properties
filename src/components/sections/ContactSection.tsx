@@ -104,10 +104,13 @@ export default function ContactSection({
   };
 
   return (
-    <section className="bg-luxury-800 py-16 lg:py-24">
+    // As the /contact page (h1) it sits right under the navbar, so it takes
+    // the shared page-top spacing instead of the homepage section padding.
+    <section
+      className={`bg-luxury-800 pb-14 sm:pb-16 lg:pb-20 ${Heading === "h1" ? "pt-10 sm:pt-12" : "pt-14 sm:pt-16 lg:pt-20"}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* ── Header (leads the section) ── */}
-        <div className="mb-12">
+        <div className="mb-8 sm:mb-10">
           <div className="inline-flex items-center gap-2 mb-4">
             <span className="w-8 h-px bg-gold-500" />
             <span className="text-gold-500 text-xs tracking-widest uppercase font-semibold">

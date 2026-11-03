@@ -72,7 +72,7 @@ export default function AboutPage() {
     <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[93px]">
 
       {/* ── Hero ── */}
-      <section className="relative bg-luxury-900 py-16 lg:py-20 overflow-hidden">
+      <section className="relative bg-luxury-900 pt-10 sm:pt-12 pb-14 sm:pb-16 lg:pb-20 overflow-hidden">
         {/* Subtle grid */}
         <div
           className="absolute inset-0 opacity-[0.03] pointer-events-none"
@@ -214,7 +214,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Personal Message ── */}
-      <section className="bg-luxury-800 py-24">
+      <section className="bg-luxury-800 py-14 sm:py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-luxury-900 border border-luxury-700 rounded-3xl p-10 sm:p-14 relative overflow-hidden">
             <div className="absolute top-8 left-8 text-gold-500/10 text-[120px] font-serif leading-none select-none">
@@ -259,7 +259,7 @@ export default function AboutPage() {
       <AwardsCarousel />
 
       {/* ── Services ── */}
-      <section className="bg-luxury-800 py-24">
+      <section className="bg-luxury-800 py-14 sm:py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-[0.85fr_1.15fr] gap-12 lg:gap-20 items-start">
             {/* Left — heading (sticky on desktop) */}
@@ -311,7 +311,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="bg-luxury-900 py-24">
+      <section className="bg-luxury-900 py-14 sm:py-16 lg:py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-display font-semibold text-luxury-50 tracking-tight mb-4">
             Ready to Find Your Dream Home?

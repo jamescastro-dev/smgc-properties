@@ -9,11 +9,11 @@ export default async function FeaturedProperties() {
   if (properties.length === 0) return null;
 
   return (
-    <section className="bg-luxury-800 py-24">
+    <section className="bg-luxury-800 py-14 sm:py-16 lg:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-14">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8 sm:mb-10">
           <div>
             <div className="inline-flex items-center gap-2 mb-4">
               <span className="w-8 h-px bg-gold-500" />

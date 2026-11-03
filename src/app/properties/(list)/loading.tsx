@@ -7,7 +7,7 @@ import PropertyGridSkeleton from "@/components/ui/PropertyGridSkeleton";
 export default function PropertiesLoading() {
   return (
     <main className="min-h-screen bg-luxury-900 pt-16 sm:pt-[93px]">
-      <LoadingStatus label="Loading properties" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <LoadingStatus label="Loading properties" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-12 pb-12">
         <div className="mb-8">
           <Bone className="h-3 w-28 mb-4" />
           <Bone className="h-10 w-48" />

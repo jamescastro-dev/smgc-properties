@@ -89,10 +89,10 @@ export default function AwardsCarousel({
   };
 
   return (
-    <section className={`${sectionClassName} py-16`}>
+    <section className={`${sectionClassName} py-14 sm:py-16 lg:py-20`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* ── Section header ── */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-8 sm:mb-10">
           <div className="inline-flex items-center gap-2 mb-3">
             <span className="w-8 h-px bg-gold-500" />
             <span className="text-gold-500 text-xs tracking-widest uppercase font-semibold">

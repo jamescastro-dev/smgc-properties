@@ -139,15 +139,23 @@ export default function PropertyDetailClient({
   const openLightbox = () => setLightboxOpen(true);
   const closeLightbox = () => setLightboxOpen(false);
 
-  // Touch swipe state for lightbox
+  // Touch swipe state for lightbox. A pinch (2+ fingers) cancels the swipe,
+  // and so does any touch while the page is pinch-zoomed — there a one-finger
+  // drag means "pan around the photo", not "next photo".
   const touchStartX = useRef<number | null>(null);
+  const isZoomed = () => (window.visualViewport?.scale ?? 1) > 1.01;
 
   const onTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
+    touchStartX.current =
+      e.touches.length === 1 && !isZoomed() ? e.touches[0].clientX : null;
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length > 1) touchStartX.current = null;
   };
 
   const onTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
+    if (touchStartX.current === null || isZoomed()) return;
     const delta = e.changedTouches[0].clientX - touchStartX.current;
     if (Math.abs(delta) > 50) {
       if (delta < 0) nextImage();
@@ -673,6 +681,7 @@ export default function PropertyDetailClient({
           <div
             className="relative flex-1 flex items-center justify-center overflow-hidden"
             onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
             onClick={(e) => e.stopPropagation()}
           >

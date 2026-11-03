@@ -5,8 +5,9 @@ import { SITE_CONFIG, PROPERTY_TYPES as BASE_PROPERTY_TYPES } from "@/lib/consta
 const QUICK_LINKS = [
   { label: "Home", href: "/" },
   { label: "Properties", href: "/properties" },
-  { label: "Buy", href: "/buy" },
-  { label: "Rent", href: "/rent" },
+  // Straight to the filtered list — /buy and /rent are only redirects.
+  { label: "Buy", href: "/properties?listing=For+Sale" },
+  { label: "Rent", href: "/properties?listing=For+Rent" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
